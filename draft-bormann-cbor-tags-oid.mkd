@@ -1,0 +1,179 @@
+---
+title: Concise Binary Object Representation (CBOR) Tags for ASN.1 Object IDs
+abbrev: CBOR tags for ASN.1 Object IDs
+docname: draft-bormann-cbor-tags-oid-00-pre
+date: 2014-10-05
+
+stand_alone: true
+
+ipr: trust200902
+keyword: Internet-Draft
+cat: info
+
+pi: [toc, sortrefs, symrefs, compact, comments]
+
+author:
+  -
+    ins: C. Bormann
+    name: Carsten Bormann
+    org: Universität Bremen TZI
+    street: Postfach 330440
+    city: Bremen
+    code: D-28359
+    country: Germany
+    phone: +49-421-218-63921
+    email: cabo@tzi.org
+  -
+    ins: S. Leonard
+    name: Sean Leonard
+    email: dev+ietf@seantek.com
+    uri: http://www.penango.com/
+    org: Penango, Inc.
+    street: 5900 Wilshire Boulevard, 21st Floor
+    city: Los Angeles, CA
+    code: 90036
+    country: USA
+
+
+normative:
+  RFC7049:
+  ITU.X690.1994: BER
+
+informative:
+  CCITT.X208.1988: ASN1
+  CCITT.X680.2002: ASN2
+
+--- abstract
+
+
+
+The Concise Binary Object Representation (CBOR, RFC 7049) is a data
+format whose design goals include the possibility of extremely small
+code size, fairly small message size, and extensibility without the
+need for version negotiation.
+
+The present document makes use of this extensibility to define a
+number of CBOR tags for ASN.1 object identifiers.  It is intended
+as the reference document for the IANA registration of the CBOR tags
+defined.
+
+--- middle
+
+Introduction        {#intro}
+============
+
+The Concise Binary Object Representation (CBOR, {{RFC7049}}) provides
+for the interchange of structured data without a requirement for a
+pre-agreed schema.
+RFC 7049 defines a basic set of data types, as well as a tagging
+mechanism that enables extending the set of data types supported via
+an IANA registry.
+
+Many IETF protocols carry ASN.1 object identifiers, as defined in
+{{-ASN1}} and later in {{-ASN2}}.  The ASN.1 Basic Encoding Rules
+(BER, {{-BER}}) specifies two binary encodings of ASN.1 object identifiers.
+The content of these encodings can be carried in a CBOR byte string.
+
+This document defines two CBOR tags that cover
+ASN.1 object identifiers encoded in this way.
+It is intended as the reference document for the IANA registration of
+the tags defined.
+
+Terminology         {#terms}
+------------
+
+<!--
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in
+RFC 2119 {{ !RFC2119}}.
+ -->
+
+The term "byte" is used in its now customary sense as a synonym for
+"octet".
+
+ASN.1 object identifiers {#oids}
+========================
+
+ASN.1 object identifiers are a hierarchically managed space of
+identifiers, each of which is a sequence of unsigned integers
+{{-ASN1}}.
+While these sequences can easily be represented in CBOR arrays of
+unsigned integers, a more compact representation can often be achieved
+by adopting the widely used representation of ASN.1 object identifiers
+defined in the ASN.1 Basic Encoding Rules (BER) {{-BER}}.
+
+BER represents the sequence of unsigned integers by concatenating
+self-delimiting {{!RFC6256}} representations of each of these integers
+in sequence.
+
+ASN.1 distinguishes absolute object identifiers, which are rooted at
+the root of the identifier hierarchy, from relative object
+identifiers, which can be rooted anywhere.  As a special optimization,
+BER combines the first two integers in an absolute object identifier
+into one before representing just that, by making use of the property of the
+hierarchy that the first number is between 0 and 2 and the second
+number is between 0 and 39.  If X and Y are the first two integers,
+the single integer actually encoded is computed as:
+
+> X * 40 + Y
+
+The inverse transformation (again making use of the known ranges of X
+and Y) is applied when decoding the ASN.1 object identifier.
+
+Since the semantics of absolute and relative ASN.1 object identifiers
+differ, this specification defines two tags:
+
+Tag 40«TBD»: tags a byte string as the ASN.1 BER encoding of an
+absolute ASN.1 object identifier.
+
+Tag 41«TBD»: tags a byte string as the ASN.1 BER encoding of a
+relative ASN.1 object identifier.
+
+
+Examples
+========
+
+... add examples ...
+
+Discussion
+==========
+
+... add more discussion, if needed ...
+
+Staying close to the way ASN.1 object identifiers are encoded in ASN.1
+BER makes back-and-forth translation easy.  As of today, ASN.1 object
+identifiers are either used in text form or in ASN.1 BER form, so
+there is an advantage in not inventing a third form.  Also,
+expectations of the cost of encoding ASN.1 object identifiers are
+based on BER; using a different encoding might not be aligned with
+these expectations.
+
+This specification allocates two numbers out of the single-byte
+tag space.  This use of code point space is justified by the wide use
+of ASN.1 object identifiers in data interchange.
+
+IANA Considerations
+============
+
+IANA is requested to reserve the tags in {{tab-tag-values}}, with the
+present document as the specification reference.
+
+| Tag     | Data Item   | Semantics                                           |
+| 40«TBD» | byte string | ASN.1 object identifier (absolute, in BER encoding) |
+| 41«TBD» | byte string | ASN.1 object identifier (relative, in BER encoding) |
+{: #tab-tag-values title="Values for Tags"}
+
+Security Considerations
+============
+
+The security considerations of RFC 7049 apply; the tags introduced
+here are not expected to raise security considerations beyond those.
+
+--- back
+
+
+<!--  LocalWords:  CBOR extensibility IANA uint sint IEEE endian IETF
+ -->
+<!--  LocalWords:  signedness endianness ASN BER encodings
+ -->
