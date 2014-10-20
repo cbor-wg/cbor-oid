@@ -29,7 +29,8 @@ author:
     email: dev+ietf@seantek.com
     uri: http://www.penango.com/
     org: Penango, Inc.
-    street: 5900 Wilshire Boulevard, 21st Floor
+    street: 5900 Wilshire Boulevard
+		street: 21st Floor
     city: Los Angeles, CA
     code: 90036
     country: USA
@@ -52,10 +53,10 @@ format whose design goals include the possibility of extremely small
 code size, fairly small message size, and extensibility without the
 need for version negotiation.
 
-The present document makes use of this extensibility to define a
-number of CBOR tags for ASN.1 object identifiers.  It is intended
+The present document makes use of this extensibility to define
+CBOR tags «O» and «R» for ASN.1 object identifiers.  It is intended
 as the reference document for the IANA registration of the CBOR tags
-defined.
+so defined.
 
 --- middle
 
@@ -69,15 +70,16 @@ RFC 7049 defines a basic set of data types, as well as a tagging
 mechanism that enables extending the set of data types supported via
 an IANA registry.
 
-Many IETF protocols carry ASN.1 object identifiers, as defined in
-{{-ASN1}} and later in {{-ASN2}}.  The ASN.1 Basic Encoding Rules
-(BER, {{-BER}}) specifies two binary encodings of ASN.1 object identifiers.
-The content of these encodings can be carried in a CBOR byte string.
+Many IETF protocols carry ASN.1 object identifiers, originally defined in
+{{-ASN1}} and most recently in {{-ASN2}} (2008).  The ASN.1 Basic Encoding Rules
+(BER, {{-BER}}) specifies the binary encodings of ASN.1 object identifiers
+and relative object identifiers.
+The contents of these encodings can be carried in a CBOR byte string.
 
 This document defines two CBOR tags that cover
 ASN.1 object identifiers encoded in this way.
 It is intended as the reference document for the IANA registration of
-the tags defined.
+the tags so defined.
 
 Terminology         {#terms}
 ------------
@@ -95,25 +97,31 @@ The term "byte" is used in its now customary sense as a synonym for
 ASN.1 object identifiers {#oids}
 ========================
 
-ASN.1 object identifiers are a hierarchically managed space of
-identifiers, each of which is a sequence of unsigned integers
-{{-ASN1}}.
+The International Object Identifier tree {{X.660}} is
+a hierarchically managed space of
+identifiers, each of which is uniquely represented as a sequence of unsigned integers
+{{-ASN2}}.
 While these sequences can easily be represented in CBOR arrays of
 unsigned integers, a more compact representation can often be achieved
 by adopting the widely used representation of ASN.1 object identifiers
 defined in the ASN.1 Basic Encoding Rules (BER) {{-BER}}.
 
 BER represents the sequence of unsigned integers by concatenating
-self-delimiting {{!RFC6256}} representations of each of these integers
+self-delimiting {{?RFC6256}} representations of each of these integers
 in sequence.
 
-ASN.1 distinguishes absolute object identifiers, which are rooted at
-the root of the identifier hierarchy, from relative object
-identifiers, which can be rooted anywhere.  As a special optimization,
+ASN.1 distinguishes absolute object identifiers (ASN.1 Type `OBJECT IDENTIFIER`),
+which begin at a root arc ({{X.660}} Clause 3.5.21), from relative object
+identifiers (ASN.1 Type `RELATIVE-OID`), which begin
+relative to some known object identifier ({{X.680}} Clause 3.8.63).  As
+a special optimization,
 BER combines the first two integers in an absolute object identifier
-into one before representing just that, by making use of the property of the
-hierarchy that the first number is between 0 and 2 and the second
-number is between 0 and 39.  If X and Y are the first two integers,
+into one numeric identifier by making use of the property of the
+hierarchy that the first arc has only three integer values (0, 1, and 2),
+and the second arcs under 0 and 1 are limited to the integer values between
+0 and 39.  (The root arc `joint-iso-itu-t(2)` has
+no such limitations on its second arc.)
+If X and Y are the first two integers,
 the single integer actually encoded is computed as:
 
 > X * 40 + Y
@@ -121,25 +129,91 @@ the single integer actually encoded is computed as:
 The inverse transformation (again making use of the known ranges of X
 and Y) is applied when decoding the ASN.1 object identifier.
 
-Since the semantics of absolute and relative ASN.1 object identifiers
+Since the semantics of absolute and relative object identifiers
 differ, this specification defines two tags:
 
-Tag 40«TBD»: tags a byte string as the ASN.1 BER encoding of an
-absolute ASN.1 object identifier.
+Tag 6«TBD»: tags a byte string as the ASN.1 BER encoding of an
+absolute object identifier (simply "object identifier" or "OID").
 
-Tag 41«TBD»: tags a byte string as the ASN.1 BER encoding of a
-relative ASN.1 object identifier.
+Tag 7«TBD»: tags a byte string as the ASN.1 BER encoding of a
+relative object identifier (also "relative OID").
 
 
 Examples
 ========
 
-... add examples ...
+## Encoding of SHA-256 OID
+
+ASN.1 Value Notation
+{ joint-iso-itu-t(2) country(16) us(840) organization(1) gov(101)
+        csor(3) nistalgorithm(4) hashalgs(2) sha256(1) }
+
+Dotted Decimal Notation (also XML Value Notation)
+2.16.840.1.101.3.4.2.1
+
+ASN.1
+06                                # UNIVERSAL TAG 6
+   09                             # 9 bytes, primitive
+      60 86 48 01 65 03 04 02 01  # [X.690] Clause 8.19
+(      |   840  1  |  3  4  2  1  ) demonstration of component encoding
+(   2.16         101              )
+
+CBOR
+C6                                # 0b110_00110: mt 6, tag 6
+   49                             # 0b010_01001: mt 2 (bstr), 9 bytes
+      60 86 48 01 65 03 04 02 01  # [X.690] Clause 8.19
+
+## Encoding of UUID OID
+
+UUID
+8b0d1a20-dcc5-11d9-bda9-0002a5d5c51b
+
+ASN.1 Value Notation
+{ joint-iso-itu-t(2) uuid(25)
+  geomicaGPAS(2957291539512641589387040445673640841648) }
+
+Dotted Decimal Notation (also XML Value Notation)
+2.25.2957291539512641589387040445673640841648
+
+ASN.1
+06                                # UNIVERSAL TAG 6
+   14                             # 20 bytes, primitive
+      69 A2 E1 D1 D1 83 B9 C5 88 F6 B7 DA C8 80 85 A5 EA F1 A3 30
+(      |                 2957291539512641589387040445673640841648 )
+(   2.25                                                          )
+
+CBOR
+C6                                # 0b110_00110: mt 6, tag 6
+   54                             # 0b010_10100: mt 2 (bstr), 20 bytes
+      69 A2 E1 D1 D1 83 B9 C5 88 F6 B7 DA C8 80 85 A5 EA F1 A3 30
+
+
+## Encoding of MIB Relative OID
+
+Given some OID (e.g., lowpanMib, assumed to be 1.3.6.1.2.1.7001),
+to which the following is added:
+
+ASN.1 Value Notation
+{ lowpanObjects(1) lowpanStats(1) lowpanOutTransmits(29) }
+
+Dotted Decimal Notation
+.1.1.29
+
+ASN.1
+0D                                # UNIVERSAL TAG 13
+   03                             # 3 bytes, primitive
+      01 01 1D                    # [X.690] Clause 8.20
+(      1  1 29                    ) demonstration of component encoding
+
+CBOR
+C7                                # 0b110_00110: mt 6, tag 7
+   43                             # 0b010_01001: mt 2 (bstr), 3 bytes
+      01 01 1D                    # [X.690] Clause 8.20
+
+This relative OID saves seven bytes relative to the OID encoding.
 
 Discussion
 ==========
-
-... add more discussion, if needed ...
 
 Staying close to the way ASN.1 object identifiers are encoded in ASN.1
 BER makes back-and-forth translation easy.  As of today, ASN.1 object
@@ -147,11 +221,31 @@ identifiers are either used in text form or in ASN.1 BER form, so
 there is an advantage in not inventing a third form.  Also,
 expectations of the cost of encoding ASN.1 object identifiers are
 based on BER; using a different encoding might not be aligned with
-these expectations.
+these expectations. If additional information about an OID is desired,
+{{X.667}} (ORS) and {{OIDINFO}} (oid-info.com) define and provide
+convenient lookup services.
 
 This specification allocates two numbers out of the single-byte
 tag space.  This use of code point space is justified by the wide use
-of ASN.1 object identifiers in data interchange.
+of object identifiers in data interchange. For most common OIDs in use
+(namely those whose contents encode to less than 24 bytes),
+the CBOR encoding will match the efficiency of BER {{X.690}}.
+
+{{RFC7049}} permits byte strings to be indefinite-length,
+with chunks divided at arbitrary byte boundaries.
+In contrast, each definite-length text string chunk in an indefinite-length
+text string MUST be well-formed UTF-8: splitting the octets of
+a UTF-8 character encoding is not allowed. By analogy to this principle
+and to Clauses 8.9.1 and 8.20.1 of {{X.690}},
+OIDs and relative OIDs are to be treated as indivisible units. They MUST be
+encoded in definite-length form. (An added convenience is that CBOR
+encodings can be searched through efficiently for specific OIDs or
+relative OIDs, without initiating the decoding process.)
+
+Diagnostic Notation
+============
+
+... discuss diagnostic form here ...
 
 IANA Considerations
 ============
@@ -160,15 +254,28 @@ IANA is requested to reserve the tags in {{tab-tag-values}}, with the
 present document as the specification reference.
 
 | Tag     | Data Item   | Semantics                                           |
-| 40«TBD» | byte string | ASN.1 object identifier (absolute, in BER encoding) |
-| 41«TBD» | byte string | ASN.1 object identifier (relative, in BER encoding) |
+| 6«TBD» | byte string | ASN.1 object identifier (absolute, in BER encoding) |
+| 7«TBD» | byte string | ASN.1 object identifier (relative, in BER encoding) |
 {: #tab-tag-values title="Values for Tags"}
 
 Security Considerations
 ============
 
-The security considerations of RFC 7049 apply; the tags introduced
-here are not expected to raise security considerations beyond those.
+The security considerations of RFC 7049 apply.
+
+PKI Layer Cake. Dan Kaminsky. Can overflow buffers.
+X.690 says that there must not be leading 80 octets (containing all 0-bits).
+Arbitrarily valued. If conversion to or from the dotted decimal form
+is necessary, an implementation SHOULD NOT attempt to convert each
+component using a fixed-size accumulator. Compact and efficient techniques
+such as the double-dabble algorithm (TODO: include algorithm) are known.
+Generally, implementations can avoid such errors (and maximize efficiency)
+by comparing two OID encodings byte-for-byte as-is,
+without resorting to the dotted decimal form.
+
+All bits in the content bytes are okay, except that the last byte MUST NOT
+have its high-order bit set, because that octet concludes the OID component.
+If the high-order bit is set, it MUST be treated as a decoding error.
 
 --- back
 
