@@ -210,7 +210,7 @@ C7                                # 0b110_00110: mt 6, tag 7
    43                             # 0b010_01001: mt 2 (bstr), 3 bytes
       01 01 1D                    # [X.690] Clause 8.20
 
-This relative OID saves seven bytes relative to the OID encoding.
+This relative OID saves seven bytes compared to the full OID encoding.
 
 Discussion
 ==========
