@@ -2,7 +2,7 @@
 title: Concise Binary Object Representation (CBOR) Tags for ASN.1 Object IDs
 abbrev: CBOR tags for ASN.1 Object IDs
 docname: draft-bormann-cbor-tags-oid-00-pre
-date: 2014-10-05
+date: 2014-10-10
 
 stand_alone: true
 
@@ -30,7 +30,7 @@ author:
     uri: http://www.penango.com/
     org: Penango, Inc.
     street: 5900 Wilshire Boulevard
-		street: 21st Floor
+    street: 21st Floor
     city: Los Angeles, CA
     code: 90036
     country: USA
@@ -38,11 +38,52 @@ author:
 
 normative:
   RFC7049:
-  ITU.X690.1994: BER
+  X.660:
+    title: >
+      Information technology — Procedures for the operation of object identifier registration authorities: General procedures and top arcs of the international object identifier tree
+    author:
+      org: International Telecommunications Union
+    date: 2011-07
+    seriesinfo:
+      ITU-T: Recommendation X.660
+
+  X.680:
+    title: >
+      Information technology — Abstract SyntaxNotation One (ASN.1): Specification of basic notation
+    author:
+      org: International Telecommunications Union
+    date: 2008-11
+    seriesinfo:
+      ITU-T: Recommendation X.680
+
+  X.690:
+    title: >
+      Information technology — ASN.1 encoding rules:
+      Specification of Basic Encoding Rules (BER), Canonical Encoding
+      Rules (CER) and Distinguished Encoding Rules (DER)
+    author:
+      org: International Telecommunications Union
+    date: 2008-11
+    seriesinfo:
+      ITU-T: Recommendation X.690
 
 informative:
   CCITT.X208.1988: ASN1
-  CCITT.X680.2002: ASN2
+  X.672:
+    title: >
+      Information technology — Open systems interconnection — Object identifier resolution system
+    author:
+      org: International Telecommunications Union
+    date: 2010-08
+    seriesinfo:
+      ITU-T: Recommendation X.672
+  OIDINFO:
+    target: http://www.oid-info.com/
+    title: >
+      OID Repository
+    author:
+      org: Orange SA
+    date: 2014
 
 --- abstract
 
@@ -71,8 +112,8 @@ mechanism that enables extending the set of data types supported via
 an IANA registry.
 
 Many IETF protocols carry ASN.1 object identifiers, originally defined in
-{{-ASN1}} and most recently in {{-ASN2}} (2008).  The ASN.1 Basic Encoding Rules
-(BER, {{-BER}}) specifies the binary encodings of ASN.1 object identifiers
+1988 {{-ASN1}} and most recently in 2008 {{X.680}}.  The ASN.1 Basic Encoding Rules
+(BER, {{X.690}}) specifies the binary encodings of ASN.1 object identifiers
 and relative object identifiers.
 The contents of these encodings can be carried in a CBOR byte string.
 
@@ -100,11 +141,11 @@ ASN.1 object identifiers {#oids}
 The International Object Identifier tree {{X.660}} is
 a hierarchically managed space of
 identifiers, each of which is uniquely represented as a sequence of unsigned integers
-{{-ASN2}}.
+{{X.680}}.
 While these sequences can easily be represented in CBOR arrays of
 unsigned integers, a more compact representation can often be achieved
 by adopting the widely used representation of ASN.1 object identifiers
-defined in the ASN.1 Basic Encoding Rules (BER) {{-BER}}.
+defined in BER.
 
 BER represents the sequence of unsigned integers by concatenating
 self-delimiting {{?RFC6256}} representations of each of these integers
@@ -142,73 +183,72 @@ relative object identifier (also "relative OID").
 Examples
 ========
 
-## Encoding of SHA-256 OID
+## Encoding of the SHA-256 OID
 
-ASN.1 Value Notation
-{ joint-iso-itu-t(2) country(16) us(840) organization(1) gov(101)
-        csor(3) nistalgorithm(4) hashalgs(2) sha256(1) }
+ASN.1 Value Notation\\
+`{ joint-iso-itu-t(2) country(16) us(840) organization(1) gov(101)
+        csor(3) nistalgorithm(4) hashalgs(2) sha256(1) }`
 
-Dotted Decimal Notation (also XML Value Notation)
-2.16.840.1.101.3.4.2.1
+Dotted Decimal Notation (also XML Value Notation)\\
+`2.16.840.1.101.3.4.2.1`
 
-ASN.1
-06                                # UNIVERSAL TAG 6
+BER\\
+`06                                # UNIVERSAL TAG 6
    09                             # 9 bytes, primitive
       60 86 48 01 65 03 04 02 01  # [X.690] Clause 8.19
-(      |   840  1  |  3  4  2  1  ) demonstration of component encoding
-(   2.16         101              )
+#      |   840  1  |  3  4  2  1    demonstration of component encoding
+#   2.16         101`
 
-CBOR
-C6                                # 0b110_00110: mt 6, tag 6
+CBOR\\
+`C6                                # 0b110_00110: mt 6, tag 6
    49                             # 0b010_01001: mt 2 (bstr), 9 bytes
-      60 86 48 01 65 03 04 02 01  # [X.690] Clause 8.19
+      60 86 48 01 65 03 04 02 01  # [X.690] Clause 8.19`
 
-## Encoding of UUID OID
+## Encoding of a UUID OID
 
-UUID
-8b0d1a20-dcc5-11d9-bda9-0002a5d5c51b
+UUID\\
+`8b0d1a20-dcc5-11d9-bda9-0002a5d5c51b`
 
-ASN.1 Value Notation
-{ joint-iso-itu-t(2) uuid(25)
-  geomicaGPAS(2957291539512641589387040445673640841648) }
+ASN.1 Value Notation\\
+`{ joint-iso-itu-t(2) uuid(25)
+  geomicaGPAS(2957291539512641589387040445673640841648) }`
 
 Dotted Decimal Notation (also XML Value Notation)
-2.25.2957291539512641589387040445673640841648
+`2.25.2957291539512641589387040445673640841648`
 
-ASN.1
-06                                # UNIVERSAL TAG 6
+BER\\
+`06                                # UNIVERSAL TAG 6
    14                             # 20 bytes, primitive
       69 A2 E1 D1 D1 83 B9 C5 88 F6 B7 DA C8 80 85 A5 EA F1 A3 30
-(      |                 2957291539512641589387040445673640841648 )
-(   2.25                                                          )
+#      |                 2957291539512641589387040445673640841648
+#   2.25`
 
-CBOR
-C6                                # 0b110_00110: mt 6, tag 6
+CBOR\\
+`C6                                # 0b110_00110: mt 6, tag 6
    54                             # 0b010_10100: mt 2 (bstr), 20 bytes
-      69 A2 E1 D1 D1 83 B9 C5 88 F6 B7 DA C8 80 85 A5 EA F1 A3 30
+      69 A2 E1 D1 D1 83 B9 C5 88 F6 B7 DA C8 80 85 A5 EA F1 A3 30`
 
+## Encoding of a MIB Relative OID
 
-## Encoding of MIB Relative OID
-
-Given some OID (e.g., lowpanMib, assumed to be 1.3.6.1.2.1.7001),
+Given some OID (e.g., `lowpanMib`, assumed to be `1.3.6.1.2.1.7001`),
 to which the following is added:
 
-ASN.1 Value Notation
-{ lowpanObjects(1) lowpanStats(1) lowpanOutTransmits(29) }
+ASN.1 Value Notation\\
+`{ lowpanObjects(1) lowpanStats(1) lowpanOutTransmits(29) }`
 
-Dotted Decimal Notation
-.1.1.29
+Dotted Decimal Notation\\
+`.1.1.29`
 
-ASN.1
-0D                                # UNIVERSAL TAG 13
+BER\\
+`0D                                # UNIVERSAL TAG 13
    03                             # 3 bytes, primitive
       01 01 1D                    # [X.690] Clause 8.20
-(      1  1 29                    ) demonstration of component encoding
+#      1  1 29                      demonstration of component encoding`
 
-CBOR
-C7                                # 0b110_00110: mt 6, tag 7
+CBOR\\
+`C7                                # 0b110_00110: mt 6, tag 7
    43                             # 0b010_01001: mt 2 (bstr), 3 bytes
-      01 01 1D                    # [X.690] Clause 8.20
+      01 01 1D                    # [X.690] Clause 8.20`
 
 This relative OID saves seven bytes compared to the full OID encoding.
 
@@ -217,19 +257,19 @@ Discussion
 
 Staying close to the way ASN.1 object identifiers are encoded in ASN.1
 BER makes back-and-forth translation easy.  As of today, ASN.1 object
-identifiers are either used in text form or in ASN.1 BER form, so
+identifiers are either used in dotted decimal form or BER form, so
 there is an advantage in not inventing a third form.  Also,
 expectations of the cost of encoding ASN.1 object identifiers are
 based on BER; using a different encoding might not be aligned with
 these expectations. If additional information about an OID is desired,
-{{X.667}} (ORS) and {{OIDINFO}} (oid-info.com) define and provide
-convenient lookup services.
+lookup services such as the OID Resolution Service (ORS, {{X.672}})
+and the OID Repository (oid-info.com, {{OIDINFO}}) are available.
 
 This specification allocates two numbers out of the single-byte
 tag space.  This use of code point space is justified by the wide use
 of object identifiers in data interchange. For most common OIDs in use
 (namely those whose contents encode to less than 24 bytes),
-the CBOR encoding will match the efficiency of BER {{X.690}}.
+the CBOR encoding will match the efficiency of {{X.690}}.
 
 {{RFC7049}} permits byte strings to be indefinite-length,
 with chunks divided at arbitrary byte boundaries.
