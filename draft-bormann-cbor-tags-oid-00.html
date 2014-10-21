@@ -1,0 +1,699 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head profile="http://www.w3.org/2006/03/hcard http://dublincore.org/documents/2008/08/04/dc-html/">
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+  <title>Concise Binary Object Representation (CBOR) Tags for ASN.1 Object Identifiers</title>
+
+  <style type="text/css" title="Xml2Rfc (sans serif)">
+  /*<![CDATA[*/
+	  a {
+	  text-decoration: none;
+	  }
+      /* info code from SantaKlauss at http://www.madaboutstyle.com/tooltip2.html */
+      a.info {
+          /* This is the key. */
+          position: relative;
+          z-index: 24;
+          text-decoration: none;
+      }
+      a.info:hover {
+          z-index: 25;
+          color: #FFF; background-color: #900;
+      }
+      a.info span { display: none; }
+      a.info:hover span.info {
+          /* The span will display just on :hover state. */
+          display: block;
+          position: absolute;
+          font-size: smaller;
+          top: 2em; left: -5em; width: 15em;
+          padding: 2px; border: 1px solid #333;
+          color: #900; background-color: #EEE;
+          text-align: left;
+      }
+	  a.smpl {
+	  color: black;
+	  }
+	  a:hover {
+	  text-decoration: underline;
+	  }
+	  a:active {
+	  text-decoration: underline;
+	  }
+	  address {
+	  margin-top: 1em;
+	  margin-left: 2em;
+	  font-style: normal;
+	  }
+	  body {
+	  color: black;
+	  font-family: Open Sans, Mayberry Pro, verdana, helvetica, arial, sans-serif;
+	  font-size: 10pt;
+	  max-width: 55em;
+	  
+	  }
+	  samp {
+	  background-color: rgb(242, 242, 255);
+	  border: 1px solid #ddd;
+	  padding-left: 2px;
+	  padding-right: 2px;
+	  font-family: Inconsolata, Consolas, Cousine, monospace;
+	  white-space: pre;
+	  }
+	  cite {
+	  font-style: normal;
+	  }
+	  dd {
+	  margin-right: 2em;
+	  }
+	  dl {
+	  margin-left: 2em;
+	  }
+	
+	  ul.empty {
+	  list-style-type: none;
+	  }
+	  ul.empty li {
+	  margin-top: .5em;
+	  }
+	  dl p {
+	  margin-left: 0em;
+	  }
+	  dt {
+	  margin-top: .5em;
+	  }
+	  h1 {
+	  font-size: 14pt;
+	  line-height: 21pt;
+	  page-break-after: avoid;
+	  }
+	  h1.np {
+	  page-break-before: always;
+	  }
+	  h1 a {
+	  color: #333333;
+	  }
+	  h2 {
+	  font-size: 12pt;
+	  line-height: 15pt;
+	  page-break-after: avoid;
+	  }
+	  h3, h4, h5, h6 {
+	  font-size: 10pt;
+	  page-break-after: avoid;
+	  }
+	  h2 a, h3 a, h4 a, h5 a, h6 a {
+	  color: black;
+	  }
+	  img {
+	  margin-left: 3em;
+	  }
+	  li {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  ol {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  ol p {
+	  margin-left: 0em;
+	  }
+	  p {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  pre {
+	  margin-left: 3em;
+	  background-color: lightyellow;
+	  padding: .25em;
+	  font-family: Inconsolata, Consolas, Cousine, monospace;
+	  }
+	  pre.text2 {
+	  border-style: dotted;
+	  border-width: 1px;
+	  background-color: #f0f0f0;
+	  width: 69em;
+	  }
+	  pre.inline {
+	  background-color: white;
+	  padding: 0em;
+	  }
+	  pre.text {
+	  border-style: dotted;
+	  border-width: 1px;
+	  background-color: #f8f8f8;
+	  width: 69em;
+	  }
+	  pre.drawing {
+	  border-style: solid;
+	  border-width: 1px;
+	  background-color: #f8f8f8;
+	  padding: 2em;
+	  }
+	  table {
+	  margin-left: 2em;
+	  }
+	  table.tt {
+	  vertical-align: top;
+	  }
+	  table.full {
+	  border-style: outset;
+	  border-width: 1px;
+	  }
+	  table.headers {
+	  border-style: outset;
+	  border-width: 1px;
+	  }
+	  table.tt td {
+	  vertical-align: top;
+	  }
+	  table.full td {
+	  border-style: inset;
+	  border-width: 1px;
+	  }
+	  table.tt th {
+	  vertical-align: top;
+	  }
+	  table.full th {
+	  border-style: inset;
+	  border-width: 1px;
+	  }
+	  table.headers th {
+	  border-style: none none inset none;
+	  border-width: 1px;
+	  }
+	  table.left {
+	  margin-right: auto;
+	  }
+	  table.right {
+	  margin-left: auto;
+	  }
+	  table.center {
+	  margin-left: auto;
+	  margin-right: auto;
+	  }
+	  caption {
+	  caption-side: bottom;
+	  font-weight: bold;
+	  font-size: 9pt;
+	  margin-top: .5em;
+	  }
+	
+	  table.header {
+	  border-spacing: 1px;
+	  width: 95%;
+	  font-size: 10pt;
+	  color: white;
+	  }
+	  td.top {
+	  vertical-align: top;
+	  }
+	  td.topnowrap {
+	  vertical-align: top;
+	  white-space: nowrap; 
+	  }
+	  table.header td {
+	  background-color: gray;
+	  width: 50%;
+	  }
+	  table.header a {
+	  color: white;
+	  }
+	  td.reference {
+	  vertical-align: top;
+	  white-space: nowrap;
+	  padding-right: 1em;
+	  }
+	  thead {
+	  display:table-header-group;
+	  }
+	  ul.toc, ul.toc ul {
+	  list-style: none;
+	  margin-left: 1.5em;
+	  margin-right: 0em;
+	  padding-left: 0em;
+	  }
+	  ul.toc li {
+	  line-height: 150%;
+	  font-weight: bold;
+	  font-size: 10pt;
+	  margin-left: 0em;
+	  margin-right: 0em;
+	  }
+	  ul.toc li li {
+	  line-height: normal;
+	  font-weight: normal;
+	  font-size: 9pt;
+	  margin-left: 0em;
+	  margin-right: 0em;
+	  }
+	  li.excluded {
+	  font-size: 0pt;
+	  }
+	  ul p {
+	  margin-left: 0em;
+	  }
+	
+	  .comment {
+	  background-color: yellow;
+	  }
+	  .center {
+	  text-align: center;
+	  }
+	  .error {
+	  color: red;
+	  font-style: italic;
+	  font-weight: bold;
+	  }
+	  .figure {
+	  font-weight: bold;
+	  text-align: center;
+	  font-size: 9pt;
+	  }
+	  .filename {
+	  color: #333333;
+	  font-weight: bold;
+	  font-size: 12pt;
+	  line-height: 21pt;
+	  text-align: center;
+	  }
+	  .fn {
+	  font-weight: bold;
+	  }
+	  .hidden {
+	  display: none;
+	  }
+	  .left {
+	  text-align: left;
+	  }
+	  .right {
+	  text-align: right;
+	  }
+	  .title {
+	  color: #990000;
+	  font-size: 18pt;
+	  line-height: 18pt;
+	  font-weight: bold;
+	  text-align: center;
+	  margin-top: 36pt;
+	  }
+	  .vcardline {
+	  display: block;
+	  }
+	  .warning {
+	  font-size: 14pt;
+	  background-color: yellow;
+	  }
+	
+	
+	  @media print {
+	  .noprint {
+		display: none;
+	  }
+	
+	  a {
+		color: black;
+		text-decoration: none;
+	  }
+	
+	  table.header {
+		width: 90%;
+	  }
+	
+	  td.header {
+		width: 50%;
+		color: black;
+		background-color: white;
+		vertical-align: top;
+		font-size: 12pt;
+	  }
+	
+	  ul.toc a::after {
+		content: leader('.') target-counter(attr(href), page);
+	  }
+	
+	  ul.ind li li a {
+		content: target-counter(attr(href), page);
+	  }
+	
+	  .print2col {
+		column-count: 2;
+		-moz-column-count: 2;
+		column-fill: auto;
+	  }
+	  }
+	
+	  @page {
+	  @top-left {
+		   content: "Internet-Draft"; 
+	  } 
+	  @top-right {
+		   content: "October 2014"; 
+	  } 
+	  @top-center {
+		   content: "CBOR OIDs";
+	  } 
+	  @bottom-left {
+		   content: "Bormann & Leonard"; 
+	  } 
+	  @bottom-center {
+		   content: "Expires April 2015"; 
+	  } 
+	  @bottom-right {
+		   content: "[Page " counter(page) "]"; 
+	  } 
+	  }
+	
+	  @page:first { 
+		@top-left {
+		  content: normal;
+		}
+		@top-right {
+		  content: normal;
+		}
+		@top-center {
+		  content: normal;
+		}
+	  }
+  /*]]>*/
+  </style>
+
+  <link href="#rfc.toc" rel="Contents"/>
+<link href="#rfc.section.1" rel="Chapter" title="1 Introduction"/>
+<link href="#rfc.section.2" rel="Chapter" title="2 ASN.1 Object Identifiers"/>
+<link href="#rfc.section.3" rel="Chapter" title="3 Examples"/>
+<link href="#rfc.section.4" rel="Chapter" title="4 Discussion"/>
+<link href="#rfc.section.5" rel="Chapter" title="5 Diagnostic Notation"/>
+<link href="#rfc.section.6" rel="Chapter" title="6 IANA Considerations"/>
+<link href="#rfc.section.7" rel="Chapter" title="7 Security Considerations"/>
+<link href="#rfc.references" rel="Chapter" title="8 References"/>
+<link href="#rfc.authors" rel="Chapter"/>
+
+
+  <meta name="generator" content="xml2rfc version 2.4.8v - http://tools.ietf.org/tools/xml2rfc" />
+  <link rel="schema.dct" href="http://purl.org/dc/terms/" />
+
+  <meta name="dct.creator" content="Bormann, C. and S. Leonard" />
+  <meta name="dct.identifier" content="urn:ietf:id:draft-bormann-cbor-tags-oid-00-pre" />
+  <meta name="dct.issued" scheme="ISO8601" content="2014-10-10" />
+  <meta name="dct.abstract" content="The Concise Binary Object Representation (CBOR, RFC 7049) is a data format whose design goals include the possibility of extremely small code size, fairly small message size, and extensibility without the need for version negotiation." />
+  <meta name="description" content="The Concise Binary Object Representation (CBOR, RFC 7049) is a data format whose design goals include the possibility of extremely small code size, fairly small message size, and extensibility without the need for version negotiation." />
+
+</head>
+
+<body>
+
+  <table class="header">
+    <tbody>
+    
+    	<tr>
+  <td class="left">Network Working Group</td>
+  <td class="right">C. Bormann</td>
+</tr>
+<tr>
+  <td class="left">Internet-Draft</td>
+  <td class="right">Universit&#228;t Bremen TZI</td>
+</tr>
+<tr>
+  <td class="left">Intended status: Informational</td>
+  <td class="right">S. Leonard</td>
+</tr>
+<tr>
+  <td class="left">Expires: April 13, 2015</td>
+  <td class="right">Penango, Inc.</td>
+</tr>
+<tr>
+  <td class="left"></td>
+  <td class="right">October 10, 2014</td>
+</tr>
+
+    	
+    </tbody>
+  </table>
+
+  <p class="title">Concise Binary Object Representation (CBOR) Tags for ASN.1 Object Identifiers<br />
+  <span class="filename">draft-bormann-cbor-tags-oid-00-pre</span></p>
+  
+  <h1 id="rfc.abstract">
+  <a href="#rfc.abstract">Abstract</a>
+</h1>
+<p>The Concise Binary Object Representation (CBOR, RFC 7049) is a data format whose design goals include the possibility of extremely small code size, fairly small message size, and extensibility without the need for version negotiation.</p>
+<p>The present document makes use of this extensibility to define CBOR tags &#171;O&#187; and &#171;R&#187; for ASN.1 object identifiers.  It is intended as the reference document for the IANA registration of the CBOR tags so defined.</p>
+<h1 id="rfc.status">
+  <a href="#rfc.status">Status of This Memo</a>
+</h1>
+<p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
+<p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
+<p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
+<p>This Internet-Draft will expire on April 13, 2015.</p>
+<h1 id="rfc.copyrightnotice">
+  <a href="#rfc.copyrightnotice">Copyright Notice</a>
+</h1>
+<p>Copyright (c) 2014 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
+<p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (http://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
+
+  
+  <hr class="noprint" />
+  <h1 class="np" id="rfc.toc"><a href="#rfc.toc">Table of Contents</a></h1>
+  <ul class="toc">
+
+  	<li>1.   <a href="#rfc.section.1">Introduction</a></li>
+<li>2.   <a href="#rfc.section.2">ASN.1 Object Identifiers</a></li>
+<li>3.   <a href="#rfc.section.3">Examples</a></li>
+<li>4.   <a href="#rfc.section.4">Discussion</a></li>
+<li>5.   <a href="#rfc.section.5">Diagnostic Notation</a></li>
+<li>6.   <a href="#rfc.section.6">IANA Considerations</a></li>
+<li>7.   <a href="#rfc.section.7">Security Considerations</a></li>
+<li>8.   <a href="#rfc.references">References</a></li>
+<li><a href="#rfc.authors">Authors' Addresses</a></li>
+
+
+  </ul>
+
+  <h1 id="rfc.section.1"><a href="#rfc.section.1">1.</a> <a href="#intro" id="intro">Introduction</a></h1>
+<p id="rfc.section.1.p.1">The Concise Binary Object Representation (CBOR, <a href="#RFC7049">[RFC7049]</a>) provides for the interchange of structured data without a requirement for a pre-agreed schema.  RFC 7049 defines a basic set of data types, as well as a tagging mechanism that enables extending the set of data types supported via an IANA registry.</p>
+<p id="rfc.section.1.p.2">Many IETF protocols carry ASN.1 object identifiers, originally defined in 1988 <a href="#CCITT.X208.1988">[CCITT.X208.1988]</a> and most recently in 2008 <a href="#X.680">[X.680]</a>.  The ASN.1 Basic Encoding Rules (BER, <a href="#X.690">[X.690]</a>) specifies the binary encodings of ASN.1 object identifiers and relative object identifiers.  The contents of these encodings can be carried in a CBOR byte string.</p>
+<p id="rfc.section.1.p.3">This document defines two CBOR tags that cover ASN.1 object identifiers encoded in this way.  It is intended as the reference document for the IANA registration of the tags so defined.</p>
+<h1 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1.</a> <a href="#terms" id="terms">Terminology</a></h1>
+<p id="rfc.section.1.1.p.1">The term &#8220;byte&#8221; is used in its now customary sense as a synonym for &#8220;octet&#8221;.</p>
+<h1 id="rfc.section.2"><a href="#rfc.section.2">2.</a> <a href="#oids" id="oids">ASN.1 Object Identifiers</a></h1>
+<p id="rfc.section.2.p.1">The International Object Identifier tree <a href="#X.660">[X.660]</a> is a hierarchically managed space of identifiers, each of which is uniquely represented as a sequence of unsigned integers <a href="#X.680">[X.680]</a>.  While these sequences can easily be represented in CBOR arrays of unsigned integers, a more compact representation can often be achieved by adopting the widely used representation of ASN.1 object identifiers defined in BER.</p>
+<p id="rfc.section.2.p.2">BER represents the sequence of unsigned integers by concatenating self-delimiting <a href="#RFC6256">[RFC6256]</a> representations of each of these integers in sequence.</p>
+<p id="rfc.section.2.p.3">ASN.1 distinguishes absolute object identifiers (ASN.1 Type <samp style="white-space: pre-wrap">OBJECT IDENTIFIER</samp>),
+which begin at a root arc (<a href="#X.660">[X.660]</a> Clause 3.5.21), from relative object identifiers (ASN.1 Type <samp style="white-space: pre-wrap">RELATIVE-OID</samp>), which begin
+relative to some known object identifier (<a href="#X.680">[X.680]</a> Clause 3.8.63).  As a special optimization, BER combines the first two integers in an absolute object identifier into one numeric identifier by making use of the property of the hierarchy that the first arc has only three integer values (0, 1, and 2), and the second arcs under 0 and 1 are limited to the integer values between 0 and 39.  (The root arc <samp style="white-space: pre-wrap">joint-iso-itu-t(2)</samp> has
+no such limitations on its second arc.)
+If X and Y are the first two integers,
+the single integer actually encoded is computed as:</p>
+<p/>
+
+<ul class="empty">
+  <li>X * 40 + Y</li>
+</ul>
+<p id="rfc.section.2.p.5">The inverse transformation (again making use of the known ranges of X and Y) is applied when decoding the ASN.1 object identifier.</p>
+<p id="rfc.section.2.p.6">Since the semantics of absolute and relative object identifiers differ, this specification defines two tags:</p>
+<p id="rfc.section.2.p.7">Tag 6&#171;TBD&#187;: tags a byte string as the ASN.1 BER encoding of an absolute object identifier (simply &#8220;object identifier&#8221; or &#8220;OID&#8221;).</p>
+<p id="rfc.section.2.p.8">Tag 7&#171;TBD&#187;: tags a byte string as the ASN.1 BER encoding of a relative object identifier (also &#8220;relative OID&#8221;).</p>
+<h1 id="rfc.section.3"><a href="#rfc.section.3">3.</a> <a href="#examples" id="examples">Examples</a></h1>
+<h1 id="rfc.section.3.1"><a href="#rfc.section.3.1">3.1.</a> <a href="#encoding-of-the-sha-256-oid" id="encoding-of-the-sha-256-oid">Encoding of the SHA-256 OID</a></h1>
+<p id="rfc.section.3.1.p.1">ASN.1 Value Notation<br/> <samp style="white-space: pre-wrap">{ joint-iso-itu-t(2) country(16) us(840) organization(1) gov(101)
+        csor(3) nistalgorithm(4) hashalgs(2) sha256(1) }</samp></p>
+<p id="rfc.section.3.1.p.2">Dotted Decimal Notation (also XML Value Notation)<br/> <samp style="white-space: pre-wrap">2.16.840.1.101.3.4.2.1</samp></p>
+<p id="rfc.section.3.1.p.3">BER<br/> <samp style="white-space: pre-wrap">06                                # UNIVERSAL TAG 6
+   09                             # 9 byte!, primitive
+      60 86 48 01 65 03 04 02 01  # [X.690] Clause 8.19
+#      |   840  1  |  3  4  2  1    demonstration of component encoding
+#   2.16         101</samp></p>
+<p id="rfc.section.3.1.p.4">CBOR<br/> <samp style="white-space: pre-wrap">C6                                # 0b110_00110: mt 6, tag 6
+   49                             # 0b010_01001: mt 2 (bstr), 9 bytes
+      60 86 48 01 65 03 04 02 01  # [X.690] Clause 8.19</samp></p>
+<h1 id="rfc.section.3.2"><a href="#rfc.section.3.2">3.2.</a> <a href="#encoding-of-a-uuid-oid" id="encoding-of-a-uuid-oid">Encoding of a UUID OID</a></h1>
+<p id="rfc.section.3.2.p.1">UUID<br/> <samp style="white-space: pre-wrap">8b0d1a20-dcc5-11d9-bda9-0002a5d5c51b</samp></p>
+<p id="rfc.section.3.2.p.2">ASN.1 Value Notation<br/> <samp style="white-space: pre-wrap">{ joint-iso-itu-t(2) uuid(25)
+  geomicaGPAS(2957291539512641589387040445673640841648) }</samp></p>
+<p id="rfc.section.3.2.p.3">Dotted Decimal Notation (also XML Value Notation) <samp style="white-space: pre-wrap">2.25.2957291539512641589387040445673640841648</samp></p>
+<p id="rfc.section.3.2.p.4">BER<br/> <samp style="white-space: pre-wrap">06                                # UNIVERSAL TAG 6
+   14                             # 20 bytes, primitive
+      69 A2 E1 D1 D1 83 B9 C5 88 F6 B7 DA C8 80 85 A5 EA F1 A3 30
+#      |                 2957291539512641589387040445673640841648
+#   2.25</samp></p>
+<p id="rfc.section.3.2.p.5">CBOR<br/> <samp style="white-space: pre-wrap">C6                                # 0b110_00110: mt 6, tag 6
+   54                             # 0b010_10100: mt 2 (bstr), 20 bytes
+      69 A2 E1 D1 D1 83 B9 C5 88 F6 B7 DA C8 80 85 A5 EA F1 A3 30</samp></p>
+<h1 id="rfc.section.3.3"><a href="#rfc.section.3.3">3.3.</a> <a href="#encoding-of-a-mib-relative-oid" id="encoding-of-a-mib-relative-oid">Encoding of a MIB Relative OID</a></h1>
+<p id="rfc.section.3.3.p.1">Given some OID (e.g., <samp style="white-space: pre-wrap">lowpanMib</samp>, assumed to be <samp style="white-space: pre-wrap">1.3.6.1.2.1.7001</samp>),
+to which the following is added:</p>
+<p id="rfc.section.3.3.p.2">ASN.1 Value Notation (not suitable for diagnostic notation)<br/> <samp style="white-space: pre-wrap">{ lowpanObjects(1) lowpanStats(1) lowpanOutTransmits(29) }</samp></p>
+<p id="rfc.section.3.3.p.3">Dotted Decimal Notation (diagnostic notation; see Section 5)<br/> <samp style="white-space: pre-wrap">.1.1.29</samp></p>
+<p id="rfc.section.3.3.p.4">BER<br/> <samp style="white-space: pre-wrap">0D                                # UNIVERSAL TAG 13
+   03                             # 3 bytes, primitive
+      01 01 1D                    # [X.690] Clause 8.20
+#      1  1 29                      demonstration of component encoding</samp></p>
+<p id="rfc.section.3.3.p.5">CBOR<br/> <samp style="white-space: pre-wrap">C7                                # 0b110_00110: mt 6, tag 7
+   43                             # 0b010_01001: mt 2 (bstr), 3 bytes
+      01 01 1D                    # [X.690] Clause 8.20</samp></p>
+<p id="rfc.section.3.3.p.6">This relative OID saves seven bytes compared to the full OID encoding.</p>
+<h1 id="rfc.section.4"><a href="#rfc.section.4">4.</a> <a href="#discussion" id="discussion">Discussion</a></h1>
+<p id="rfc.section.4.p.1">Staying close to the way ASN.1 object identifiers are encoded in ASN.1 BER makes back-and-forth translation easy.  As of today, ASN.1 object identifiers are either used in dotted decimal form or BER form, so there is an advantage in not inventing a third form.  Also, expectations of the cost of encoding ASN.1 object identifiers are based on BER; using a different encoding might not be aligned with these expectations. If additional information about an OID is desired, lookup services such as the OID Resolution Service (ORS, <a href="#X.672">[X.672]</a>) and the OID Repository (oid-info.com, <a href="#OIDINFO">[OIDINFO]</a>) are available.</p>
+<p id="rfc.section.4.p.2">This specification allocates two numbers out of the single-byte tag space.  This use of code point space is justified by the wide use of object identifiers in data interchange. For most common OIDs in use (namely those whose contents encode to less than 24 bytes), the CBOR encoding will match the efficiency of <a href="#X.690">[X.690]</a>.</p>
+<p><a href="#RFC7049">[RFC7049]</a> permits byte strings to be indefinite-length, with chunks divided at arbitrary byte boundaries.  In contrast, each definite-length text string chunk in an indefinite-length text string MUST be well-formed UTF-8: splitting the octets of a UTF-8 character encoding is not allowed. By analogy to this principle and to Clauses 8.9.1 and 8.20.1 of <a href="#X.690">[X.690]</a>, OIDs and relative OIDs are to be treated as indivisible units. They MUST be encoded in definite-length form. (An added convenience is that CBOR encodings can be searched through efficiently for specific OIDs or relative OIDs, without initiating the decoding process.)</p>
+<h1 id="rfc.section.5"><a href="#rfc.section.5">5.</a> <a href="#diagnostic-notation" id="diagnostic-notation">Diagnostic Notation</a></h1>
+<p id="rfc.section.5.p.1">Implementers will likely want to see OIDs and relative OIDs in their &#8220;natural forms&#8221; (as sequences of unsigned integers) for diagnostic purposes. Accordingly, this section defines new syntaxes for the diagnostic notation prescribed in Section 6 of <a href="#RFC7049">[RFC7049]</a>.</p>
+<p id="rfc.section.5.p.2">An object identifier may be written in ASN.1 value notation (with enclosing braces and secondary identifiers), or in dotted decimal notation with at least three arcs. Both examples are shown in Section 3.  The surrounding tag notation is optional. The ASN.1 value notation for OIDs does not overlap with JSON object notation for CBOR maps, because at least two arcs are required for a valid OID.</p>
+<p id="rfc.section.5.p.3">A relative object identifier may be written in dotted decimal notation only, prefixed with a dot as shown in Section 3.3. The surrounding tag notation is optional.  ASN.1 value notation is not suitable for the diagnostic notation of relative OIDs because knowledge of the base OID cannot be determined from the encoding alone; such knowledge requires a protocol on top of CBOR.</p>
+<p id="rfc.section.5.p.4">The notation in this section may be employed in addition to the basic notation, which would be a tagged binary string.</p>
+<h1 id="rfc.section.6"><a href="#rfc.section.6">6.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a></h1>
+<p id="rfc.section.6.p.1">IANA is requested to reserve the tags in <a href="#tab-tag-values">Table 1</a>, with the present document as the specification reference.</p>
+<div id="rfc.table.1"/>
+<div id="tab-tag-values"/>
+<table cellpadding="3" cellspacing="0" class="tt full center">
+  <caption>Values for Tags</caption>
+  <thead>
+    <tr>
+      <th class="left">Tag</th>
+      <th class="left">Data Item</th>
+      <th class="left">Semantics</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="left">6&#171;TBD&#187;</td>
+      <td class="left">byte string</td>
+      <td class="left">ASN.1 object identifier (absolute, in BER encoding)</td>
+    </tr>
+    <tr>
+      <td class="left">7&#171;TBD&#187;</td>
+      <td class="left">byte string</td>
+      <td class="left">ASN.1 object identifier (relative, in BER encoding)</td>
+    </tr>
+  </tbody>
+</table>
+<h1 id="rfc.section.7"><a href="#rfc.section.7">7.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a></h1>
+<p id="rfc.section.7.p.1">The security considerations of RFC 7049 apply.</p>
+<p id="rfc.section.7.p.2">The encodings in Clauses 8.19 and 8.20 of <a href="#X.690">[X.690]</a> are extremely compact and unambiguous, but MUST be followed precisely to avoid security pitfalls. In particular, the byte 0x80 SHALL NOT appear in the byte string, because otherwise an arc&#8217;s integer value would not be encoded in the fewest possible octets.  Furthermore, the last byte SHALL NOT have its high-order bit (0b10000000) set; such a byte implies that the arc&#8217;s integer value has been truncated.  If either of these illegal values are encountered, they MUST be treated as decoding errors. Comparing two OIDs or relative OIDs can be done byte-for-byte only after decoding succeeds.</p>
+<p><a href="#PKILCAKE">[PKILCAKE]</a> uncovers exploit vectors for the illegal values above, as well as for cases where conversion to or from the dotted decimal notation goes awry. Neither <a href="#X.660">[X.660]</a> nor <a href="#X.680">[X.680]</a> place an upper bound on the range of unsigned integer values for an arc; the integers are abitrarily valued.  An implementation SHOULD NOT attempt to convert each component using a fixed-size accumulator, as an attacker will certainly be able to cause the accumulator to overflow. Compact and efficient techniques for such conversions, such as the double dabble algorithm [[TODO: CITE]], are well-known in the art; their application to this field is left as an exercise to the reader.</p>
+<h1 id="rfc.references"><a href="#rfc.references">8.</a> References</h1>
+<h1 id="rfc.references.1"><a href="#rfc.references.1">8.1.</a> Normative References</h1>
+<table>
+  <tbody>
+    <tr>
+      <td class="reference">
+        <b id="RFC7049">[RFC7049]</b>
+      </td>
+      <td class="top"><a>Bormann, C.</a> and <a>P. Hoffman</a>, "<a href="http://tools.ietf.org/html/rfc7049">Concise Binary Object Representation (CBOR)</a>", RFC 7049, October 2013.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="X.660">[X.660]</b>
+      </td>
+      <td class="top"><a>International Telecommunications Union</a>, "<a>Information technology &#8212; Procedures for the operation of object identifier registration authorities: General procedures and top arcs of the international object identifier tree</a>", ITU-T Recommendation X.660, July 2011.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="X.680">[X.680]</b>
+      </td>
+      <td class="top"><a>International Telecommunications Union</a>, "<a>Information technology &#8212; Abstract SyntaxNotation One (ASN.1): Specification of basic notation</a>", ITU-T Recommendation X.680, November 2008.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="X.690">[X.690]</b>
+      </td>
+      <td class="top"><a>International Telecommunications Union</a>, "<a>Information technology &#8212; ASN.1 encoding rules: Specification of Basic Encoding Rules (BER), Canonical Encoding Rules (CER) and Distinguished Encoding Rules (DER)</a>", ITU-T Recommendation X.690, November 2008.</td>
+    </tr>
+  </tbody>
+</table>
+<h1 id="rfc.references.2"><a href="#rfc.references.2">8.2.</a> Informative References</h1>
+<table>
+  <tbody>
+    <tr>
+      <td class="reference">
+        <b id="CCITT.X208.1988">[CCITT.X208.1988]</b>
+      </td>
+      <td class="top"><a>International Telephone and Telegraph Consultative Committee</a>, "<a>Specification of Abstract Syntax Notation One (ASN.1)</a>", CCITT Recommendation X.208, November 1988.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="OIDINFO">[OIDINFO]</b>
+      </td>
+      <td class="top"><a>Orange SA</a>, "<a href="http://www.oid-info.com/">OID Repository</a>", 2014.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="PKILCAKE">[PKILCAKE]</b>
+      </td>
+      <td class="top"><a>Kaminsky, D.</a>, <a>Matterson, M.</a> and <a>L. Sassaman</a>, "<a href="http://dl.acm.org/citation.cfm?id=2163593">PKI Layer Cake: New Collision Attacks Against the Global X.509 Infrastructure</a>", FC 2010, Lecture Notes in Computer Science 6052 289-303, January 2010.<p>doi:10.1007/978-3-642-14577-3_22</p></td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC6256">[RFC6256]</b>
+      </td>
+      <td class="top"><a>Eddy, W.</a> and <a>E. Davies</a>, "<a href="http://tools.ietf.org/html/rfc6256">Using Self-Delimiting Numeric Values in Protocols</a>", RFC 6256, May 2011.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="X.672">[X.672]</b>
+      </td>
+      <td class="top"><a>International Telecommunications Union</a>, "<a>Information technology &#8212; Open systems interconnection &#8212; Object identifier resolution system</a>", ITU-T Recommendation X.672, August 2010.</td>
+    </tr>
+  </tbody>
+</table>
+<h1 id="rfc.authors">
+  <a href="#rfc.authors">Authors' Addresses</a>
+</h1>
+<div class="avoidbreak">
+  <address class="vcard">
+	<span class="vcardline">
+	  <span class="fn">Carsten Bormann</span> 
+	  <span class="n hidden">
+		<span class="family-name">Bormann</span>
+	  </span>
+	</span>
+	<span class="org vcardline">Universit&#228;t Bremen TZI</span>
+	<span class="adr">
+	  <span class="vcardline">Postfach 330440</span>
+
+	  <span class="vcardline">
+		<span class="locality">Bremen</span>,  
+		<span class="region"></span>
+		<span class="code">D-28359</span>
+	  </span>
+	  <span class="country-name vcardline">Germany</span>
+	</span>
+	<span class="vcardline">Phone: +49-421-218-63921</span>
+
+<span class="vcardline">EMail: <a href="mailto:cabo@tzi.org">cabo@tzi.org</a></span>
+
+  </address>
+</div><div class="avoidbreak">
+  <address class="vcard">
+	<span class="vcardline">
+	  <span class="fn">Sean Leonard</span> 
+	  <span class="n hidden">
+		<span class="family-name">Leonard</span>
+	  </span>
+	</span>
+	<span class="org vcardline">Penango, Inc.</span>
+	<span class="adr">
+	  <span class="vcardline">5900 Wilshire Boulevard</span>
+<span class="vcardline">21st Floor</span>
+
+	  <span class="vcardline">
+		<span class="locality">Los Angeles, CA</span>,  
+		<span class="region"></span>
+		<span class="code">90036</span>
+	  </span>
+	  <span class="country-name vcardline">USA</span>
+	</span>
+	<span class="vcardline">EMail: <a href="mailto:dev+ietf@seantek.com">dev+ietf@seantek.com</a></span>
+
+<span class="vcardline">URI: <a href="http://www.penango.com/">http://www.penango.com/</a></span>
+
+  </address>
+</div>
+
+</body>
+</html>
