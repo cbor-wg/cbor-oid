@@ -1,5 +1,5 @@
 ---
-title: Concise Binary Object Representation (CBOR) Tags for ASN.1 Object IDs
+title: Concise Binary Object Representation (CBOR) Tags for ASN.1 Object Identifiers
 abbrev: CBOR tags for ASN.1 Object IDs
 docname: draft-bormann-cbor-tags-oid-00-pre
 date: 2014-10-10
@@ -10,7 +10,7 @@ ipr: trust200902
 keyword: Internet-Draft
 cat: info
 
-pi: [toc, sortrefs, symrefs, compact, comments]
+pi: [toc, [tocdepth, 1], sortrefs, symrefs, compact, comments]
 
 author:
   -
@@ -29,8 +29,9 @@ author:
     email: dev+ietf@seantek.com
     uri: http://www.penango.com/
     org: Penango, Inc.
-    street: 5900 Wilshire Boulevard
-    street: 21st Floor
+    street:
+      - 5900 Wilshire Boulevard
+      - 21st Floor
     city: Los Angeles, CA
     code: 90036
     country: USA
@@ -84,6 +85,24 @@ informative:
     author:
       org: Orange SA
     date: 2014
+  PKILCAKE:
+    target: http://dl.acm.org/citation.cfm?id=2163593
+    title: "PKI Layer Cake: New Collision Attacks Against the Global X.509 Infrastructure"
+    author:
+      -
+        name: Dan Kaminsky
+        ins: D. Kaminsky
+      -
+        name: Meredith L. Patterson
+        ins: M. Matterson
+      -
+        name: Len Sassaman
+        ins: L. Sassaman
+    date: 2010-01
+    seriesinfo:
+      FC: 2010
+      Lecture Notes in Computer Science 6052: 289-303
+    annotation: doi:10.1007/978-3-642-14577-3_22
 
 --- abstract
 
@@ -135,7 +154,7 @@ RFC 2119 {{ !RFC2119}}.
 The term "byte" is used in its now customary sense as a synonym for
 "octet".
 
-ASN.1 object identifiers {#oids}
+ASN.1 Object Identifiers {#oids}
 ========================
 
 The International Object Identifier tree {{X.660}} is
@@ -180,7 +199,7 @@ Tag 7«TBD»: tags a byte string as the ASN.1 BER encoding of a
 relative object identifier (also "relative OID").
 
 
-Examples
+Examples {#examples}
 ========
 
 ## Encoding of the SHA-256 OID
@@ -233,10 +252,10 @@ CBOR\\
 Given some OID (e.g., `lowpanMib`, assumed to be `1.3.6.1.2.1.7001`),
 to which the following is added:
 
-ASN.1 Value Notation\\
+ASN.1 Value Notation (not suitable for diagnostic notation)\\
 `{ lowpanObjects(1) lowpanStats(1) lowpanOutTransmits(29) }`
 
-Dotted Decimal Notation\\
+Dotted Decimal Notation (diagnostic notation; see Section 5)\\
 `.1.1.29`
 
 BER\\
@@ -252,7 +271,7 @@ CBOR\\
 
 This relative OID saves seven bytes compared to the full OID encoding.
 
-Discussion
+Discussion {#discussion}
 ==========
 
 Staying close to the way ASN.1 object identifiers are encoded in ASN.1
@@ -285,7 +304,29 @@ relative OIDs, without initiating the decoding process.)
 Diagnostic Notation
 ============
 
-... discuss diagnostic form here ...
+Implementers will likely want to see OIDs and relative OIDs
+in their "natural forms" (as sequences of unsigned integers)
+for diagnostic purposes. Accordingly, this section defines new syntaxes
+for the diagnostic notation prescribed in Section 6 of {{RFC7049}}.
+
+An object identifier may be written in ASN.1 value notation (with
+enclosing braces and secondary identifiers), or in dotted decimal notation
+with at least three arcs. Both examples are shown in Section 3.
+The
+surrounding tag notation is optional. The ASN.1 value notation for OIDs does not
+overlap with JSON object notation for CBOR maps, because at least
+two arcs are required for a valid OID.
+
+A relative object identifier may be written in dotted decimal notation only,
+prefixed with a dot as shown in Section 3.3. The surrounding
+tag notation is optional.
+ASN.1 value notation is not suitable for the diagnostic notation
+of relative OIDs because
+knowledge of the base OID cannot be determined from the encoding alone;
+such knowledge requires a protocol on top of CBOR.
+
+The notation in this section may be employed in addition to the basic notation,
+which would be a tagged binary string.
 
 IANA Considerations
 ============
@@ -303,19 +344,27 @@ Security Considerations
 
 The security considerations of RFC 7049 apply.
 
-PKI Layer Cake. Dan Kaminsky. Can overflow buffers.
-X.690 says that there must not be leading 80 octets (containing all 0-bits).
-Arbitrarily valued. If conversion to or from the dotted decimal form
-is necessary, an implementation SHOULD NOT attempt to convert each
-component using a fixed-size accumulator. Compact and efficient techniques
-such as the double-dabble algorithm (TODO: include algorithm) are known.
-Generally, implementations can avoid such errors (and maximize efficiency)
-by comparing two OID encodings byte-for-byte as-is,
-without resorting to the dotted decimal form.
+The encodings in Clauses 8.19 and 8.20 of {{X.690}} are extremely compact and unambiguous,
+but MUST be followed precisely to avoid security pitfalls. In particular,
+the byte 0x80 SHALL NOT appear in the byte string, because otherwise
+an arc's integer value would not be encoded in the fewest possible octets.
+Furthermore, the last byte SHALL NOT have its high-order bit (0b10000000)
+set; such a byte implies that the arc's integer value
+has been truncated.
+If either of these illegal values are encountered, they MUST be treated
+as decoding errors. Comparing two OIDs or relative OIDs
+can be done byte-for-byte only after decoding succeeds.
 
-All bits in the content bytes are okay, except that the last byte MUST NOT
-have its high-order bit set, because that octet concludes the OID component.
-If the high-order bit is set, it MUST be treated as a decoding error.
+{{PKILCAKE}} uncovers exploit vectors for the illegal values above,
+as well as for cases where conversion to or from the dotted decimal notation
+goes awry. Neither {{X.660}} nor {{X.680}} place an upper bound on the
+range of unsigned integer values for an arc; the integers are abitrarily valued.
+An implementation SHOULD NOT attempt to convert each component using a
+fixed-size accumulator, as an attacker will certainly be able to
+cause the accumulator to overflow. Compact and efficient techniques
+for such conversions, such as the double dabble algorithm \[\[TODO: CITE\]\],
+are well-known in the art; their application to this field is left
+as an exercise to the reader.
 
 --- back
 
