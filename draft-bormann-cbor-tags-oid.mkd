@@ -41,7 +41,9 @@ normative:
   RFC7049:
   X.660:
     title: >
-      Information technology — Procedures for the operation of object identifier registration authorities: General procedures and top arcs of the international object identifier tree
+      Information technology —
+      Procedures for the operation of object identifier registration authorities:
+      General procedures and top arcs of the international object identifier tree
     author:
       org: International Telecommunications Union
     date: 2011-07
@@ -50,7 +52,8 @@ normative:
 
   X.680:
     title: >
-      Information technology — Abstract SyntaxNotation One (ASN.1): Specification of basic notation
+      Information technology — Abstract Syntax Notation One (ASN.1):
+      Specification of basic notation
     author:
       org: International Telecommunications Union
     date: 2008-11
@@ -72,7 +75,8 @@ informative:
   CCITT.X208.1988: ASN1
   X.672:
     title: >
-      Information technology — Open systems interconnection — Object identifier resolution system
+      Information technology — Open systems interconnection —
+      Object identifier resolution system
     author:
       org: International Telecommunications Union
     date: 2010-08
@@ -87,14 +91,16 @@ informative:
     date: 2014
   PKILCAKE:
     target: http://dl.acm.org/citation.cfm?id=2163593
-    title: "PKI Layer Cake: New Collision Attacks Against the Global X.509 Infrastructure"
+    title: >
+      PKI Layer Cake:
+      New Collision Attacks Against the Global X.509 Infrastructure
     author:
       -
         name: Dan Kaminsky
         ins: D. Kaminsky
       -
         name: Meredith L. Patterson
-        ins: M. Matterson
+        ins: M. L. Patterson
       -
         name: Len Sassaman
         ins: L. Sassaman
