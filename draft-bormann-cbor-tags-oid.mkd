@@ -306,8 +306,9 @@ Diagnostic Notation
 
 Implementers will likely want to see OIDs and relative OIDs
 in their "natural forms" (as sequences of unsigned integers)
-for diagnostic purposes. Accordingly, this section defines new syntaxes
-for the diagnostic notation prescribed in Section 6 of {{RFC7049}}.
+for diagnostic purposes. Accordingly, this section defines additional
+syntactic elements that can be used in conjunction with the diagnostic
+notation described in Section 6 of {{RFC7049}}.
 
 An object identifier may be written in ASN.1 value notation (with
 enclosing braces and secondary identifiers), or in dotted decimal notation
@@ -328,13 +329,18 @@ such knowledge requires a protocol on top of CBOR.
 The notation in this section may be employed in addition to the basic notation,
 which would be a tagged binary string.
 
+| RFC 7049 diagnostic notation | 6(h'2b030601') | 7(h'0601') |
+| Dotted notation              | 1.3.6.1        | .6.1       |
+| ASN.1 value notation:        | {1 3 6 1}      | {6 1}      |
+{: #tab-diagnostic title="Examples for extended diagnostic notation"}
+
 IANA Considerations
 ============
 
-IANA is requested to reserve the tags in {{tab-tag-values}}, with the
+IANA is requested to assign the CBOR tags in {{tab-tag-values}}, with the
 present document as the specification reference.
 
-| Tag     | Data Item   | Semantics                                           |
+| Tag    | Data Item   | Semantics                                           |
 | 6«TBD» | byte string | ASN.1 object identifier (absolute, in BER encoding) |
 | 7«TBD» | byte string | ASN.1 object identifier (relative, in BER encoding) |
 {: #tab-tag-values title="Values for Tags"}
@@ -371,5 +377,7 @@ as an exercise to the reader.
 
 <!--  LocalWords:  CBOR extensibility IANA uint sint IEEE endian IETF
  -->
-<!--  LocalWords:  signedness endianness ASN BER encodings
+<!--  LocalWords:  signedness endianness ASN BER encodings OIDs OID
+ -->
+<!--  LocalWords:  Implementers
  -->
