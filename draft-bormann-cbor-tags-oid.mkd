@@ -385,8 +385,17 @@ If either of these illegal values are encountered, they MUST be treated
 as decoding errors. Comparing two OIDs or relative OIDs
 can be done byte-for-byte only after decoding succeeds.
 
+OIDs and relative OIDs can always be treated as opaque byte strings.
+Actually understanding the structure that was used for generating them
+is not necessary, and it is strongly RECOMMENDED not to try.
+If the OIDs are translated into other representations, the usual
+security considerations for non-trivial representation conversions apply.
+
+Conversions Between BER and Dotted Decimal Notation
+------------
+
 {{PKILCAKE}} uncovers exploit vectors for the illegal values above,
-as well as for cases where conversion to or from the dotted decimal notation
+as well as for cases in which conversion to or from the dotted decimal notation
 goes awry. Neither {{X.660}} nor {{X.680}} place an upper bound on the
 range of unsigned integer values for an arc; the integers are abitrarily valued.
 An implementation SHOULD NOT attempt to convert each component using a
