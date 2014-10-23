@@ -157,7 +157,8 @@ NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
 RFC 2119 {{ !RFC2119}}.
  -->
 
-The term "byte" is used in its now customary sense as a synonym for
+The terminology of RFC 7049 applies; in particular
+the term "byte" is used in its now customary sense as a synonym for
 "octet".
 
 ASN.1 Object Identifiers {#oids}
@@ -165,22 +166,25 @@ ASN.1 Object Identifiers {#oids}
 
 The International Object Identifier tree {{X.660}} is
 a hierarchically managed space of
-identifiers, each of which is uniquely represented as a sequence of unsigned integers
+identifiers, each of which is uniquely represented as a sequence of
+unsigned integers ("sub-identifiers")
 {{X.680}}.
 While these sequences can easily be represented in CBOR arrays of
 unsigned integers, a more compact representation can often be achieved
 by adopting the widely used representation of ASN.1 object identifiers
-defined in BER.
+defined in BER; this representation may also be more amenable to
+processing by other software making use of ASN.1 object identifiers.
 
 BER represents the sequence of unsigned integers by concatenating
-self-delimiting {{?RFC6256}} representations of each of these integers
+self-delimiting {{?RFC6256}} representations of each of the sub-identifier
 in sequence.
 
 ASN.1 distinguishes absolute object identifiers (ASN.1 Type `OBJECT IDENTIFIER`),
 which begin at a root arc ({{X.660}} Clause 3.5.21), from relative object
 identifiers (ASN.1 Type `RELATIVE-OID`), which begin
-relative to some known object identifier ({{X.680}} Clause 3.8.63).  As
-a special optimization,
+relative to some object identifier known from context ({{X.680}}
+Clause 3.8.63).
+As a special optimization,
 BER combines the first two integers in an absolute object identifier
 into one numeric identifier by making use of the property of the
 hierarchy that the first arc has only three integer values (0, 1, and 2),
@@ -204,6 +208,43 @@ absolute object identifier (simply "object identifier" or "OID").
 Tag «R» (value TBD): tags a byte string as the ASN.1 BER encoding of a
 relative object identifier (also "relative OID").
 
+## Requirements on the byte string being tagged {#reqts}
+
+A byte string tagged by «O» or «R» MUST be a syntactically valid BER
+representation of an ASN.1 object identifier.  Specifically:
+
+* its first byte, and any byte that follows a byte that has the most significant
+  bit unset, MUST NOT be 0x80 (this requirement excludes expressing the
+  sub-identifiers with anything but the shortest form)
+* its last byte MUST NOT have the most significant bit set (this
+  requirement exludes an incomplete final sub-identifier)
+
+If either of these invalid conditions are encountered, they MUST be
+treated as decoding errors. Comparing two OIDs or relative OIDs for
+equality in a byte-for-byte fashion may not be safe before these checks
+succeed on at least one of them (this includes the case where one of
+them is a local constant); a process implementing an exclusion list
+MUST check for decoding errors first.
+
+Note that {{X.680}} restricts relative identifiers to have at least
+one sub-identifier (array element).
+As an extension, this specification does not specifically exclude
+empty relative identifiers; they may still be excluded by application semantics.
+
+{{RFC7049}} permits byte strings to be indefinite-length,
+with chunks divided at arbitrary byte boundaries.
+This contrasts with text strings, where each chunk in an indefinite-length
+text string is required be well-formed UTF-8 on its own: splitting the octets of
+a UTF-8 character encoding between chunks is not allowed.
+
+By analogy to this principle and to Clauses 8.9.1 and 8.20.1 of
+{{X.690}}, the byte strings carrying the OIDs and relative OIDs are
+also to be treated as indivisible units: They MUST be encoded in
+definite-length form; indefinite-length form is treated as an encoding
+error (and the same considerations as above apply).
+(An added convenience is that CBOR encodings can
+be searched through efficiently for specific OIDs or relative OIDs,
+without initiating the decoding process.)
 
 Examples {#examples}
 ========
@@ -213,8 +254,8 @@ number 7 for «O».  See {{ianadis}}.
 
 ## Encoding of the SHA-256 OID
 
-ASN.1 Value Notation  
-{ joint-iso-itu-t(2) country(16) us(840) organization(1) gov(101)  
+ASN.1 Value Notation\\
+{ joint-iso-itu-t(2) country(16) us(840) organization(1) gov(101)\\
         csor(3) nistalgorithm(4) hashalgs(2) sha256(1) }
 
 Dotted Decimal Notation (also XML Value Notation)\\
@@ -249,8 +290,6 @@ ASN.1 Value Notation\\
 Dotted Decimal Notation (also XML Value Notation)\\
 2.25.2957291539512641589387040445673640841648
 
-BER
-
 ~~~~~~~~~~~
 06                                # UNIVERSAL TAG 6
    14                             # 20 bytes, primitive
@@ -258,14 +297,14 @@ BER
 #      |                 2957291539512641589387040445673640841648
 #   2.25
 ~~~~~~~~~~~
-
-CBOR
+{: #fig-uuid-ber title="UUID in an object identifier, in BER"}
 
 ~~~~~~~~~~~
 C6                                # 0b110_00110: mt 6, tag 6
    54                             # 0b010_10100: mt 2, 20 bytes
       69 A2 E1 D1 D1 83 B9 C5 88 F6 B7 DA C8 80 85 A5 EA F1 A3 30`
 ~~~~~~~~~~~
+{: #fig-uuid-cbor title="UUID in an object identifier, in CBOR"}
 
 ## Encoding of a MIB Relative OID
 
@@ -278,22 +317,20 @@ ASN.1 Value Notation (not suitable for diagnostic notation)\\
 Dotted Decimal Notation (diagnostic notation; see Section 5)\\
 .1.1.29
 
-BER
-
 ~~~~~~~~~~~
 0D                                # UNIVERSAL TAG 13
    03                             # 3 bytes, primitive
       01 01 1D                    # X.690 Clause 8.20
 #      1  1 29                      show component encoding
 ~~~~~~~~~~~
-
-CBOR
+{: #fig-mib-ber title="MIB relative object identifier, in BER"}
 
 ~~~~~~~~~~~
 C7                                # 0b110_00110: mt 6, tag 7
    43                             # 0b010_01001: mt 2 (bstr), 3 bytes
       01 01 1D                    # X.690 Clause 8.20
 ~~~~~~~~~~~
+{: #fig-mib-cbor title="MIB relative object identifier, in CBOR"}
 
 This relative OID saves seven bytes compared to the full OID encoding.
 
@@ -315,17 +352,6 @@ tag space.  This use of code point space is justified by the wide use
 of object identifiers in data interchange. For most common OIDs in use
 (namely those whose contents encode to less than 24 bytes),
 the CBOR encoding will match the efficiency of {{X.690}}.
-
-{{RFC7049}} permits byte strings to be indefinite-length,
-with chunks divided at arbitrary byte boundaries.
-In contrast, each definite-length text string chunk in an indefinite-length
-text string MUST be well-formed UTF-8: splitting the octets of
-a UTF-8 character encoding is not allowed. By analogy to this principle
-and to Clauses 8.9.1 and 8.20.1 of {{X.690}},
-OIDs and relative OIDs are to be treated as indivisible units. They MUST be
-encoded in definite-length form. (An added convenience is that CBOR
-encodings can be searched through efficiently for specific OIDs or
-relative OIDs, without initiating the decoding process.)
 
 Diagnostic Notation
 ============
@@ -403,21 +429,23 @@ Security Considerations
 The security considerations of RFC 7049 apply.
 
 The encodings in Clauses 8.19 and 8.20 of {{X.690}} are extremely compact and unambiguous,
-but MUST be followed precisely to avoid security pitfalls. In particular,
-the byte 0x80 SHALL NOT appear in the byte string, because otherwise
-an arc's integer value would not be encoded in the fewest possible octets.
-Furthermore, the last byte SHALL NOT have its high-order bit (0b10000000)
-set; such a byte implies that the arc's integer value
-has been truncated.
-If either of these illegal values are encountered, they MUST be treated
-as decoding errors. Comparing two OIDs or relative OIDs
-can be done byte-for-byte only after decoding succeeds.
+but MUST be followed precisely to avoid security pitfalls.
+In particular, the requirements set out in {{reqts}} of this document need to be
+followed; otherwise, an attacker may be able to subvert a checking
+process by submitting alternative representations that are later taken
+as the original (or even something else entirely) by another decoder
+supposed to be protected by the checking process.
 
 OIDs and relative OIDs can always be treated as opaque byte strings.
 Actually understanding the structure that was used for generating them
-is not necessary, and it is strongly RECOMMENDED not to try.
+is not necessary, and, except for checking the structure requirements,
+it is strongly NOT RECOMMENDED to perform any
+processing of this kind (e.g., converting into dotted notation and
+back) unless absolutely necessary.
 If the OIDs are translated into other representations, the usual
-security considerations for non-trivial representation conversions apply.
+security considerations for non-trivial representation conversions
+apply; the integers of the sub-identifiers need to be handled as
+unlimited-range integers (cf. {{fig-uuid-cbor}}).
 
 Conversions Between BER and Dotted Decimal Notation
 ------------
