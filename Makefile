@@ -5,8 +5,7 @@ all:	$(DRAFTS)
 
 %.xml:	%.mkd
 	kramdown-rfc2629 $< >$@.new1
-	sed '/\<section anchor="examples"/,/\<section anchor="discussion\"/ s/\<spanx style\=\"verb\"\>/\<spanx style\=\"vbare\"\>/' $@.new1 > $@.new2
-	mv $@.new2 $@
+	mv $@.new1 $@
 
 %.txt:	%.xml
 	xml2rfc $< $@
