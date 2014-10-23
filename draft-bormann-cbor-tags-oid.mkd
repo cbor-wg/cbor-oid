@@ -355,7 +355,7 @@ which would be a tagged binary string.
 
 | RFC 7049 diagnostic notation | 6(h'2b030601') | 7(h'0601') |
 | Dotted decimal notation      | 1.3.6.1        | .6.1       |
-| ASN.1 value notation         | {1 3 6 1}      | {6 1}      |
+| ASN.1 value notation         | {1 3 6 1}      | --N/A--    |
 {: #tab-diagnostic title="Examples for extended diagnostic notation"}
 
 IANA Considerations
