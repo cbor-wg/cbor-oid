@@ -217,7 +217,7 @@ representation of an ASN.1 object identifier.  Specifically:
   bit unset, MUST NOT be 0x80 (this requirement excludes expressing the
   sub-identifiers with anything but the shortest form)
 * its last byte MUST NOT have the most significant bit set (this
-  requirement exludes an incomplete final sub-identifier)
+  requirement excludes an incomplete final sub-identifier)
 
 If either of these invalid conditions are encountered, they MUST be
 treated as decoding errors. Comparing two OIDs or relative OIDs for
@@ -226,10 +226,10 @@ succeed on at least one of them (this includes the case where one of
 them is a local constant); a process implementing an exclusion list
 MUST check for decoding errors first.
 
-Note that {{X.680}} restricts relative identifiers to have at least
+{{X.680}} restricts RELATIVE-OID values to have at least
 one sub-identifier (array element).
-As an extension, this specification does not specifically exclude
-empty relative identifiers; they may still be excluded by application semantics.
+This specification permits
+empty relative object identifiers; they may still be excluded by application semantics.
 
 {{RFC7049}} permits byte strings to be indefinite-length,
 with chunks divided at arbitrary byte boundaries.
@@ -453,7 +453,7 @@ Conversions Between BER and Dotted Decimal Notation
 {{PKILCAKE}} uncovers exploit vectors for the illegal values above,
 as well as for cases in which conversion to or from the dotted decimal notation
 goes awry. Neither {{X.660}} nor {{X.680}} place an upper bound on the
-range of unsigned integer values for an arc; the integers are abitrarily valued.
+range of unsigned integer values for an arc; the integers are arbitrarily valued.
 An implementation SHOULD NOT attempt to convert each component using a
 fixed-size accumulator, as an attacker will certainly be able to
 cause the accumulator to overflow. Compact and efficient techniques
