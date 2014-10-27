@@ -1,14 +1,14 @@
 ---
-title: Concise Binary Object Representation (CBOR) Tags for ASN.1 Object Identifiers
-abbrev: CBOR tags for ASN.1 Object IDs
-docname: draft-bormann-cbor-tags-oid-00-pre
-date: 2014-10-23
+title: Concise Binary Object Representation (CBOR) Tags for ASN.1 Object Identifiers
+abbrev: CBOR Tags for ASN.1 OIDs
+docname: draft-bormann-cbor-tags-oid-00
+date: 2014-10-27
 
 stand_alone: true
 
 ipr: trust200902
 keyword: Internet-Draft
-cat: info
+cat: std
 
 pi: [toc, [tocdepth, 1], sortrefs, symrefs, compact, comments]
 
