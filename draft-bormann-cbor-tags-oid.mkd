@@ -1,8 +1,8 @@
 ---
 title: Concise Binary Object Representation (CBOR) Tags for ASN.1 Object Identifiers
 abbrev: CBOR Tags for ASN.1 OIDs
-docname: draft-bormann-cbor-tags-oid-00
-date: 2014-10-27
+docname: draft-bormann-cbor-tags-oid-01
+date: 2015-07-06
 
 stand_alone: true
 
@@ -108,7 +108,17 @@ informative:
     seriesinfo:
       FC: 2010
       Lecture Notes in Computer Science 6052: 289-303
-    annotation: doi:10.1007/978-3-642-14577-3_22
+      DOI:: 10.1007/978-3-642-14577-3_22
+  DOUBLEDABBLE:
+    author:
+      - ins: S. Gao
+      - ins: D. Al-Khalili
+      - ins: N. Chabini
+    date: 2012-06
+    title: An improved BCD adder using 6-LUT FPGAs
+    seriesinfo:
+      IEEE: 10th International New Circuits and Systems Conference (NEWCAS 2012), pp. 13–16
+      DOI:: 10.1109/NEWCAS.2012.6328944
 
 --- abstract
 
@@ -150,12 +160,10 @@ the tags so defined.
 Terminology         {#terms}
 ------------
 
-<!--
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
 NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
 "OPTIONAL" in this document are to be interpreted as described in
-RFC 2119 {{ !RFC2119}}.
- -->
+RFC 2119 {{!RFC2119}}.
 
 The terminology of RFC 7049 applies; in particular
 the term "byte" is used in its now customary sense as a synonym for
@@ -308,7 +316,7 @@ C6                                # 0b110_00110: mt 6, tag 6
 
 ## Encoding of a MIB Relative OID
 
-Given some OID (e.g., `lowpanMib`, assumed to be `1.3.6.1.2.1.7001`),
+Given some OID (e.g., `lowpanMib`, assumed to be `1.3.6.1.2.1.226` {{?RFC7388}}),
 to which the following is added:
 
 ASN.1 Value Notation (not suitable for diagnostic notation)\\
@@ -412,7 +420,7 @@ this code point space.
 Procedurally, this space is also reserved for standards action.
 
 An alternative would be to go for the specification required space,
-e.g. tag number 40 for «O» and tag number 41 for «O».  As an example this would change
+e.g. tag number 40 for «O» and tag number 41 for «R».  As an example this would change
 {{fig-sha-cbor}} into:
 
 ~~~~~~~~~~~
@@ -457,7 +465,7 @@ range of unsigned integer values for an arc; the integers are arbitrarily valued
 An implementation SHOULD NOT attempt to convert each component using a
 fixed-size accumulator, as an attacker will certainly be able to
 cause the accumulator to overflow. Compact and efficient techniques
-for such conversions, such as the double dabble algorithm \[\[TODO: CITE\]\],
+for such conversions, such as the double dabble algorithm {{DOUBLEDABBLE}}
 are well-known in the art; their application to this field is left
 as an exercise to the reader.
 
