@@ -148,7 +148,7 @@ an IANA registry.
 
 Many IETF protocols carry ASN.1 object identifiers, originally defined in
 1988 {{-ASN1}} and most recently in 2008 {{X.680}}.  The ASN.1 Basic Encoding Rules
-(BER, {{X.690}}) specifies the binary encodings of both ASN.1 object identifiers
+(BER, {{X.690}}) specify the binary encodings of both ASN.1 object identifiers
 and relative object identifiers.
 The contents of these encodings can be carried in a CBOR byte string.
 
@@ -184,7 +184,7 @@ defined in BER; this representation may also be more amenable to
 processing by other software making use of ASN.1 object identifiers.
 
 BER represents the sequence of unsigned integers by concatenating
-self-delimiting {{?RFC6256}} representations of each of the sub-identifier
+self-delimiting {{?RFC6256}} representations of each of the sub-identifiers
 in sequence.
 
 ASN.1 distinguishes absolute object identifiers (ASN.1 Type `OBJECT IDENTIFIER`),
@@ -258,7 +258,7 @@ Examples {#examples}
 ========
 
 In the following examples, we are using tag number 6 for «O» and tag
-number 7 for «O».  See {{ianadis}}.
+number 7 for «R».  See {{ianadis}}.
 
 ## Encoding of the SHA-256 OID
 
