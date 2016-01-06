@@ -293,16 +293,16 @@ UUID\\
 
 ASN.1 Value Notation\\
 { joint-iso-itu-t(2) uuid(25)\\
-  geomicaGPAS(2957291539512641589387040445673640841648) }
+  geomicaGPAS(184830721219540099336690027854602552603) }
 
 Dotted Decimal Notation (also XML Value Notation)\\
-2.25.2957291539512641589387040445673640841648
+2.25.184830721219540099336690027854602552603
 
 ~~~~~~~~~~~
 06                                # UNIVERSAL TAG 6
    14                             # 20 bytes, primitive
-      69 A2 E1 D1 D1 83 B9 C5 88 F6 B7 DA C8 80 85 A5 EA F1 A3 30
-#      |                 2957291539512641589387040445673640841648
+      69 82 96 8D 8D 88 9B CC A8 C7 B3 BD D4 C0 80 AA AE D7 8A 1B
+#      |                  184830721219540099336690027854602552603
 #   2.25
 ~~~~~~~~~~~
 {: #fig-uuid-ber title="UUID in an object identifier, in BER"}
@@ -310,7 +310,7 @@ Dotted Decimal Notation (also XML Value Notation)\\
 ~~~~~~~~~~~
 C6                                # 0b110_00110: mt 6, tag 6
    54                             # 0b010_10100: mt 2, 20 bytes
-      69 A2 E1 D1 D1 83 B9 C5 88 F6 B7 DA C8 80 85 A5 EA F1 A3 30`
+      69 82 96 8D 8D 88 9B CC A8 C7 B3 BD D4 C0 80 AA AE D7 8A 1B
 ~~~~~~~~~~~
 {: #fig-uuid-cbor title="UUID in an object identifier, in CBOR"}
 
