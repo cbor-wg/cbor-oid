@@ -1,8 +1,8 @@
 ---
-title: Concise Binary Object Representation (CBOR) Tags for ASN.1 Object Identifiers
+title: Concise Binary Object Representation (CBOR) Tags for ASN.1 Object Identifiers, and Omnibus Corrections and Techniques
 abbrev: CBOR Tags for ASN.1 OIDs
-docname: draft-bormann-cbor-tags-oid-02
-date: 2016-01-06
+docname: draft-bormann-cbor-tags-oid-03
+date: 2016-06-14
 
 stand_alone: true
 
@@ -56,7 +56,7 @@ normative:
       Specification of basic notation
     author:
       org: International Telecommunications Union
-    date: 2008-11
+    date: 2015-08
     seriesinfo:
       ITU-T: Recommendation X.680
 
@@ -67,7 +67,7 @@ normative:
       Rules (CER) and Distinguished Encoding Rules (DER)
     author:
       org: International Telecommunications Union
-    date: 2008-11
+    date: 2015-08
     seriesinfo:
       ITU-T: Recommendation X.690
 
@@ -82,13 +82,22 @@ informative:
     date: 2010-08
     seriesinfo:
       ITU-T: Recommendation X.672
+  X.681:
+    title: >
+      Information technology — Abstract Syntax Notation One (ASN.1):
+      Information object specification
+    author:
+      org: International Telecommunications Union
+    date: 2015-08
+    seriesinfo:
+      ITU-T: Recommendation X.681
   OIDINFO:
     target: http://www.oid-info.com/
     title: >
       OID Repository
     author:
       org: Orange SA
-    date: 2014
+    date: 2016
   PKILCAKE:
     target: http://dl.acm.org/citation.cfm?id=2163593
     title: >
@@ -132,7 +141,7 @@ need for version negotiation.
 The present document makes use of this extensibility to define
 CBOR tags «O» and «R» \[values TBD] for ASN.1 object identifiers.  It is intended
 as the reference document for the IANA registration of the CBOR tags
-so defined.
+so defined. This document also provides other corrections and improvements to CBOR.
 
 --- middle
 
@@ -156,6 +165,12 @@ This document defines two CBOR tags that cover the two kinds of
 ASN.1 object identifiers encoded in this way.
 It is intended as the reference document for the IANA registration of
 the tags so defined.
+
+During development of this Internet-Draft, a couple of deficiencies
+and points of enhancement were noted. This document updates {{RFC7049}}
+to handle binary Internet messages {{RFC2045}} {{RFC3030}}
+natively, and provides certain techniques for efficiently
+encoding sets in CBOR.
 
 Terminology         {#terms}
 ------------
@@ -363,7 +378,7 @@ the CBOR encoding will match the efficiency of {{X.690}}.
 (This preliminary conclusion is likely to generate some discussion,
 see {{ianadis}}.)
 
-Diagnostic Notation
+Diagnostic Notation {#diagnostic}
 ============
 
 Implementers will likely want to see OIDs and relative OIDs
@@ -373,33 +388,579 @@ syntactic elements that can be used in conjunction with the diagnostic
 notation described in Section 6 of {{RFC7049}}.
 
 An object identifier may be written in ASN.1 value notation (with
-enclosing braces and secondary identifiers), or in dotted decimal notation
+enclosing braces and secondary identifiers,
+ObjectIdentifierValue of Clause 32.3 of {{X.680}}),
+or in dotted decimal notation
 with at least three arcs. Both examples are shown in Section 3.
 The
-surrounding tag notation is optional. The ASN.1 value notation for OIDs does not
+surrounding tag notation is not to be used, because
+the tag is implied. The ASN.1 value notation for OIDs does not
 overlap with JSON object notation for CBOR maps, because at least
 two arcs are required for a valid OID.
 
-A relative object identifier may be written in dotted decimal notation only,
+A relative object identifier may be written in dotted decimal notation
+or in ASN.1 value notation, in both cases
 prefixed with a dot as shown in Section 3.3. The surrounding
-tag notation is optional.
-ASN.1 value notation is not suitable for the diagnostic notation
-of relative OIDs because
-knowledge of the base OID cannot be determined from the encoding alone;
-such knowledge requires a protocol on top of CBOR.
+tag notation is not to be used, because the tag is implied.
 
 The notation in this section may be employed in addition to the basic notation,
 which would be a tagged binary string.
 
 | RFC 7049 diagnostic notation | 6(h'2b0601') | 7(h'0601') |
 | Dotted decimal notation      | 1.3.6.1      | .6.1       |
-| ASN.1 value notation         | {1 3 6 1}    | --N/A--    |
+| ASN.1 value notation         | {1 3 6 1}    | .{6 1}     |
 {: #tab-diagnostic title="Examples for extended diagnostic notation"}
+
+OID Enumerations
+============
+This section provides
+a roadmap to using OIDs as enumerated items.
+
+CBOR does not have an ENUMERATED type like ASN.1 to identify
+named values in a protocol element with three or more states
+(Clause 20 and Clause G.2.3 of {{X.680}}).
+ASN.1 ENUMERATED turns out to be superfluous because ASN.1
+INTEGER values can get named (and have historically been used for finite,
+multistate variables, such as version numbers),
+while ASN.1 ENUMERATED types
+can be defined to be extensible with the ellipsis lexical item.
+Practically, the named integers are not serialized in the binary
+encodings anyway; they merely serve as a semantic hints for designers
+and debuggers.
+
+CBOR expects that protocol designers will use
+one of the basic major types for multistate
+variables, assigning semantics to particular values
+using higher-level schemas. The obvious choices
+for the basic types are integers (particularly
+unsigned integers) and UTF-8 strings. However,
+these major types are not without drawbacks.
+
+Integers are compact for small values, but have
+a flat namespace so there are mis-assignment
+and collision risks that can only be mitigated
+with protocol-specific registries.
+Arrays of integers are possible, but arrays require
+more processing logic for equality comparisons,
+and the JSON conversion is not intuitive when
+the enumerated value serves as a key in a map.
+
+UTF-8 strings are less compact when the strings
+are supposed to resemble their semantics, and there are
+normalization issues if the strings contain characters
+beyond the ASCII range. UTF-8 strings also comprise
+a flat namespace like integers unless the higher-level
+schema employs delimiters
+(which makes the string even larger). This section
+provides a novel alternative in OIDs.
+
+## Factors Favoring OID Enumerations
+
+A protocol designer might choose OIDs or relative OIDs
+for an enumerated item in view of the following observations:
+
+1. OIDs and relative OIDs are relatively compact:
+a relative OID
+encoded according to this specification
+occupies two bytes for a single arc with
+primary integer values 0-127 (excluding the semantic tag «R»).
+(In contrast, an unsigned integer requires one byte
+for 0-23, two bytes for 24-255, and three bytes
+for 256-65535.)
+
+2. OIDs and relative OIDs (with base) are persistent
+and globally unambiguous.
+
+3. OIDs and relative OIDs have built-in semantics
+for designers and debuggers. Specifically,
+the advent of universal OID repositories such as
+{{OID-INFO}} makes it easy for a designer
+or debugger to pull up useful information
+about the object of interest (Clause 3.5.10 of {{X.660}}).
+This useful information (for humans) does not have to bleed
+into the encoded representation (for machines).
+
+4. OIDs and relative OIDs are always compared for
+exact equality: no need to deal with case folding,
+case sensitivity, or other normalization issues.
+("Overlong" encodings are PROHIBITED; therefore
+overlong encodings MUST be treated as coding errors.)
+
+5. OIDs and relative OIDs have a built-in hierarchy,
+so if implementers want to extend an enumeration
+without assigning new values "horizontally", they
+have the option of assigning new values "vertically",
+possibly with more or less stringent assignment rules.
+
+6. Because OIDs and relative OIDs (with base)
+are part of the so-called International Object Identifier tree
+{{X.660}}, any other protocol specification can reuse
+the enumeration if the designers find it useful.
+
+7. OIDs and relative OIDs have natural JSON
+representations in the dotted decimal notations
+prescribed in {{diagnostic}}. OIDs and relative
+OIDs can be distinguished from each other
+by the presence or absence of the leading dot ".".
+As the resulting JSON string is entirely numeric
+in the ASCII range, case and normalization are irrelevant to the comparison.
+(An object identifier also has a semantic string
+reprsentation in the form of an OID-IRI {{X.680}},
+for those who really want that type of thing.)
+
+8. OIDs and relative OIDs are human language-neutral.
+A protocol designer working in US-English might
+name an enumerated value "sig" for "signature", but "sig"
+could also stand for "significand", "signal", or
+"special interest group".
+In Swedish and Norwegian, "sig" is a pronoun
+that means "himself, herself, itself, one, them",
+etc.&emdash;an entirely different meaning.
+
+## Factors Favoring Integer Enumerations
+
+A protocol designer might choose integers
+for an enumerated item in view of the following observations:
+
+1. The CBOR encoding of unsigned integers 0-23 is the most
+compact, occupying exactly one byte (excluding any semantic tags).
+
+2. A protocol designer may wish to prohibit extensibility
+as a matter of course. Integers comprise a single flat namespace:
+there is no hierarchy.
+
+3. If greater range is desired while sticking to one byte,
+a protocol designer may double the range of possible values
+by allowing negative integers -24 - -1.
+However, enumerating values using negative integers may have
+unintended side-effects, because some programming environments
+(e.g., C/C++) make implementation-defined assumptions about
+the number of bits needed for an enumerated type.
+
+## Factors Favoring UTF-8 String Enumerations
+
+A protocol designer might choose UTF-8 strings
+for an enumerated item in view of the following observations:
+
+1. A specification can practically limit the content of UTF-8 strings
+   to the ASCII range (or narrower), obviating normalization problems.
+
+2. UTF-8 strings are easier to read on-the-wire for humans.
+
+3. UTF-8 strings can contain arbitrary textual identifiers, which
+   can be hierarchial, e.g., URIs.
+
+## OID Enumeration Example
+
+(TODO: example of enumerated thing in CBOR, diagnostic notation, JSON.)
+
+OID Arrays, Maps, and Associations
+============
+A common use of OIDs in ASN.1 is to identify the kind of data
+in an open type (Clause 3.8.57 of {{X.680}}), using
+information object classes {{X.681}}. CBOR
+is schema-neutral, and (although not fully discussed
+in {{RFC7049}}) semantic tagging was originally
+intended to identify items
+in a global, context-free way
+(i.e., where a specification would not repurpose
+a tag with different semantics than its IANA
+registration). Therefore,
+using OIDs to identify contextual data
+in a similar fashion to {{X.681}} is RECOMMENDED.
+
+«O» and «R» can tag CBOR arrays and maps.
+
+When the «O» or «R» tag is applied to an array, it means
+that the data is an arry of OIDs or relative OIDs, respectively.
+
+When the «O» or «R» tag is applied to a map, it means that
+the keys are all OIDs, or all relative OIDs, respectively.
+The values in the map are not considered specially tagged.
+
+## Switching OID and Relative OID
+
+If an individual item in a «O» or «R» tagged array, or
+an individual key in a «O» or «R» tagged map, is tagged
+with the opposite tag («R» or «O») of the array or map itself,
+that tag cancels and replaces the outer tag for that item.
+Like tags MUST NOT be used on such individual items.
+For example, if «R» is the outer tag on an array
+and «O» is the inner tag
+on a binary string, semantically the inner item is
+treated as a regular OID, not as a relative OID.
+
+The purpose is to create more compact and flexible identifier spaces,
+especially when object identifiers are used as
+enumerated items. Examples:
+
+«R» outside, «O» inside: An implementation that strives for a compact representation,
+does not have to emit base OID arcs repeatedly for each item.
+At the same time, if a private organization or standards body
+separate from the specification needs to identify something
+that the specification maintainers disagree with,
+the separate body does not need to request registration
+of an identifier under a controlled arc (i.e., the base arc of the relative OIDs).
+
+«O» outside, «R» inside: A collection of OIDs is supposed
+to be open to all-comers, but a certain set of OIDs issued
+under a particular arc is foreseeable for the majority of implementations.
+For example, an OID protocol slot may identify cryptographic
+algorithms: anyone can write (and has written) an algorithm
+with an arbitrary OID. However, the protocol slot designer may
+wish to privilege certain algorithms (and therefore OIDs)
+that are well-known in that field of use.
+
+## Tag Stacking
+
+CBOR permits tag stacking (tagging a tagged item),
+although this technique has not
+been used much yet. This specification anticipates that OIDs
+and relative OIDs will be associated with values with
+uniform semantics. This section provides specific semantics
+when tags are "stacked", that is, a CBOR item
+starts with tag «O» or «R», followed by one or more arbitrary tags
+("subsequent tags"),
+followed by a map or array.
+
+### Map
+
+The overall gist is that the first tag applies to the keys in a map;
+the subsequent tags apply to the values in a map.
+
+When «O» or «R» is the first tag
+in a stack of tags, followed by a map:
+o The «O» or «R» tag indicates that the keys of the map are
+  OIDs or relative OIDs.
+	(Discuss the byte strings.)
+o The subsequent tags uniformly apply to all of the values.
+
+For example, if tag 32 (URL) is the subsequent tag, then
+all values in the map are treated semantically as if tag 32 is
+applied to them individually.
+
+It is possible that individual values can be tagged. Semantically,
+these tags cumulate with the outer subsequent tags; inner value tags
+do not cancel or replace the outer tags.
+
+### Array
+
+The overall gist is that the first tag applies
+to the ordered "keys" in the array (even-numbered items,
+assuming that the index starts at 0);
+the subsequent tags apply to the ordered "values"
+in the array (odd-numbered items). This tagging technique
+creates an ordered associative array. [[NB:
+Some call this the FORTRAN approach. need to cite]]
+
+When «O» or «R» is the first tag in a stack of tags,
+followed by an array:
+o The «O» or «R» tag indicates that alternating items,
+  starting with the first item, are OIDs or relative OIDs.
+	Said items MUST be byte strings containing OIDs or relative OIDs.
+o The subsequent tags uniformly apply to the alternating items,
+  starting with the second item.
+o The array MUST have an even number of items; an array
+  that has an odd number of items is a coding error.
+
+To create an ordered associative array wherein the values
+(even elements) are arbitrarily tagged,
+stack tag 55799, self-describe CBOR (Section 2.4.5
+of {{RFC7049}}), after the «O» or «R» tag.
+Tag 55799 imparts no special semantics, so it is
+an effective placeholder.
+(This sequence is mainly provided for completeness:
+it is a more compact alternative to an array of duple-arrays that
+each contain
+an OID or relative OID, and an arbitrary value.)
+
+Applications and Examples of OIDs
+============
+
+(TODO: show OID arrays, OID maps, OID maps to
+OID-defined types, example of X.500 distinguished name
+realized as CBOR sequence.)
+
+Binary Internet Messages and MIME Entities
+============
+
+Section 2.4.4.3 of {{RFC7049}} assigns tag 36
+to "MIME messages (including all headers)" {{RFC2045}},
+and prescribes UTF-8 strings, without further elaboration.
+Actually MIME encircles several different formats,
+and is not limited to UTF-8 strings. This section updates
+tag 36.
+
+## CBOR Byte String and Binary MIME
+
+Tag 36 is to be used with byte strings. When the tagged
+item is a byte string, any octet can be used in the content.
+[[TODO: cite binary MIME, BDAT, etc. standards.]]
+
+A conforming implementation that purports to process
+tag 36-tagged items, MUST accept byte strings
+as well as UTF-8 strings. Byte strings, rather than UTF-8
+strings, SHOULD be considered the default.
+(While binary Content-Transfer-Encoding is not particularly
+common as of this writing, 8-bit encoding is, and it is foreseeable
+that many 8-bit encoded messages will still have charsets
+other than UTF-8.)
+
+## Internet Messages, MIME Messages, and MIME Entities
+
+Definitions: "MIME message" is not explicitly defined
+in {{RFC2045}}, but a careful read suggests that
+a MIME message is: "either a
+(complete or "top-level") RFC 822 message being transferred on a
+network, or a message encapsulated in a body of type "message/rfc822"
+or "message/partial"," that also contains MIME header fields,
+namely, MIME-Version field, which MUST be present
+(Section 4 of {{RFC2045}}. Other MIME header fields
+such as Content-Type and Content-Transfer-Encoding
+are assumed to be their {{RFC2045}} default values,
+if not present in the data.
+
+When the contents have a From field (a type of "originator address field")
+and a Date field (the lone "origination date field")
+(Section 3.6 of {{RFC5322}}),
+the item is concluded to have a Content-Type of message/rfc822
+or message/global, as appropriate, except as otherwise
+specified in this section.
+
+(TBD: Do we need a separate tag for a MIME entity?)
+(Alternate proposal: When the tagged data does not
+include a MIME-Version field or other
+fields required by RFC822 (5322) (e.g., no From field),
+it is presumed to be a MIME entity, rather than
+a MIME message. Therefore, it has no top-level content-type:
+instead it is simply a "MIME entity", consisting of
+one element, whose Content-Type is the content of the
+Content-Type header field, if present,
+or the {{RFC2045}} default of "text/plain; charset=us-ascii",
+if absent. Content-Transfer-Encoding
+SHALL be assumed to be 8bit when the CBOR item
+is a UTF-8 string, and SHALL be assumed to be binary
+when the CBOR item is a byte string. (Or should
+all be considered CTE: binary?) And, when the tagged
+data has RFC822 required fields but no MIME-Version,
+shall we assume it's a MIME entity, or shall we assume
+it's an Internet message that does not conform to MIME?)
+
+Content that has no headers whatsoever is valid, and
+implementations that process tag 36 MUST permit this case:
+in such a case, the data starts with CRLF CRLF,
+followed by the body. In such a case, the content
+is assumed to be a MIME entity of Content-Type
+"text/plain; charset=us-ascii", and not an
+RFC822 (RFC5322) Internet message. (TBD: Confirm.)
+
+## Netnews, HTTP, and SIP Messages
+
+Other message types that are MIME-related
+are message/news, message/http, and message/sip.
+
+{{RFC5537}} specifies that message/news is deprecated
+(marked as obsolete) and that message/rfc822
+SHOULD be used in its place; presumably this
+also extends to message/global over time.
+Netnews Article Format {{RFC5536}} is a strict
+subset of Internet Message Format; it can be
+detected by the presence of the six mandatory
+header fields: Date, From, Message-ID, Newsgroups,
+Path, and Subject. (Newsgroups and Path fields
+are specific to Netnews.)
+
+message/http {{RFC7230}} is the media type
+for HTTP requests and responses. It can be detected
+by analyzing the first line of the body, which is
+an HTTP Start Line (Section 3.1 of {{RFC7230}}):
+it does not conform to the syntax
+of an Internet Message Format header field.
+The optional parameter "msgtype" can be inferred
+from the Start Line. Implementers need to be
+aware that the default character encoding for
+message/http is ISO-8859-1, not UTF-8. Therefore,
+implementations SHOULD NOT encode HTTP messages
+with CBOR UTF-8 strings.
+
+Similarly, message/sip {{RFC3261}} is the media type of
+SIP request and response messages. It can be detected
+by analyzing the first line of the body, which is
+a SIP start-line (Section 7.1 of {{RFC3261}}):
+it does not conform to the syntax of an Internet Message Format
+header field. The optional parameter can be inferred
+from the start-line.
+
+## Other Messages
+
+The CBOR binary or UTF-8 string MAY contain other
+types of messages. An implementation MAY send such a
+message as a MIME entity with the Content-Type
+field appropriately set, or alternatively, MAY
+send the message at the top-level directly.
+However, if a purported message type is ambiguous with
+a message/rfc822 (or message/global)
+message, a receiver SHALL treat the message
+as message/rfc822 (or message/global).
+If a purported message type is ambiguous with
+a MIME entity (and unambiguously not message/rfc822
+or message/global), a receiver SHALL treat
+the message as a MIME entity.
+
+Applications and Examples of Messages and Entities
+============
+
+Tag 36 is the RECOMMEDED way to convey data with
+MIME-related metadata, including messages
+(which may or may not actually be MIME-enabled) and MIME entities.
+
+Example 1: A legacy RFC822 message is encoded as
+a UTF-8 string or byte string with tag 36. The contents
+have From, To, Date, and Subject header fields, two CRLFs,
+and a single line "Hello World!", terminated with a CRLF.
+
+Example 2a: A {{RFC5280}} certificate is encoded as
+a byte string with tag 36. The contents are
+comprised of "Content-Type: application/pkix-cert",
+two CRLFs, and the DER encoding of the certificate.
+(The "Content-Transfer-Encoding: binary" header is
+not necessary.)
+
+Example 2b: A {{RFC5280}} certificate is encoded
+as a UTF-8 string or byte string with tag 36. The contents
+are comprised of "Content-Type: application/pkix-cert",
+a CRLF, "Content-Transfer-Encoding: base64",
+two CRLFs, and the base64 encoding of the DER
+encoding of the certificate, conforming to Section 6.8
+of {{RFC2045}}. In particular, base64 lines are limted
+to 76 characters, separated by CRLF, and the final line
+is supposed to end with CRLF. Needless to say, this
+is not nearly as efficient as Example 2a.
+
+X.690 Series Tags
+============
+
+[[NB: Carsten probably won't like this. Plan on removing this section. LOL]]
+
+It is foreseeable that CBOR applications will need
+to send and receive ASN.1 data, for example, for legacy
+or security applications. While a native representation
+in CBOR is preferred, preserving the data in an ASN.1
+encoding may be necessary, for example, to preserve
+cryptographic verification. A tag «X» is allocated
+for this purpose.
+
+When the tagged item is a byte string, the
+byte string contents are encoded according to {{X.690}},
+i.e., BER, CER, or DER. CBOR implementations
+are not required to validate conformance of the contained
+data to {{X.690}}.
+
+When the tagged item is an array with 3 items:
+1. The first item SHALL be an OID (with tag «O» omitted;
+it SHALL NOT be a relative OID),
+indicating the ASN.1 module containing the type of the PDU.
+
+2. The second item SHALL be a UTF-8 string indicating
+the ASN.1 value's <em>type reference name</em> (Clause 3.8.88 of {{X.680}})
+conforming to the <tt>typereference</tt> production
+(Clause 12.2 of {{X.680}}).
+
+3. The third item SHALL be a byte string,
+whose contents are encoded per the prior paragraph.
+
+(TBD: Use of tagged UTF-8 string is reserved for ASN.1
+textual formats such as XER and ASN.1 value notation?
+Probably not necessary. Just omit.)
+
+Implementation note: DER-encoded items are always definite-length,
+so there is very little reason to use CBOR byte string
+indefinite encoding when encoding such DER-encoded items.
+
+Example: A {{RFC5280}} certificate can be encoded as a byte string with tag «X»,
+or as an array with tag «X», with three elements:
+a byte string containing the BER encoding of 1.3.6.1.5.5.7.0.18,
+a UTF-8 string "Certificate", and
+a byte string containing the DER encoding of the certificate.
+
+Regular Expression Clarification
+============
+
+(TODO: better specify conformance to
+actual regular expression standards with tag 35.
+PCRE and JavaScript/ECMAScript regular expressions are very different;
+{{RFC7049}} is not specific enough about this.)
+
+Set and Multiset Technique
+============
+CBOR has no native type for a set, which is an arbitrary
+unordered collection of items. The following technique is
+RECOMMENDED to express set and multiset semantics concisely
+in native CBOR data.
+
+In computer science, a <em>set</em>
+is a collection of distinct items; there is no ordering
+to the items. Thus, implementations can optimize set storage
+in many ways that are not available with ordered elements in arrays.
+Sets can be stored in hashtables, bit fields, trees, or other
+abstract data types.
+
+In computer science, a <em>multiset</em>
+allows multiple instances of a set's elements.
+Put another way, each distinct item has a cardinality property
+indicating the number of these items in the multiset.
+
+To store items in a set or multiset, it is RECOMMENDED
+to store the CBOR items as keys in a map; the values
+SHALL all be positive integers (major type 0, value/additional
+information greater than or equal to 1). In the special
+case of a set, the values SHALL be the integer 1.
+This technique has no special tag associated with it.
+As with
+arrays that schemas classify as "records" (i.e.,
+arrays with positionally defined elements), schemas are
+likewise free to classify maps as sets in particular
+instances.
+
+Fruits Basket Example
+============
+
+Consider a basket of fruits. The basket can contain
+any number of fruits; each fruit of the same species is
+considered identical. This basket has two apples,
+four bananas, six pears, and one pineapple:
+
+~~~~~~~~~~~
+{"apple": 2, "banana": 4, "pear": 6, "pineapple": 1}
+~~~~~~~~~~~
+{: #fig-fruits-basket-cbor-diag title="Fruits Basket in CBOR Diagnostic Notation"}
+
+~~~~~~~~~~~
+A4                       # map(4)
+   65                    # text(5)
+      6170706C65         # "apple"
+   02                    # unsigned(2)
+   66                    # text(6)
+      62616E616E61       # "banana"
+   04                    # unsigned(4)
+   64                    # text(4)
+      70656172           # "pear"
+   06                    # unsigned(6)
+   69                    # text(9)
+      70696E656170706C65 # "pineapple"
+   01                    # unsigned(1)
+~~~~~~~~~~~
+{: #fig-fruits-basket-cbor title="Fruits Basket in CBOR (33 bytes)"}
+
+
+[[TODO: Consider a Merkle Tree example: set of sets of sets of sets of things. ???]]
 
 IANA Considerations {#iana}
 ============
 
 (This section to be edited by the RFC editor.)
+
+## CBOR Tags
 
 IANA is requested to assign the CBOR tags in {{tab-tag-values}}, with the
 present document as the specification reference.
@@ -432,6 +993,16 @@ d8 28                            # tag(40)
 ~~~~~~~~~~~
 {: #fig-sha-cbor1 title="SHA-256 OID in cbor (using specification required tag)"}
 
+## Pre-Existing Tags
+
+(TODO: complete.)
+IANA is requested to modify the registrations for the following CBOR tags:
+
+Tag 36.
+
+## New Tags
+
+(TODO: complete.)
 
 Security Considerations
 ============
