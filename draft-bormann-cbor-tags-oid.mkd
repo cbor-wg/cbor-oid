@@ -2,7 +2,7 @@
 title: Concise Binary Object Representation (CBOR) Tags for ASN.1 Object Identifiers, and Omnibus Corrections and Techniques
 abbrev: CBOR Tags for ASN.1 OIDs
 docname: draft-bormann-cbor-tags-oid-03
-date: 2016-06-14
+date: 2016-06-16
 
 stand_alone: true
 
@@ -38,7 +38,10 @@ author:
 
 
 normative:
+  RFC2045:
+  RFC3261:
   RFC7049:
+  RFC7230:
   X.660:
     title: >
       Information technology —
@@ -72,6 +75,8 @@ normative:
       ITU-T: Recommendation X.690
 
 informative:
+  RFC3030:
+  RFC5280:
   CCITT.X208.1988: ASN1
   X.672:
     title: >
@@ -91,7 +96,7 @@ informative:
     date: 2015-08
     seriesinfo:
       ITU-T: Recommendation X.681
-  OIDINFO:
+  OID-INFO:
     target: http://www.oid-info.com/
     title: >
       OID Repository
@@ -168,7 +173,7 @@ the tags so defined.
 
 During development of this Internet-Draft, a couple of deficiencies
 and points of enhancement were noted. This document updates {{RFC7049}}
-to handle binary Internet messages {{RFC2045}} {{RFC3030}}
+to handle binary Internet messages
 natively, and provides certain techniques for efficiently
 encoding sets in CBOR.
 
@@ -650,8 +655,9 @@ to the ordered "keys" in the array (even-numbered items,
 assuming that the index starts at 0);
 the subsequent tags apply to the ordered "values"
 in the array (odd-numbered items). This tagging technique
-creates an ordered associative array. [[NB:
-Some call this the FORTRAN approach. need to cite]]
+creates an ordered associative array.
+\[\[NB:
+Some call this the FORTRAN approach. need to cite\]\]
 
 When «O» or «R» is the first tag in a stack of tags,
 followed by an array:
@@ -695,7 +701,9 @@ tag 36.
 
 Tag 36 is to be used with byte strings. When the tagged
 item is a byte string, any octet can be used in the content.
-[[TODO: cite binary MIME, BDAT, etc. standards.]]
+Arbitrary octets are supported by {{RFC2045}}
+and can be supported in protocols such as SMTP
+using BINARYMIME {{RFC3030}}.
 
 A conforming implementation that purports to process
 tag 36-tagged items, MUST accept byte strings
@@ -840,7 +848,7 @@ is not nearly as efficient as Example 2a.
 X.690 Series Tags
 ============
 
-[[NB: Carsten probably won't like this. Plan on removing this section. LOL]]
+\[\[NB: Carsten probably won't like this. Plan on removing this section. LOL\]\]
 
 It is foreseeable that CBOR applications will need
 to send and receive ASN.1 data, for example, for legacy
@@ -953,7 +961,7 @@ A4                       # map(4)
 {: #fig-fruits-basket-cbor title="Fruits Basket in CBOR (33 bytes)"}
 
 
-[[TODO: Consider a Merkle Tree example: set of sets of sets of sets of things. ???]]
+\[\[TODO: Consider a Merkle Tree example: set of sets of sets of sets of things. ???\]\]
 
 IANA Considerations {#iana}
 ============
