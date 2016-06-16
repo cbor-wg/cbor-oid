@@ -873,9 +873,9 @@ it SHALL NOT be a relative OID),
 indicating the ASN.1 module containing the type of the PDU.
 
 2. The second item SHALL be a UTF-8 string indicating
-the ASN.1 value's <spanx style="emph">type reference name</spanx>
+the ASN.1 value's *type reference name*
 (Clause 3.8.88 of {{X.680}})
-conforming to the <spanx style="verb">typereference</spanx> production
+conforming to the `typereference` production
 (Clause 12.2 of {{X.680}}).
 
 3. The third item SHALL be a byte string,
@@ -910,14 +910,14 @@ unordered collection of items. The following technique is
 RECOMMENDED to express set and multiset semantics concisely
 in native CBOR data.
 
-In computer science, a <spanx style="emph">set</spanx>
+In computer science, a *set*
 is a collection of distinct items; there is no ordering
 to the items. Thus, implementations can optimize set storage
 in many ways that are not available with ordered elements in arrays.
 Sets can be stored in hashtables, bit fields, trees, or other
 abstract data types.
 
-In computer science, a <spanx style="emph">multiset</spanx>
+In computer science, a *multiset*
 allows multiple instances of a set's elements.
 Put another way, each distinct item has a cardinality property
 indicating the number of these items in the multiset.
