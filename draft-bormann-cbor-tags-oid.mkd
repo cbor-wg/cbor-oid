@@ -2,7 +2,7 @@
 title: Concise Binary Object Representation (CBOR) Tags for ASN.1 Object Identifiers, and Omnibus Corrections and Techniques
 abbrev: CBOR Tags for ASN.1 OIDs
 docname: draft-bormann-cbor-tags-oid-03
-date: 2016-06-16
+date: 2016-06-18
 
 stand_alone: true
 
@@ -632,11 +632,18 @@ in a similar fashion to {{X.681}} is RECOMMENDED.
 «O» and «R» can tag CBOR arrays and maps.
 
 When the «O» or «R» tag is applied to an array, it means
-that the data is an arry of OIDs or relative OIDs, respectively.
+that the respective tag is imputed to all items in the array.
+For example, every array item that is a binary string
+is an OID, when the array is tagged with «O».
 
 When the «O» or «R» tag is applied to a map, it means that
-the keys are all OIDs, or all relative OIDs, respectively.
+the respective tag is imputed to all keys in the map.
 The values in the map are not considered specially tagged.
+
+Array and map stacking is permitted. For example,
+an 3-dimensional array of OIDs can be composed by using
+a single «O» tag, followed by an array of arrays of arrays
+of binary strings. All such binary strings are considered OIDs.
 
 ## Switching OID and Relative OID
 
@@ -739,8 +746,92 @@ Applications and Examples of OIDs
 ============
 
 (TODO: show OID arrays, OID maps, OID maps to
-OID-defined types, example of X.500 distinguished name
-realized as CBOR sequence.)
+OID-defined types.)
+
+Consider the X.500 distinguished name:
+
+| Attribute Types           | Attribute Values |
+| { c (2.5.4.6) }           | US               |
+| { l (2.5.4.7)             | Los Angeles      |
+| &#x00A0;&#x00A0;s (2.5.4.8)             | CA               |
+| &#x00A0;&#x00A0;postalCode (2.5.4.17) } | 90013            |
+| { street (2.5.4.9) }      | 532 S Olive St   |
+| { businessCategory (...)  | Public Park      |
+| &#x00A0;&#x00A0;buildingName (...) }    | Pershing Square  |
+{: #tab-dn-data title="Example X.500 Distinguished Name" cols="l l"}
+
+{{tab-dn-data}} has four RDNs. The country and street RDNs are single-valued.
+The second and fourth RDNs are multi-valued.
+
+The equivalent representations in CBOR diagnostic notation and CBOR are:
+
+~~~~~~~~~~~
+[{ 2.5.4.6: "US" },
+ { 2.5.4.7: "Los Angeles", 2.5.4.8: "CA", 2.5.4.17: "90013" },
+ { 2.5.4.9: "532 S Olive St" },
+ { 2.5.4.15: "Public Park",
+   0.9.2342.19200300.100.1.48: "Pershing Square" }]
+~~~~~~~~~~~
+{: #fig-dn-cbor-diag title="Distinguished Name, in CBOR Diagnostic Notation"}
+
+~~~~~~~~~~~
+6([{ h'550406': "US" },
+   { h'550407': "Los Angeles", h'550408': "CA", h'550411': "90013" },
+   { h'550409': "532 S Olive St" },
+   { h'55040f': "Public Park",
+     h'0992268993f22c640130': "Pershing Square" }])
+~~~~~~~~~~~
+{: #fig-dn-cbor-diag-7049 title="Distinguished Name, in CBOR Diagnostic Notation (RFC 7049 only)"}
+
+~~~~~~~~~~~
+c6                                      # tag(6)
+   84                                   # array(4)
+      a1                                # map(1)
+         43                             # bytes(3)
+            550406                      # (2.5.4.6)
+         62                             # text(2)
+            5553                        # "US"
+      a3                                # map(3)
+         43                             # bytes(3)
+            550407                      # (2.5.4.7)
+         6b                             # text(11)
+            4c6f7320416e67656c6573      # "Los Angeles"
+         43                             # bytes(3)
+            550408                      # (2.5.4.8)
+         62                             # text(2)
+            4341                        # "CA"
+         43                             # bytes(3)
+            550411                      # (2.5.4.17)
+         65                             # text(5)
+            3930303133                  # "90013"
+      a1                                # map(1)
+         43                             # bytes(3)
+            550409                      # (2.5.4.9)
+         6e                             # text(14)
+            3533322053204f6c697665205374 # "532 S Olive St"
+      a2                                # map(2)
+         43                             # bytes(3)
+            55040f                      # (2.5.4.15)
+         6b                             # text(11)
+            5075626c6963205061726b      # "Public Park"
+         4a                             # bytes(10)
+            0992268993f22c640130       # (0.9.2342.19200300.100.1.48)
+         6f                             # text(15)
+            5065727368696e6720537175617265 # "Pershing Square"
+~~~~~~~~~~~
+{: #fig-dn-cbor title="Distinguished Name, in CBOR (108 bytes)"}
+
+(This example encoding assumes that all attribute values are UTF-8 strings,
+or can be represented as UTF-8 strings with no loss of information.)
+
+For reference, the {{?RFC4514}} LDAP string encoding of such data would be:
+
+~~~~~~~~~~~
+buildingName=Pershing Square+businessCategory=Public Park,
+street=532 S Olive St,l=Los Angeles+postalCode=90013+st=CA,c=US
+~~~~~~~~~~~
+{: #fig-dn-ldap title="Distinguished Name, in LDAP String Encoding (121 bytes)"}
+
 
 Binary Internet Messages and MIME Entities
 ============
