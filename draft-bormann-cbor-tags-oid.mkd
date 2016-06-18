@@ -560,7 +560,59 @@ for an enumerated item in view of the following observations:
 
 ## OID Enumeration Example
 
-(TODO: example of enumerated thing in CBOR, diagnostic notation, JSON.)
+An enumerated item indicates the revision level of a data format.
+Revision levels are issued by year, such as 2011, 2012, etc.
+However, in the year 2013, two revisions were issued: the first
+one and an important update in June that needs to be distinguished.
+The revision levels are assigned to some OID arc:
+
+`{2 25 6464646464 revs(4)}`
+
+In this arc, the following sub-arcs are assigned:
+
+| Sub-Arc            |
+| {v2011(1)}         |
+| {v2012(2)}         |
+| {v2013(3)}         |
+| {v2013(3) june(6)} |
+| {v2014(4)}         |
+| {v2015(5)}         |
+{: #tab-oid-enum-sub-arcs title="Example Sub-Arcs" cols="l"}
+
+In CBOR, the enumeration is encoded as a relative OID.
+The schema specifies the base OID arc, which is omitted:
+
+~~~~~~~~~~~
+c7       # tag(7)
+   41    # bytes(1)
+      03 # "\x03"
+
+c7         # tag(7)
+   42      # bytes(2)
+      0301 # "\x03\x01"
+~~~~~~~~~~~
+{: #fig-enum-cbor title="enumerated items in CBOR"}
+
+~~~~~~~~~~~
+.3
+
+.{v2013(3) june(6)}
+~~~~~~~~~~~
+{: #fig-enum-diag title="enumerated items in CBOR diagnostic"}
+
+~~~~~~~~~~~
+".3"
+
+".3.6"
+~~~~~~~~~~~
+{: #fig-enum-json-1 title="enumerated items in JSON (possibility 1)"}
+
+~~~~~~~~~~~
+"v2013"
+
+"v2013/june"
+~~~~~~~~~~~
+{: #fig-enum-json-2 title="enumerated items in JSON (possibility 2)"}
 
 OID Arrays, Maps, and Associations
 ============
