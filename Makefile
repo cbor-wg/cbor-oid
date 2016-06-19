@@ -9,6 +9,6 @@ all:	$(DRAFTS)
 	mv $@.new1 $@
 	$(OPEN) $@
 
-%.txt:	%.xml
-	xml2rfc $< $@
+%.txt %.html:	%.xml
+	xml2rfc $< --text --html
 	$(OPEN) $@
