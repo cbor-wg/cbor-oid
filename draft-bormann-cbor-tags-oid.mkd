@@ -164,7 +164,7 @@ mechanism that enables extending the set of data types supported via
 an IANA registry.
 
 Many IETF protocols carry ASN.1 object identifiers, originally defined in
-1988 {{-ASN1}} and most recently in 2008 {{X.680}}.  The ASN.1 Basic Encoding Rules
+1988 {{-ASN1}} and most recently in 2015 {{X.680}}.  The ASN.1 Basic Encoding Rules
 (BER, {{X.690}}) specify the binary encodings of both ASN.1 object identifiers
 and relative object identifiers.
 The contents of these encodings can be carried in a CBOR byte string.
@@ -419,10 +419,12 @@ which would be a tagged binary string.
 | ASN.1 value notation         | {1 3 6 1}    | .{6 1}     |
 {: #tab-diagnostic title="Examples for extended diagnostic notation"}
 
-OID Enumerations
+Enumerations in CBOR
 ============
 This section provides
-a roadmap to using OIDs as enumerated items.
+a roadmap to using enumerated items in CBOR, including
+design considerations for choosing
+between OIDs, integers, and UTF-8 strings.
 
 CBOR does not have an ENUMERATED type like ASN.1 to identify
 named values in a protocol element with three or more states
@@ -467,11 +469,12 @@ provides a novel alternative in OIDs.
 A protocol designer might choose OIDs or relative OIDs
 for an enumerated item in view of the following observations:
 
-1. OIDs and relative OIDs are relatively compact:
-a relative OID
+1. OIDs and relative OIDs are quite compact:
+a single-arc relative OID
 encoded according to this specification
-occupies two bytes for a single arc with
-primary integer values 0-127 (excluding the semantic tag «R»).
+occupies just two bytes for
+primary integer values 0-127 (excluding the semantic tag «R»),
+and three bytes for primary integer values 128-16383.
 (In contrast, an unsigned integer requires one byte
 for 0-23, two bytes for 24-255, and three bytes
 for 256-65535.)
@@ -551,12 +554,13 @@ A protocol designer might choose UTF-8 strings
 for an enumerated item in view of the following observations:
 
 1. A specification can practically limit the content of UTF-8 strings
-   to the ASCII range (or narrower), obviating normalization problems.
+   to the ASCII range (or narrower), mitigating
+   some normalization problems.
 
 2. UTF-8 strings are easier to read on-the-wire for humans.
 
 3. UTF-8 strings can contain arbitrary textual identifiers, which
-   can be hierarchial, e.g., URIs.
+   can be hierarchical, e.g., URIs.
 
 ## OID Enumeration Example
 
@@ -609,7 +613,7 @@ c7         # tag(7)
 ~~~~~~~~~~~
 {: #fig-enum-json-2 title="Enumerated Items in JSON (possibility 2)"}
 
-OID Arrays and Maps
+Tag Factoring and Tag Stacking with OID Arrays and Maps
 ============
 A common use of OIDs in ASN.1 is to identify the kind of data
 in an open type (Clause 3.8.57 of {{X.680}}), using
@@ -624,28 +628,25 @@ registration). Therefore,
 using OIDs to identify contextual data
 in a similar fashion to {{X.681}} is RECOMMENDED.
 
-«O» and «R» can tag CBOR arrays and maps.
+## Tag Factoring
 
-(TODO: decide whether to call this "tag factoring", "tag imputing",
-or some other pithy saying.)
+«O» and «R» can tag CBOR arrays and maps. The idea is that
+the tag is factored out from each individual byte string;
+the tag is placed in front of the array or map instead.
+The tags «O» and «R» are left-distributive.
 
 When the «O» or «R» tag is applied to an array, it means
 that the respective tag is imputed to all items in the array.
-(Conversely, it can be said that the tag «O» or «R»
-is factored from the items in the array. The tags «O» or «R»
-are left-distributive.)
-For example, every array item that is a binary string
-is an OID, when the array is tagged with «O».
+For example, when the array is tagged with «O»,
+every array item that is a binary string
+is an OID.
 
 When the «O» or «R» tag is applied to a map, it means that
 the respective tag is imputed to all keys in the map.
-(Conversely, it can be said that the tag «O» or «R»
-is factored from the keys in the map. The tags «O» or «R»
-are left-distributive.)
 The values in the map are not considered specially tagged.
 
 Array and map stacking is permitted. For example,
-an 3-dimensional array of OIDs can be composed by using
+a 3-dimensional array of OIDs can be composed by using
 a single «O» tag, followed by an array of arrays of arrays
 of binary strings. All such binary strings are considered OIDs.
 
@@ -655,7 +656,7 @@ If an individual item in a «O» or «R» tagged array, or
 an individual key in a «O» or «R» tagged map, is tagged
 with the opposite tag («R» or «O») of the array or map itself,
 that tag cancels and replaces the outer tag for that item.
-Like tags MUST NOT be used on such individual items
+Like tags MUST NOT be used on such individual items;
 such tagging is a coding error.
 For example, if «R» is the outer tag on an array
 and «O» is the inner tag
@@ -703,14 +704,16 @@ the subsequent tags apply to the values in a map.
 
 When «O» or «R» is the first tag
 in a stack of tags, followed by a map:
-o The «O» or «R» tag indicates that the keys of the map are
-  OIDs or relative OIDs.
-	(Discuss the byte strings.)
-o The subsequent tags uniformly apply to all of the values.
+
+* The «O» or «R» tag indicates that the keys of the map are
+  byte string OIDs, byte string relative OIDs,
+  or tag-factored arrays or maps
+  of the same.
+* The subsequent tags uniformly apply to all of the values.
 
 For example, if tag 32 (URL) is the subsequent tag, then
 all values in the map are treated semantically as if tag 32 is
-applied to them individually.
+applied to them individually. See {{fig-oid-uri-cbor-diag}}.
 
 It is possible that individual values can be tagged. Semantically,
 these tags cumulate with the outer subsequent tags; inner value tags
@@ -729,12 +732,14 @@ Some call this the FORTRAN approach. need to cite\]\]
 
 When «O» or «R» is the first tag in a stack of tags,
 followed by an array:
-o The «O» or «R» tag indicates that alternating items,
-  starting with the first item, are OIDs or relative OIDs.
-	Said items MUST be byte strings containing OIDs or relative OIDs.
-o The subsequent tags uniformly apply to the alternating items,
+
+* The «O» or «R» tag indicates that alternating items,
+  starting with the first item, are
+  byte string OIDs, byte string relative OIDs,
+  or tag-factored arrays or maps of the same.
+* The subsequent tags uniformly apply to the alternating items,
   starting with the second item.
-o The array MUST have an even number of items; an array
+* The array MUST have an even number of items; an array
   that has an odd number of items is a coding error.
 
 To create an ordered associative array wherein the values
@@ -770,6 +775,7 @@ notation of a map of OIDs to URIs is:
 6(32({0.9.2342.7776.1: "http://example.com/",
       0.9.2342.7776.2: "ftp://ftp.example.com/pub/"}))
 ~~~~~~~~~~~
+{: #fig-oid-uri-cbor-diag title="Map of OIDs to URIs, in CBOR Diagnostic Diagnostic Notation"}
 
 Applications and Examples of OIDs
 ============
@@ -777,7 +783,7 @@ Applications and Examples of OIDs
 ## GPU Farm
 
 Consider a 3-dimensional OID array, indicating
-certain operations to perform on a matrices of values
+certain operations to perform on a matrix of values
 in a GPU farm. Default operations are under
 the OID arc 0.9.2342.7777 (such as .1, .2, .124, etc.);
 the arc 0.9.2342.7777 itself represents the identity operation.
@@ -1094,7 +1100,8 @@ is not nearly as efficient as Example 2a.
 X.690 Series Tags
 ============
 
-\[\[NB: Carsten probably won't like this. Plan on removing this section. LOL\]\]
+\[\[NB: Carsten probably won't like this. Plan on removing this section.
+It is mainly provided to contrast with Section 10.\]\]
 
 It is foreseeable that CBOR applications will need
 to send and receive ASN.1 data, for example, for legacy
@@ -1111,9 +1118,17 @@ are not required to validate conformance of the contained
 data to {{X.690}}.
 
 When the tagged item is an array with 3 items:
+
 1. The first item SHALL be an OID (with tag «O» omitted;
 it SHALL NOT be a relative OID),
 indicating the ASN.1 module containing the type of the PDU.
+\[\[NB: this is a good example of a non-trivial
+structure in which an element is well-defined to
+be an OID, which has a tag. Is the CBOR philosophy
+to tag the item, or omit the tag on the item,
+when the item's semantics
+are already fixed by the outer tag? Similar situations
+can apply to tag 32 (URI), etc.\]\]
 
 2. The second item SHALL be a UTF-8 string indicating
 the ASN.1 value's *type reference name*
@@ -1132,11 +1147,19 @@ Implementation note: DER-encoded items are always definite-length,
 so there is very little reason to use CBOR byte string
 indefinite encoding when encoding such DER-encoded items.
 
-Example: A {{RFC5280}} certificate can be encoded as a byte string with tag «X»,
-or as an array with tag «X», with three elements:
-a byte string containing the BER encoding of 1.3.6.1.5.5.7.0.18,
-a UTF-8 string "Certificate", and
-a byte string containing the DER encoding of the certificate.
+Example: A {{RFC5280}} certificate can be encoded:
+
+1. as a byte string with tag «X», or
+
+2. as an array with tag «X», with three elements:
+
+   {: style="format (%d)"}
+   1. a byte string `h'2B 06 01 05 05 07 00 12'`,
+      which is the BER encoding of 1.3.6.1.5.5.7.0.18,
+
+   2. a UTF-8 string "Certificate", and
+
+   3. a byte string containing the DER encoding of the certificate.
 
 Regular Expression Clarification
 ============
@@ -1186,27 +1209,40 @@ considered identical. This basket has two apples,
 four bananas, six pears, and one pineapple:
 
 ~~~~~~~~~~~
-{"apple": 2, "banana": 4, "pear": 6, "pineapple": 1}
+{"🍎": 2, "🍌": 4,
+ "🍐": 6, "🍍": 1}
 ~~~~~~~~~~~
 {: #fig-fruits-basket-cbor-diag title="Fruits Basket in CBOR Diagnostic Notation"}
 
+{::comment}
+The encoding above is intentional, to illustrate a point about
+characters beyond ASCII in IETF documents.
+
+The UTF-16 units are: 
+\uD83C\uDF4E
+\uD83C\uDF4C
+\uD83C\uDF50
+\uD83C\uDF4D
+
+The UTF-8 and UTF-32 units are below.
+{:/comment}
+
 ~~~~~~~~~~~
 A4                       # map(4)
-   65                    # text(5)
-      6170706C65         # "apple"
+   64                    # text(4)
+      f09f8d8e           # "\u{1F34E}"
    02                    # unsigned(2)
-   66                    # text(6)
-      62616E616E61       # "banana"
+   64                    # text(4)
+      f09f8d8c           # "\u{1F34C}"
    04                    # unsigned(4)
    64                    # text(4)
-      70656172           # "pear"
+      f09f8d90           # "\u{1F350}"
    06                    # unsigned(6)
-   69                    # text(9)
-      70696E656170706C65 # "pineapple"
+   64                    # text(4)
+      f09f8d8d           # "\u{1F34D}"
    01                    # unsigned(1)
 ~~~~~~~~~~~
 {: #fig-fruits-basket-cbor title="Fruits Basket in CBOR (33 bytes)"}
-
 
 \[\[TODO: Consider a Merkle Tree example: set of sets of sets of sets of things. ???\]\]
 
