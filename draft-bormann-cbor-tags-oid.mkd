@@ -2,7 +2,7 @@
 title: Concise Binary Object Representation (CBOR) Tags for ASN.1 Object Identifiers, and Omnibus Corrections and Techniques
 abbrev: CBOR Tags for ASN.1 OIDs
 docname: draft-bormann-cbor-tags-oid-03
-date: 2016-06-18
+date: 2016-06-30
 
 stand_alone: true
 
