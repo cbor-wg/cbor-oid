@@ -322,11 +322,11 @@ applied directly to CBOR byte strings.
 
 For byte strings with tag «O»:
 
-> /^((?:[\x81-\xFF][\x80-\xFF]*)?[\x00-\x7F])+$/
+> `/^((?:[\x81-\xFF][\x80-\xFF]*)?[\x00-\x7F])+$/`
 
 For byte strings with tag «R»:
 
-> /^((?:[\x81-\xFF][\x80-\xFF]*)?[\x00-\x7F])*$/
+> `/^((?:[\x81-\xFF][\x80-\xFF]*)?[\x00-\x7F])*$/`
 
 Putative CBOR data that fails these tests SHALL be rejected as
 improperly coded.
@@ -336,26 +336,25 @@ the byte strings is to hunt for prohibited patterns.
 
 For byte strings with tag «O»:
 
-> /^$|(?:^|[\x00-\x7F])\x80|[\x80-\xFF]$/
+> `/^$|(?:^|[\x00-\x7F])\x80|[\x80-\xFF]$/`
 
 or with lookbehind:
 
-> /^$|^\x80|(?<[\x00-\x7F])\x80|(?<[\x80-\xFF])$/
+> `/^$|^\x80|(?<[\x00-\x7F])\x80|(?<[\x80-\xFF])$/`
 
 For byte strings with tag «R»:
 
-> /(?:^|[\x00-\x7F])\x80|[\x80-\xFF]$/
+> `/(?:^|[\x00-\x7F])\x80|[\x80-\xFF]$/`
 
 or with lookbehind:
 
-> /^\x80|(?<[\x00-\x7F])\x80|(?<[\x80-\xFF])$/
+> `/^\x80|(?<[\x00-\x7F])\x80|(?<[\x80-\xFF])$/`
 
 Putative CBOR data that passes these tests SHALL
 be rejected as improperly coded.
 
 (It is worth pointing out that these tests, when optimally implemented,
-ought to be markedly faster than UTF-8 validation.
-It's another thing in favor of OIDs vs. text strings as identifiers.)
+ought to be markedly faster than UTF-8 validation.)
 
 {::comment}
 low = high bit unset (0-127)
@@ -391,7 +390,7 @@ For OID, also MUST NOT:
 
 /^$|^\x80|(?<[\x00-\x7F])\x80|(?<[\x80-\xFF])$/
 
-{/::comment}
+{:/comment}
 
 Examples {#examples}
 ========
@@ -1407,7 +1406,7 @@ IANA Considerations {#iana}
 
 ## CBOR Tags
 
-IANA is requested to assign the CBOR tags in {{tab-tag-values}}, with the
+IANA is requested to assign the CBOR tags in {{tab-tag-values-new}}, with the
 present document as the specification reference.
 
 | Tag    | Data Item   | Semantics                                 |
