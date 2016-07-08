@@ -1,5 +1,5 @@
 ---
-title: Concise Binary Object Representation (CBOR) Tags and Techniques for Object Identifiers, Enumerations, Binary Entites, Regular Expressions, and Sets
+title: Concise Binary Object Representation (CBOR) Tags and Techniques for Object Identifiers, Enumerations, Binary Entities, Regular Expressions, and Sets
 abbrev: CBOR Tags and Techniques
 docname: draft-bormann-cbor-tags-oid-04
 date: 2016-07-08
