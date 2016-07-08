@@ -155,7 +155,7 @@ the wire protocol. This document adds
 object identifiers (OIDs) to CBOR with
 CBOR tags «O» and «R» \[values TBD].  It is intended
 as the reference document for the IANA registration of the CBOR tags
-so defined. Useful techniques for enumerations, sets, and multisets
+so defined. Useful techniques for enumerations and sets
 are presented (without new tags). As the documentation for MIME
 entities (tag 36) and regular expressions (tag 35) RFC 7049
 left much out, this document provides more comprehensive specifications.
@@ -211,7 +211,7 @@ that finds expression in a variety of message-oriented
 Internet protocols. Similarly, "Tag 35 is for regular expressions",
 but the references to Perl Compatible Regular Expressions
 (PCRE) and JavaScript syntax (ECMA-262) are not
-compatibl with each other. Two sections cover
+compatible with each other. Two sections cover
 the subtleties of items tagged with these tags,
 and so update {{RFC7049}} without changing the basic
 CBOR wire protocol.
@@ -1245,7 +1245,7 @@ are comprised of "Content-Type: application/pkix-cert",
 a CRLF, "Content-Transfer-Encoding: base64",
 two CRLFs, and the base64 encoding of the DER
 encoding of the certificate, conforming to Section 6.8
-of {{RFC2045}}. In particular, base64 lines are limted
+of {{RFC2045}}. In particular, base64 lines are limited
 to 76 characters, separated by CRLF, and the final line
 is supposed to end with CRLF. Needless to say, this
 is not nearly as efficient as Example 2a.
