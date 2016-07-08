@@ -1,14 +1,15 @@
 ---
-title: Concise Binary Object Representation (CBOR) Tags for ASN.1 Object Identifiers, and Omnibus Corrections and Techniques
-abbrev: CBOR Tags for ASN.1 OIDs
-docname: draft-bormann-cbor-tags-oid-03
-date: 2016-06-30
+title: Concise Binary Object Representation (CBOR) Tags and Techniques for Object Identifiers, Enumerations, Binary Entites, Regular Expressions, and Sets
+abbrev: CBOR Tags and Techniques
+docname: draft-bormann-cbor-tags-oid-04
+date: 2016-07-08
 
 stand_alone: true
 
 ipr: trust200902
 keyword: Internet-Draft
 cat: std
+updates: 7049
 
 pi: [toc, [tocdepth, 1], sortrefs, symrefs, compact, comments]
 
@@ -144,12 +145,20 @@ informative:
 The Concise Binary Object Representation (CBOR, RFC 7049) is a data
 format whose design goals include the possibility of extremely small
 code size, fairly small message size, and extensibility without the
-need for version negotiation.
+need for version negotiation. 
 
-The present document makes use of this extensibility to define
-CBOR tags «O» and «R» \[values TBD] for ASN.1 object identifiers.  It is intended
+Useful tags and techniques have
+emerged since the publication of RFC 7049;
+the present document makes use of CBOR's built-in major types to define
+and refine several useful constructs, without changing
+the wire protocol. This document adds
+object identifiers (OIDs) to CBOR with
+CBOR tags «O» and «R» \[values TBD].  It is intended
 as the reference document for the IANA registration of the CBOR tags
-so defined. This document also provides other corrections and improvements to CBOR.
+so defined. Useful techniques for enumerations, sets, and multisets
+are presented (without new tags). As the documentation for MIME
+entities (tag 36) and regular expressions (tag 35) RFC 7049
+left much out, this document provides more comprehensive specifications.
 
 --- middle
 
@@ -163,22 +172,49 @@ RFC 7049 defines a basic set of data types, as well as a tagging
 mechanism that enables extending the set of data types supported via
 an IANA registry.
 
-Many IETF protocols carry ASN.1 object identifiers, originally defined in
-1988 {{-ASN1}} and most recently in 2015 {{X.680}}.  The ASN.1 Basic Encoding Rules
-(BER, {{X.690}}) specify the binary encodings of both ASN.1 object identifiers
+Useful tags and techniques have emerged since the publication of
+{{RFC7049}}. This document makes use of CBOR's built-in major types
+to provide for several useful constructs without changing the wire protocol.
+
+The original focus of this work was to add support for object identifiers
+(OIDs, {{X.680}}), which many IETF protocols carry.
+The ASN.1 Basic Encoding Rules
+(BER, {{X.690}}) specify the binary encodings of both object identifiers
 and relative object identifiers.
 The contents of these encodings can be carried in a CBOR byte string.
-
 This document defines two CBOR tags that cover the two kinds of
-ASN.1 object identifiers encoded in this way.
+ASN.1 object identifiers encoded in this way. The tags
+can also be applied to arrays and maps for more articulated
+identification purposes.
 It is intended as the reference document for the IANA registration of
-the tags so defined.
+the tags so defined. To promote the use and usefulness
+of OIDs in CBOR, a new arc is also proposed.
 
-During development of this Internet-Draft, a couple of deficiencies
-and points of enhancement were noted. This document updates {{RFC7049}}
-to handle binary Internet messages
-natively, and provides certain techniques for efficiently
-encoding sets in CBOR.
+This document covers several useful techniques that have been
+or are being developed
+as implementers are applying CBOR to practical problems.
+Enumerations have found wide utility in CBOR, despite CBOR's
+lack of a native enumerated type. A section covers the
+advantages of choosing built-in types, with additional consideration
+for using the newly-defined object identifier types
+in enumerations. CBOR also lacks a native set type
+(in the mathematical sense of an arbitrary unordered collection of items),
+but has a more powerful
+alternative in its native map type. A section covers
+how to adapt the map type to express set and multiset semantics.
+
+Finally, this document covers the semantics of existing tags
+in {{RFC7049}} that were somewhat underspecified.
+"Tag 36 is for MIME messages", but the reference {{RFC2045}}
+actually defines a different construct, the MIME entity,
+that finds expression in a variety of message-oriented
+Internet protocols. Similarly, "Tag 35 is for regular expressions",
+but the references to Perl Compatible Regular Expressions
+(PCRE) and JavaScript syntax (ECMA-262) are not
+compatibl with each other. Two sections cover
+the subtleties of items tagged with these tags,
+and so update {{RFC7049}} without changing the basic
+CBOR wire protocol.
 
 Terminology         {#terms}
 ------------
@@ -192,7 +228,7 @@ The terminology of RFC 7049 applies; in particular
 the term "byte" is used in its now customary sense as a synonym for
 "octet".
 
-ASN.1 Object Identifiers {#oids}
+Object Identifiers {#oids}
 ========================
 
 The International Object Identifier tree {{X.660}} is
@@ -202,9 +238,9 @@ unsigned integers ("sub-identifiers")
 {{X.680}}.
 While these sequences can easily be represented in CBOR arrays of
 unsigned integers, a more compact representation can often be achieved
-by adopting the widely used representation of ASN.1 object identifiers
+by adopting the widely used representation of object identifiers
 defined in BER; this representation may also be more amenable to
-processing by other software making use of ASN.1 object identifiers.
+processing by other software making use of object identifiers.
 
 BER represents the sequence of unsigned integers by concatenating
 self-delimiting {{?RFC6256}} representations of each of the sub-identifiers
@@ -228,21 +264,21 @@ the single integer actually encoded is computed as:
 > X * 40 + Y
 
 The inverse transformation (again making use of the known ranges of X
-and Y) is applied when decoding the ASN.1 object identifier.
+and Y) is applied when decoding the object identifier.
 
 Since the semantics of absolute and relative object identifiers
 differ, this specification defines two tags:
 
-Tag «O» (value TBD): tags a byte string as the ASN.1 BER encoding of an
+Tag «O» (value TBD): tags a byte string as the {{X.690}} encoding of an
 absolute object identifier (simply "object identifier" or "OID").
 
-Tag «R» (value TBD): tags a byte string as the ASN.1 BER encoding of a
+Tag «R» (value TBD): tags a byte string as the {{X.690}} encoding of a
 relative object identifier (also "relative OID").
 
 ## Requirements on the byte string being tagged {#reqts}
 
 A byte string tagged by «O» or «R» MUST be a syntactically valid BER
-representation of an ASN.1 object identifier.  Specifically:
+representation of an object identifier.  Specifically:
 
 * its first byte, and any byte that follows a byte that has the most significant
   bit unset, MUST NOT be 0x80 (this requirement excludes expressing the
@@ -260,7 +296,8 @@ MUST check for decoding errors first.
 {{X.680}} restricts RELATIVE-OID values to have at least
 one sub-identifier (array element).
 This specification permits
-empty relative object identifiers; they may still be excluded by application semantics.
+empty relative object identifiers; they may
+still be excluded by application semantics.
 
 {{RFC7049}} permits byte strings to be indefinite-length,
 with chunks divided at arbitrary byte boundaries.
@@ -274,8 +311,87 @@ also to be treated as indivisible units: They MUST be encoded in
 definite-length form; indefinite-length form is treated as an encoding
 error (and the same considerations as above apply).
 (An added convenience is that CBOR encodings can
-be searched through efficiently for specific OIDs or relative OIDs,
+be searched through efficiently for specific object identifiers
 without initiating the decoding process.)
+
+We provide "binary regular expression" forms for implementation
+convenience. Unlike typical regular expressions that operate on
+character sequences, the following
+regular expressions take bytes as their domain, so they can be
+applied directly to CBOR byte strings.
+
+For byte strings with tag «O»:
+
+> /^((?:[\x81-\xFF][\x80-\xFF]*)?[\x00-\x7F])+$/
+
+For byte strings with tag «R»:
+
+> /^((?:[\x81-\xFF][\x80-\xFF]*)?[\x00-\x7F])*$/
+
+Putative CBOR data that fails these tests SHALL be rejected as
+improperly coded.
+
+Another (possibly more efficient) way to validate
+the byte strings is to hunt for prohibited patterns.
+
+For byte strings with tag «O»:
+
+> /^$|(?:^|[\x00-\x7F])\x80|[\x80-\xFF]$/
+
+or with lookbehind:
+
+> /^$|^\x80|(?<[\x00-\x7F])\x80|(?<[\x80-\xFF])$/
+
+For byte strings with tag «R»:
+
+> /(?:^|[\x00-\x7F])\x80|[\x80-\xFF]$/
+
+or with lookbehind:
+
+> /^\x80|(?<[\x00-\x7F])\x80|(?<[\x80-\xFF])$/
+
+Putative CBOR data that passes these tests SHALL
+be rejected as improperly coded.
+
+(It is worth pointing out that these tests, when optimally implemented,
+ought to be markedly faster than UTF-8 validation.
+It's another thing in favor of OIDs vs. text strings as identifiers.)
+
+{::comment}
+low = high bit unset (0-127)
+high = high bit set (128-255)
+
+MUST NOT:
+low 80
+or
+^ 80
+
+means:
+/(?:^|[\x00-\x7F])\x80/
+/^\x80|(?<[\x00-\x7F])\x80/
+
+MUST:
+low $
+=== MUST NOT:
+high $
+
+/[\x80-\xFF]$/
+
+/(?<[\x80-\xFF])$/
+
+Relative OID:
+/(?:^|[\x00-\x7F])\x80|[\x80-\xFF]$/
+
+/^\x80|(?<[\x00-\x7F])\x80|(?<[\x80-\xFF])$/
+
+For OID, also MUST NOT:
+^$ (empty string)
+
+/^$|(?:^|[\x00-\x7F])\x80|[\x80-\xFF]$/
+
+/^$|^\x80|(?<[\x00-\x7F])\x80|(?<[\x80-\xFF])$/
+
+{/::comment}
 
 Examples {#examples}
 ========
@@ -368,14 +484,16 @@ This relative OID saves seven bytes compared to the full OID encoding.
 Discussion {#discussion}
 ==========
 
-Staying close to the way ASN.1 object identifiers are encoded in ASN.1
-BER makes back-and-forth translation easy.  As of today, ASN.1 object
-identifiers are either used in dotted decimal form or BER form, so
+Staying close to the way object identifiers are encoded in ASN.1
+BER makes back-and-forth translation easy.  Object
+identifiers in IETF protocols
+are serialized in dotted decimal form or BER form, so
 there is an advantage in not inventing a third form.  Also,
-expectations of the cost of encoding ASN.1 object identifiers are
+expectations of the cost of encoding object identifiers are
 based on BER; using a different encoding might not be aligned with
 these expectations. If additional information about an OID is desired,
-lookup services such as the <xref target="X.672">OID Resolution Service (ORS)</xref>
+lookup services such as
+the <xref target="X.672">OID Resolution Service (ORS)</xref>
 and the <xref target="OID-INFO">OID Repository</xref> are available.
 
 This specification allocates two numbers out of the single-byte
@@ -419,7 +537,39 @@ which would be a tagged binary string.
 | ASN.1 value notation         | {1 3 6 1}    | .{6 1}     |
 {: #tab-diagnostic title="Examples for extended diagnostic notation"}
 
-Enumerations in CBOR
+A New Arc for Concise OIDs {#carc}
+============
+
+Object identifiers in {{X.690}} form are remarkably compact.
+Nevertheless, for some applications (and engineers),
+they are simply not compact enough, at least when compared
+to certain alternatives such as very small unsigned integers
+(see {{enums}}). The shortest object identifier under
+the IETF's control is 1.3.6.1 (4 bytes), although an assignment
+directly under that arc has not happened
+since 1999 {{?RFC2506}}, and no assignments
+directly under that arc have ever been assigned
+directly to protocol elements. The shortest IETF-controlled,
+First-Come, First-Served OID arc is 8 bytes
+by getting a Private Enterprise Number
+from IANA, an OID for which is assigned under 1.3.6.1.4.1.
+To promote object identifier usage in CBOR
+and to make OIDs as competitive as possible,
+(the authors / the IETF / ISOC) have secured
+a very short arc `{ x y z }` that only occupies
+(1, 2, 3) byte(s).
+
+[[NB: Registration procedures under that arc.]]
+
+The history of OIDs suggests that the human mind tends
+to excessive taxonomy around them. Unlike assignments in the
+1.3.6.1 range, this document suggests that registrants
+acquire OIDs under this short arc
+"laterally" rather than hierarchically, in keeping
+with CBOR's design goal to have concise
+serializations.
+
+Enumerations in CBOR         {#enums}
 ============
 This section provides
 a roadmap to using enumerated items in CBOR, including
@@ -460,9 +610,13 @@ are supposed to resemble their semantics, and there are
 normalization issues if the strings contain characters
 beyond the ASCII range. UTF-8 strings also comprise
 a flat namespace like integers unless the higher-level
-schema employs delimiters
-(which makes the string even larger). This section
-provides a novel alternative in OIDs.
+schema employs delimiters,
+which makes the string even larger. If conciseness
+is a design goal, other perceived
+advantages of a string as an identifier are pretty much blown out
+the moment one has to tack "https://" onto the front.
+
+This section provides a novel alternative in OIDs.
 
 ## Factors Favoring OID Enumerations
 
@@ -542,7 +696,7 @@ there is no hierarchy.
 
 3. If greater range is desired while sticking to one byte,
 a protocol designer may double the range of possible values
-by allowing negative integers -24 - -1.
+by allowing negative integers.
 However, enumerating values using negative integers may have
 unintended side-effects, because some programming environments
 (e.g., C/C++) make implementation-defined assumptions about
@@ -615,7 +769,7 @@ c7         # tag(7)
 
 Tag Factoring and Tag Stacking with OID Arrays and Maps
 ============
-A common use of OIDs in ASN.1 is to identify the kind of data
+A common use of object identifiers in ASN.1 is to identify the kind of data
 in an open type (Clause 3.8.57 of {{X.680}}), using
 information object classes {{X.681}}. CBOR
 is schema-neutral, and (although not fully discussed
@@ -1256,10 +1410,10 @@ IANA Considerations {#iana}
 IANA is requested to assign the CBOR tags in {{tab-tag-values}}, with the
 present document as the specification reference.
 
-| Tag    | Data Item   | Semantics                                           |
-| 6«TBD» | byte string | ASN.1 object identifier (absolute, in BER encoding) |
-| 7«TBD» | byte string | ASN.1 object identifier (relative, in BER encoding) |
-{: #tab-tag-values title="Values for Tags" cols="l 11eml r"}
+| Tag    | Data Item   | Semantics                                 |
+| 6«TBD» | multiple    | object identifier (BER encoding)          |
+| 7«TBD» | multiple    | relative object identifier (BER encoding) |
+{: #tab-tag-values-new title="Values for New Tags" cols="l 11eml r"}
 
 
 ## Discussion {#ianadis}
@@ -1289,7 +1443,10 @@ d8 28                            # tag(40)
 (TODO: complete.)
 IANA is requested to modify the registrations for the following CBOR tags:
 
-Tag 36.
+| Tag    | Data Item   | Semantics                  |
+| 35     | «TBD»       | regular expression «TBD»   |
+| 36     | multiple    | message or MIME entity     |
+{: #tab-tag-values-mod title="Values for Existing Tags" cols="l 11eml r"}
 
 ## New Tags
 
