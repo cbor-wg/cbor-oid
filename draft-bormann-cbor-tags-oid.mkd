@@ -107,13 +107,13 @@ informative:
       org: Orange SA
     date: 2016
   DCE-RPC:
-    title: DCE: Remote Procedure Call
+    title: "DCE: Remote Procedure Call"
     author:
       org: Open Group CAE
-      date: 1994-08
-      seriesinfo:
-        Specification: C309
-        ISBN: 1-85912-041-5
+    date: 1994-08
+    seriesinfo:
+      Specification: C309
+      ISBN: 1-85912-041-5
   PKILCAKE:
     target: http://dl.acm.org/citation.cfm?id=2163593
     title: >
@@ -567,7 +567,7 @@ and to make OIDs as competitive as possible,
 a very short arc `{ x y z }` that only occupies
 (1, 2, 3) byte(s).
 
-[[NB: Registration procedures under that arc.]]
+\[\[NB: Registration procedures under that arc.]]
 
 The history of OIDs suggests that the human mind tends
 to excessive taxonomy around them. "Excessive taxonomy"
@@ -575,7 +575,7 @@ means that while classifying purposes are served,
 the detailed taxonomy comes at the expense of
 concise encoding to the point that other implementers
 complain that the OIDs are "too long". OIDs
-also lose nmemonic properties when the arcs
+also lose mnemonic properties when the arcs
 are so long that implementers cannot keep track
 of all of the divisions.
 Unlike assignments in the
@@ -1145,7 +1145,7 @@ a complicating factor.
 6. UUIDs are human language-neutral.
 (However, unlike OIDs, UUIDs
 are too long to be described
-as nmenomic in any practical sense.)
+as mnemonic in any practical sense.)
 
 ## Factors Favoring Integer Enumerations
 
