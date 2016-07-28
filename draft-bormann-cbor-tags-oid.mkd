@@ -1,8 +1,8 @@
 ---
-title: Concise Binary Object Representation (CBOR) Tags and Techniques for Object Identifiers, Enumerations, Binary Entities, Regular Expressions, and Sets
+title: Concise Binary Object Representation (CBOR) Tags and Techniques for Object Identifiers, UUIDs, Enumerations, Binary Entities, Regular Expressions, and Sets
 abbrev: CBOR Tags and Techniques
-docname: draft-bormann-cbor-tags-oid-04
-date: 2016-07-08
+docname: draft-bormann-cbor-tags-oid-05
+date: 2016-07-28
 
 stand_alone: true
 
@@ -106,6 +106,14 @@ informative:
     author:
       org: Orange SA
     date: 2016
+  DCE-RPC:
+    title: DCE: Remote Procedure Call
+    author:
+      org: Open Group CAE
+      date: 1994-08
+      seriesinfo:
+        Specification: C309
+        ISBN: 1-85912-041-5
   PKILCAKE:
     target: http://dl.acm.org/citation.cfm?id=2163593
     title: >
@@ -140,7 +148,6 @@ informative:
 --- abstract
 
 
-
 The Concise Binary Object Representation (CBOR, RFC 7049) is a data
 format whose design goals include the possibility of extremely small
 code size, fairly small message size, and extensibility without the
@@ -155,7 +162,8 @@ object identifiers (OIDs) to CBOR with
 CBOR tags «O» and «R» \[values TBD].  It is intended
 as the reference document for the IANA registration of the CBOR tags
 so defined. Useful techniques for enumerations and sets
-are presented (without new tags). As the documentation for MIME
+are presented (without new tags). As the documentation for 
+binary UUIDs (tag 37), MIME
 entities (tag 36) and regular expressions (tag 35) RFC 7049
 left much out, this document provides more comprehensive specifications.
 
@@ -195,7 +203,8 @@ as implementers are applying CBOR to practical problems.
 Enumerations have found wide utility in CBOR, despite CBOR's
 lack of a native enumerated type. A section covers the
 advantages of choosing built-in types, with additional consideration
-for using the newly-defined object identifier types
+for using the newly-defined object identifier (OID)
+and universally unique identifier (UUID) types
 in enumerations. CBOR also lacks a native set type
 (in the mathematical sense of an arbitrary unordered collection of items),
 but has a more powerful
@@ -213,7 +222,8 @@ but the references to Perl Compatible Regular Expressions
 compatible with each other. Two sections cover
 the subtleties of items tagged with these tags,
 and so update {{RFC7049}} without changing the basic
-CBOR wire protocol.
+CBOR wire protocol. One section enhances
+UUIDs.
 
 Terminology         {#terms}
 ------------
@@ -567,205 +577,7 @@ acquire OIDs under this short arc
 with CBOR's design goal to have concise
 serializations.
 
-Enumerations in CBOR         {#enums}
-============
-This section provides
-a roadmap to using enumerated items in CBOR, including
-design considerations for choosing
-between OIDs, integers, and UTF-8 strings.
-
-CBOR does not have an ENUMERATED type like ASN.1 to identify
-named values in a protocol element with three or more states
-(Clause 20 and Clause G.2.3 of {{X.680}}).
-ASN.1 ENUMERATED turns out to be superfluous because ASN.1
-INTEGER values can get named (and have historically been used for finite,
-multistate variables, such as version numbers),
-while ASN.1 ENUMERATED types
-can be defined to be extensible with the ellipsis lexical item.
-Practically, the named integers are not serialized in the binary
-encodings anyway; they merely serve as a semantic hints for designers
-and debuggers.
-
-CBOR expects that protocol designers will use
-one of the basic major types for multistate
-variables, assigning semantics to particular values
-using higher-level schemas. The obvious choices
-for the basic types are integers (particularly
-unsigned integers) and UTF-8 strings. However,
-these major types are not without drawbacks.
-
-Integers are compact for small values, but have
-a flat namespace so there are mis-assignment
-and collision risks that can only be mitigated
-with protocol-specific registries.
-Arrays of integers are possible, but arrays require
-more processing logic for equality comparisons,
-and the JSON conversion is not intuitive when
-the enumerated value serves as a key in a map.
-
-UTF-8 strings are less compact when the strings
-are supposed to resemble their semantics, and there are
-normalization issues if the strings contain characters
-beyond the ASCII range. UTF-8 strings also comprise
-a flat namespace like integers unless the higher-level
-schema employs delimiters,
-which makes the string even larger. If conciseness
-is a design goal, other perceived
-advantages of a string as an identifier are pretty much blown out
-the moment one has to tack "https://" onto the front.
-
-This section provides a novel alternative in OIDs.
-
-## Factors Favoring OID Enumerations
-
-A protocol designer might choose OIDs or relative OIDs
-for an enumerated item in view of the following observations:
-
-1. OIDs and relative OIDs are quite compact:
-a single-arc relative OID
-encoded according to this specification
-occupies just two bytes for
-primary integer values 0-127 (excluding the semantic tag «R»),
-and three bytes for primary integer values 128-16383.
-(In contrast, an unsigned integer requires one byte
-for 0-23, two bytes for 24-255, and three bytes
-for 256-65535.)
-
-2. OIDs and relative OIDs (with base) are persistent
-and globally unambiguous.
-
-3. OIDs and relative OIDs have built-in semantics
-for designers and debuggers. Specifically,
-the advent of universal OID repositories such as
-{{OID-INFO}} makes it easy for a designer
-or debugger to pull up useful information
-about the object of interest (Clause 3.5.10 of {{X.660}}).
-This useful information (for humans) does not have to bleed
-into the encoded representation (for machines).
-
-4. OIDs and relative OIDs are always compared for
-exact equality: no need to deal with case folding,
-case sensitivity, or other normalization issues.
-("Overlong" encodings are PROHIBITED; therefore
-overlong encodings MUST be treated as coding errors.)
-
-5. OIDs and relative OIDs have a built-in hierarchy,
-so if implementers want to extend an enumeration
-without assigning new values "horizontally", they
-have the option of assigning new values "vertically",
-possibly with more or less stringent assignment rules.
-
-6. Because OIDs and relative OIDs (with base)
-are part of the so-called International Object Identifier tree
-{{X.660}}, any other protocol specification can reuse
-the enumeration if the designers find it useful.
-
-7. OIDs and relative OIDs have natural JSON
-representations in the dotted decimal notations
-prescribed in {{diagnostic}}. OIDs and relative
-OIDs can be distinguished from each other
-by the presence or absence of the leading dot ".".
-As the resulting JSON string is entirely numeric
-in the ASCII range, case and normalization are irrelevant to the comparison.
-(An object identifier also has a semantic string
-representation in the form of an OID-IRI {{X.680}},
-for those who really want that type of thing.)
-
-8. OIDs and relative OIDs are human language-neutral.
-A protocol designer working in US-English might
-name an enumerated value "sig" for "signature", but "sig"
-could also stand for "significand", "signal", or
-"special interest group".
-In Swedish and Norwegian, "sig" is a pronoun
-that means "himself, herself, itself, one, them",
-etc.&mdash;an entirely different meaning.
-
-## Factors Favoring Integer Enumerations
-
-A protocol designer might choose integers
-for an enumerated item in view of the following observations:
-
-1. The CBOR encoding of unsigned integers 0-23 is the most
-compact, occupying exactly one byte (excluding any semantic tags).
-
-2. A protocol designer may wish to prohibit extensibility
-as a matter of course. Integers comprise a single flat namespace:
-there is no hierarchy.
-
-3. If greater range is desired while sticking to one byte,
-a protocol designer may double the range of possible values
-by allowing negative integers.
-However, enumerating values using negative integers may have
-unintended side-effects, because some programming environments
-(e.g., C/C++) make implementation-defined assumptions about
-the number of bits needed for an enumerated type.
-
-## Factors Favoring UTF-8 String Enumerations
-
-A protocol designer might choose UTF-8 strings
-for an enumerated item in view of the following observations:
-
-1. A specification can practically limit the content of UTF-8 strings
-   to the ASCII range (or narrower), mitigating
-   some normalization problems.
-
-2. UTF-8 strings are easier to read on-the-wire for humans.
-
-3. UTF-8 strings can contain arbitrary textual identifiers, which
-   can be hierarchical, e.g., URIs.
-
-## OID Enumeration Example
-
-An enumerated item indicates the revision level of a data format.
-Revision levels are issued by year, such as 2011, 2012, etc.
-However, in the year 2013, two revisions were issued: the first
-one and an important update in June that needs to be distinguished.
-The revision levels are assigned to some OID arc:
-
-`{2 25 6464646464 revs(4)}`
-
-In this arc, the following sub-arcs are assigned:
-
-| Sub-Arc            |
-| {v2011(1)}         |
-| {v2012(2)}         |
-| {v2013(3)}         |
-| {v2013(3) june(6)} |
-| {v2014(4)}         |
-| {v2015(5)}         |
-{: #tab-oid-enum-sub-arcs title="Example Sub-Arcs" cols="l"}
-
-In CBOR, the enumeration is encoded as a relative OID.
-The schema specifies the base OID arc, which is omitted:
-
-~~~~~~~~~~~
-c7         # tag(7)
-   41 03   # .3
-
-c7         # tag(7)
-   42 0306 # .3.6
-~~~~~~~~~~~
-{: #fig-enum-cbor title="Enumerated Items in CBOR"}
-
-~~~~~~~~~~~
-.3
-.{v2013(3) june(6)}
-~~~~~~~~~~~
-{: #fig-enum-cbor-diag title="Enumerated Items in CBOR Diagnostic Notation"}
-
-~~~~~~~~~~~
-".3"
-".3.6"
-~~~~~~~~~~~
-{: #fig-enum-json-1 title="Enumerated Items in JSON (possibility 1)"}
-
-~~~~~~~~~~~
-"v2013"
-"v2013/june"
-~~~~~~~~~~~
-{: #fig-enum-json-2 title="Enumerated Items in JSON (possibility 2)"}
-
-Tag Factoring and Tag Stacking with OID Arrays and Maps
+Tag Factoring and Tag Stacking with OID Arrays and Maps {#tfs}
 ============
 A common use of object identifiers in ASN.1 is to identify the kind of data
 in an open type (Clause 3.8.57 of {{X.680}}), using
@@ -1090,6 +902,327 @@ street=532 S Olive St,l=Los Angeles+postalCode=90013+st=CA,c=US
 ~~~~~~~~~~~
 {: #fig-dn-ldap title="Distinguished Name, in LDAP String Encoding (121 bytes)"}
 
+Universally Unique Identifiers in CBOR {#uuid}
+============
+This section provides guidance on the Universally Unique
+Identifier (UUID) type, which was introduced into CBOR
+with tag «U» (currently tag 37, reassignment to be discussed
+in view of this section). A UUID {{!RFC4122}} is 128 bits long
+and requires no central registration process.
+UUIDs were originally used in the Apollo Network Computing System
+and later in the Open Software Foundation's (OSF) Distributed
+Computing Environment (DCE), for Remote Procedure Calls (RPC)
+{{DCE-RPC}}.
+{::comment}
+Actually publication C309 (1994) is old. Publication C706,
+DCE 1.1: Remote Procedure Call (1997), seems a bit newer, and
+MAY be the same as ISO/IEC 11578: Information technology - Open
+Systems Interconnection - Remote Procedure Call (RPC).
+{:/comment}
+
+As a tagged binary string identifier type in CBOR, the
+UUID type
+shares several characteristics with OID types. The main
+differences are that a UUID is always 16 bytes
+(anything less or more is a coding error), there is
+no central assignment process, and
+every 128-bit combination is valid.
+({{!RFC4122}} calls out the nil UUID, which is special
+but perfectly valid.)
+Optional registries have cropped up over the years;
+one such registry is {{OID-INFO}}.
+Users who use UUIDs in CBOR are strongly encouraged
+to document their UUIDs in such registries.
+
+To provide parity with OIDs, UUIDs
+MUST be encoded in definite-length form
+(see {{oids}}). Consequently, individual UUIDs can be easily searched
+for by looking for `d8 25` (major type 6, tag 37),
+`50` (major type 2, additional information 16),
+and 16 bytes. Therefore, a directly encoded UUID
+in CBOR occupies 19 bytes. In contrast, stuffing
+a UUID in an OID in CBOR requires 22 bytes (see {{fig-uuid-cbor}});
+conversion between OID-UUID form and binary or string UUID forms
+requires bit-shifting (but mercifcully not base-shifting, see
+{{bdconv}}). An example based on {{fig-uuid-cbor}} is below:
+
+~~~~~~~~~~~
+D8 25                             # tag(37)
+   54                             # 0b010_10000: mt 2, 16 bytes
+      8B 0D 1A 20 DC C5 11 D9 BD A9 00 02 A5 D5 C5 1B
+~~~~~~~~~~~
+{: #fig-uuid2-cbor title="Binary UUID in CBOR"}
+
+## Diagnostic Notation
+
+Implementers will likely want to see UUIDs in their "natural forms"
+for diagnostic purposes. Accordingly, this section defines additional
+syntactic elements that can be used in conjunction with the diagnostic
+notation described in Section 6 of {{RFC7049}}.
+
+A universally unique identifier may be written in "string representation"
+as that term is defined in {{!RFC4122}}. An example
+of such a string is `8b0d1a20-dcc5-11d9-bda9-0002a5d5c51b`
+(see {{fig-uuid-cbor}} and {{fig-uuid2-cbor}}). Lowercase
+is the preferred form.
+(TBD: permit, require, or prohibit curly brace form?)
+
+The notation in this section may be employed in addition to the basic notation,
+which would be a tagged binary string.
+
+## Tag Factoring and Tag Stacking
+
+Tag Factoring and Tag Stacking are hereby permitted
+with the UUID type, with the same semantics as {{tfs}}.
+
+Enumerations in CBOR         {#enums}
+============
+This section provides
+a roadmap to using enumerated items in CBOR, including
+design considerations for choosing
+between OIDs, UUIDs, integers, and UTF-8 strings.
+
+CBOR does not have an ENUMERATED type like ASN.1 to identify
+named values in a protocol element with three or more states
+(Clause 20 and Clause G.2.3 of {{X.680}}).
+ASN.1 ENUMERATED turns out to be superfluous because ASN.1
+INTEGER values can get named (and have historically been used for finite,
+multistate variables, such as version numbers),
+while ASN.1 ENUMERATED types
+can be defined to be extensible with the ellipsis lexical item.
+Practically, the named integers are not serialized in the binary
+encodings anyway; they merely serve as a semantic hints for designers
+and debuggers.
+
+CBOR expects that protocol designers will use
+one of the basic major types for multistate
+variables, assigning semantics to particular values
+using higher-level schemas. The obvious choices
+for the basic types are integers (particularly
+unsigned integers) and UTF-8 strings. However,
+these major types are not without drawbacks.
+
+Integers are compact for small values, but have
+a flat namespace so there are mis-assignment
+and collision risks that can only be mitigated
+with protocol-specific registries.
+Arrays of integers are possible, but arrays require
+more processing logic for equality comparisons,
+and the JSON conversion is not intuitive when
+the enumerated value serves as a key in a map.
+
+UTF-8 strings are less compact when the strings
+are supposed to resemble their semantics, and there are
+normalization issues if the strings contain characters
+beyond the ASCII range. UTF-8 strings also comprise
+a flat namespace like integers unless the higher-level
+schema employs delimiters,
+which makes the string even larger. If conciseness
+is a design goal, other perceived
+advantages of a string as an identifier are pretty much blown out
+the moment one has to tack `https://` onto the front.
+
+This section provides novel alternatives in OIDs and UUIDs.
+It compares and contrasts these binary types to other enumerants,
+namely integers and text (UTF-8) strings.
+
+## Factors Favoring OID Enumerations
+
+A protocol designer might choose OIDs or relative OIDs
+for an enumerated item in view of the following observations:
+
+1. OIDs and relative OIDs are quite compact:
+a single-arc relative OID
+encoded according to this specification
+occupies just two bytes for
+primary integer values 0-127 (excluding the semantic tag «R»),
+and three bytes for primary integer values 128-16383.
+(In contrast, an unsigned integer requires one byte
+for 0-23, two bytes for 24-255, and three bytes
+for 256-65535.)
+
+2. OIDs and relative OIDs (with base) are persistent
+and globally unambiguous.
+
+3. OIDs and relative OIDs have built-in semantics
+for designers and debuggers. Specifically,
+the advent of universal OID repositories such as
+{{OID-INFO}} makes it easy for a designer
+or debugger to pull up useful information
+about the object of interest (Clause 3.5.10 of {{X.660}}).
+This useful information (for humans) does not have to bleed
+into the encoded representation (for machines).
+
+4. OIDs and relative OIDs are always compared for
+exact equality: no need to deal with case folding,
+case sensitivity, or other normalization issues.
+("Overlong" encodings are PROHIBITED; therefore
+overlong encodings MUST be treated as coding errors.)
+
+5. OIDs and relative OIDs have a built-in hierarchy,
+so if implementers want to extend an enumeration
+without assigning new values "horizontally", they
+have the option of assigning new values "vertically",
+possibly with more or less stringent assignment rules.
+
+6. Because OIDs and relative OIDs (with base)
+are part of the so-called International Object Identifier tree
+{{X.660}}, any other protocol specification can reuse
+the enumeration if the designers find it useful.
+
+7. OIDs and relative OIDs have natural JSON
+representations in the dotted decimal notations
+prescribed in {{diagnostic}}. OIDs and relative
+OIDs can be distinguished from each other
+by the presence or absence of the leading dot ".".
+As the resulting JSON string is entirely numeric
+in the ASCII range, case and normalization are irrelevant to the comparison.
+(An object identifier also has a semantic string
+representation in the form of an OID-IRI {{X.680}},
+for those who really want that type of thing.)
+
+8. OIDs and relative OIDs are human language-neutral.
+A protocol designer working in US-English might
+name an enumerated value "sig" for "signature", but "sig"
+could also stand for "significand", "signal", or
+"special interest group".
+In Swedish and Norwegian, "sig" is a pronoun
+that means "himself, herself, itself, one, them",
+etc.&mdash;an entirely different meaning.
+
+## Factors Favoring UUID Enumerations
+
+A Universally Unique Identifier (UUID) is
+a 128-bit identifier that is unique
+across both space and time with a very high
+degree of probability; one intent is to identify
+"very persistent objects across a network",
+such as remote procedure call interfaces
+{{DCE-RPC}}.
+
+A protocol designer might choose UUIDs for 
+an enumerated item in view of the following observations:
+
+1. UUIDs are always 16 bytes. This means that
+while they are not particularly short, they also cannot
+be overly long. Space is constant and predictable.
+(As great as OIDs are, an OID that exceeds 17 bytes
+is simply excessive compared to a randomly-assigned
+UUID.)
+
+2. Any 128-bit combination is a valid UUID. The other
+types in this section have to be validated, even
+integers (e.g., to avoid overflow and out-of-range conditions).
+
+3. There is no registration authority that serves
+as a roadblock, and (for all practical purposes)
+no semantic or aesthetic values are implied by lower
+bit combinations.
+
+4. Many platforms can compare UUIDs (128-bit values)
+in one atomic operation. The comparison
+can be done without regard to endianness,
+provided that the endianness is the same between two
+UUIDs in memory. (On the wire, a CBOR UUID is big-endian.)
+For this reason, UUIDs may be faster than
+(naïve) integer enumerations.
+
+5. UUIDs have natural JSON representations
+in the string representations prescribed by {{!RFC4122}}.
+The resulting JSON strings are entirely in the ASCII range
+and occupy exactly 36 characters;
+however, normalization (to lowercase) is
+a complicating factor.
+
+6. UUIDs are human language-neutral.
+(However, unlike OIDs, UUIDs
+are too long to be described
+as nmenomic in any practical sense.)
+
+## Factors Favoring Integer Enumerations
+
+A protocol designer might choose integers
+for an enumerated item in view of the following observations:
+
+1. The CBOR encoding of unsigned integers 0-23 is the most
+compact, occupying exactly one byte (excluding any semantic tags).
+
+2. A protocol designer may wish to prohibit extensibility
+as a matter of course. Integers comprise a single flat namespace:
+there is no hierarchy.
+
+3. If greater range is desired while sticking to one byte,
+a protocol designer may double the range of possible values
+by allowing negative integers.
+However, enumerating values using negative integers may have
+unintended side-effects, because some programming environments
+(e.g., C/C++) make implementation-defined assumptions about
+the number of bits needed for an enumerated type.
+
+## Factors Favoring UTF-8 String Enumerations
+
+A protocol designer might choose UTF-8 strings
+for an enumerated item in view of the following observations:
+
+1. A specification can practically limit the content of UTF-8 strings
+   to the ASCII range (or narrower), mitigating
+   some normalization problems.
+
+2. UTF-8 strings are easier to read on-the-wire for humans.
+
+3. UTF-8 strings can contain arbitrary textual identifiers, which
+   can be hierarchical, e.g., URIs.
+
+## OID Enumeration Example
+
+An enumerated item indicates the revision level of a data format.
+Revision levels are issued by year, such as 2011, 2012, etc.
+However, in the year 2013, two revisions were issued: the first
+one and an important update in June that needs to be distinguished.
+The revision levels are assigned to some OID arc:
+
+`{2 25 6464646464 revs(4)}`
+
+In this arc, the following sub-arcs are assigned:
+
+| Sub-Arc            |
+| {v2011(1)}         |
+| {v2012(2)}         |
+| {v2013(3)}         |
+| {v2013(3) june(6)} |
+| {v2014(4)}         |
+| {v2015(5)}         |
+{: #tab-oid-enum-sub-arcs title="Example Sub-Arcs" cols="l"}
+
+In CBOR, the enumeration is encoded as a relative OID.
+The schema specifies the base OID arc, which is omitted:
+
+~~~~~~~~~~~
+c7         # tag(7)
+   41 03   # .3
+
+c7         # tag(7)
+   42 0306 # .3.6
+~~~~~~~~~~~
+{: #fig-enum-cbor title="Enumerated Items in CBOR"}
+
+~~~~~~~~~~~
+.3
+.{v2013(3) june(6)}
+~~~~~~~~~~~
+{: #fig-enum-cbor-diag title="Enumerated Items in CBOR Diagnostic Notation"}
+
+~~~~~~~~~~~
+".3"
+".3.6"
+~~~~~~~~~~~
+{: #fig-enum-json-1 title="Enumerated Items in JSON (possibility 1)"}
+
+~~~~~~~~~~~
+"v2013"
+"v2013/june"
+~~~~~~~~~~~
+{: #fig-enum-json-2 title="Enumerated Items in JSON (possibility 2)"}
 
 Binary Internet Messages and MIME Entities
 ============
@@ -1444,6 +1577,7 @@ IANA is requested to modify the registrations for the following CBOR tags:
 | Tag    | Data Item   | Semantics                  |
 | 35     | «TBD»       | regular expression «TBD»   |
 | 36     | multiple    | message or MIME entity     |
+| 37     | multiple    | binary UUID                |
 {: #tab-tag-values-mod title="Values for Existing Tags" cols="l 11eml r"}
 
 ## New Tags
@@ -1474,7 +1608,7 @@ security considerations for non-trivial representation conversions
 apply; the integers of the sub-identifiers need to be handled as
 unlimited-range integers (cf. {{fig-uuid-cbor}}).
 
-Conversions Between BER and Dotted Decimal Notation
+Conversions Between BER and Dotted Decimal Notation {#bdconv}
 ------------
 
 {{PKILCAKE}} uncovers exploit vectors for the illegal values above,
