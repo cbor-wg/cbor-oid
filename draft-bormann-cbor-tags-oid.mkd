@@ -184,7 +184,7 @@ Useful tags and techniques have emerged since the publication of
 to provide for several useful constructs without changing the wire protocol.
 
 The original focus of this work was to add support for object identifiers
-(OIDs, {{X.680}}), which many IETF protocols carry.
+(OIDs, {{X.660}}), which many IETF protocols carry.
 The ASN.1 Basic Encoding Rules
 (BER, {{X.690}}) specify the binary encodings of both object identifiers
 and relative object identifiers.
@@ -243,7 +243,7 @@ Object Identifiers {#oids}
 The International Object Identifier tree {{X.660}} is
 a hierarchically managed space of
 identifiers, each of which is uniquely represented as a sequence of
-unsigned integers ("sub-identifiers")
+primary integer values
 {{X.680}}.
 While these sequences can easily be represented in CBOR arrays of
 unsigned integers, a more compact representation can often be achieved
@@ -252,8 +252,8 @@ defined in BER; this representation may also be more amenable to
 processing by other software making use of object identifiers.
 
 BER represents the sequence of unsigned integers by concatenating
-self-delimiting {{?RFC6256}} representations of each of the sub-identifiers
-in sequence.
+self-delimiting {{?RFC6256}} representations of each of the
+primary integer values in sequence.
 
 ASN.1 distinguishes absolute object identifiers (ASN.1 Type `OBJECT IDENTIFIER`),
 which begin at a root arc ({{X.660}} Clause 3.5.21), from relative object
@@ -291,9 +291,9 @@ representation of an object identifier.  Specifically:
 
 * its first byte, and any byte that follows a byte that has the most significant
   bit unset, MUST NOT be 0x80 (this requirement excludes expressing the
-  sub-identifiers with anything but the shortest form)
+  primary integer values with anything but the shortest form)
 * its last byte MUST NOT have the most significant bit set (this
-  requirement excludes an incomplete final sub-identifier)
+  requirement excludes an incomplete final primary integer value)
 
 If either of these invalid conditions are encountered, they MUST be
 treated as decoding errors. Comparing two OIDs or relative OIDs for
@@ -303,7 +303,7 @@ them is a local constant); a process implementing an exclusion list
 MUST check for decoding errors first.
 
 {{X.680}} restricts RELATIVE-OID values to have at least
-one sub-identifier (array element).
+one arc.
 This specification permits
 empty relative object identifiers; they may
 still be excluded by application semantics.
@@ -570,7 +570,15 @@ a very short arc `{ x y z }` that only occupies
 [[NB: Registration procedures under that arc.]]
 
 The history of OIDs suggests that the human mind tends
-to excessive taxonomy around them. Unlike assignments in the
+to excessive taxonomy around them. "Excessive taxonomy"
+means that while classifying purposes are served,
+the detailed taxonomy comes at the expense of
+concise encoding to the point that other implementers
+complain that the OIDs are "too long". OIDs
+also lose nmemonic properties when the arcs
+are so long that implementers cannot keep track
+of all of the divisions.
+Unlike assignments in the
 1.3.6.1 range, this document suggests that registrants
 acquire OIDs under this short arc
 "laterally" rather than hierarchically, in keeping
@@ -1605,8 +1613,8 @@ processing of this kind (e.g., converting into dotted notation and
 back) unless absolutely necessary.
 If the OIDs are translated into other representations, the usual
 security considerations for non-trivial representation conversions
-apply; the integers of the sub-identifiers need to be handled as
-unlimited-range integers (cf. {{fig-uuid-cbor}}).
+apply; the primary integer values are unlimited in range
+(cf. {{fig-uuid-cbor}}).
 
 Conversions Between BER and Dotted Decimal Notation {#bdconv}
 ------------
