@@ -1,8 +1,8 @@
 ---
 title: Concise Binary Object Representation (CBOR) Tags and Techniques for Object Identifiers, UUIDs, Enumerations, Binary Entities, Regular Expressions, and Sets
 abbrev: CBOR Tags and Techniques
-docname: draft-bormann-cbor-tags-oid-05
-date: 2016-07-28
+docname: draft-bormann-cbor-tags-oid-06
+date: 2017-03-13
 
 stand_alone: true
 
@@ -1631,6 +1631,17 @@ are well-known in the art; their application to this field is left
 as an exercise to the reader.
 
 --- back
+
+Changes from -05 to -06
+============
+
+Refreshed the draft to the current date ("keep-alive").
+
+Changes from -04 to -05
+============
+
+Discussed UUID usage in CBOR, and incorporated fixes
+proposed by Olivier Dubuisson, including fixes regarding OID nomenclature.
 
 Changes from -03 to -04
 ============
