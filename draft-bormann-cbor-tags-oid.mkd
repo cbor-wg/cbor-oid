@@ -84,15 +84,6 @@ informative:
     date: 2010-08
     seriesinfo:
       ITU-T: Recommendation X.672
-  X.681:
-    title: >
-      Information technology — Abstract Syntax Notation One (ASN.1):
-      Information object specification
-    author:
-      org: International Telecommunications Union
-    date: 2015-08
-    seriesinfo:
-      ITU-T: Recommendation X.681
   PCRE:
       target: http://www.pcre.org/
       title: PCRE - Perl Compatible Regular Expressions
@@ -200,19 +191,20 @@ differ, this specification defines two tags:
 Tag TBD111: tags a byte string as the {{X.690}} encoding of an
 absolute object identifier (simply "object identifier" or "OID").
 
-Tag TBD110: tags a byte string as the {{X.690}} encoding of a
-relative object identifier (also "relative OID").  Since the encoding is
-the same, this tag can also be used for tagging a byte string that
-contains a sequence of zero or more {{-sdnv}} Self-Delimiting
-Numeric Values (SDNVs).
+Tag TBD110: tags a byte string as the {{X.690}} encoding of a relative
+object identifier (also "relative OID").  Since the encoding of each
+number is the same as for {{-sdnv}} Self-Delimiting Numeric Values
+(SDNVs), this tag can also be used for tagging a byte string that
+contains a sequence of zero or more SDNVs.
 
 ## Requirements on the byte string being tagged {#reqts}
 
 A byte string tagged by TBD111 or TBD110 MUST be a syntactically valid BER
 representation of an object identifier: A concatenation of zero or
-more SDNV values, where each SDNV value is a sequence of bytes that
+more SDNV values, where each SDNV value is a sequence of one or more bytes that
 all have their most significant bit set, except for the last byte,
-and where the first byte cannot be 0x80.
+where it must be unset; the first byte of each SDNV cannot be 0x80
+(which would be a leading zero in SDNV's base-128 arithmetic).
 
 In other words:
 
@@ -231,9 +223,9 @@ This specification permits
 empty relative object identifiers; they may
 still be excluded by application semantics.
 
-Do enable the search for specific object ID values, it is RECOMMENDED
-that definite length encoding (see Section 2.2.2 of {{-cbor}}) is used for the byte strings used as
-tag content for these tags.
+To enable the search for specific object ID values, it is RECOMMENDED
+that definite length encoding (see Section 2.2.2 of {{-cbor}}) is used
+for the byte strings used as tag content for these tags.
 
 The valid set of byte strings can also be expressed using regular
 expressions on bytes, using no specific notation but resembling
@@ -258,8 +250,8 @@ Examples {#examples}
 ## Encoding of the SHA-256 OID
 
 ASN.1 Value Notation:
-: { joint-iso-itu-t(2) country(16) us(840) organization(1) gov(101)\\
-        csor(3) nistalgorithm(4) hashalgs(2) sha256(1) }
+: { joint-iso-itu-t(2) country(16) us(840) organization(1) gov(101)
+    csor(3) nistalgorithm(4) hashalgs(2) sha256(1) }
 
 Dotted Decimal Notation:
 : 2.16.840.1.101.3.4.2.1
@@ -322,25 +314,11 @@ expectations of the cost of encoding object identifiers are
 based on BER; using a different encoding might not be aligned with
 these expectations. If additional information about an OID is desired,
 lookup services such as
-the <xref target="X.672">OID Resolution Service (ORS)</xref>
-and the <xref target="OID-INFO">OID Repository</xref> are available.
+the [OID Resolution Service (ORS)](#X.672)
+and the [OID Repository](#OID-INFO) are available.
 
-Tag Factoring and Tag Stacking with OID Arrays and Maps {#tfs}
+Tag Factoring with OID Arrays and Maps {#tfs}
 ============
-A common use of object identifiers in ASN.1 is to identify the kind of data
-in an open type (Clause 3.8.57 of {{X.680}}), using
-information object classes {{X.681}}. CBOR
-is schema-neutral, and (although not fully discussed
-in {{RFC7049}}) semantic tagging was originally
-intended to identify items
-in a global, context-free way
-(i.e., where a specification would not repurpose
-a tag with different semantics than its IANA
-registration). Therefore,
-using OIDs to identify contextual data
-in a similar fashion to {{X.681}} is RECOMMENDED.
-
-## Tag Factoring
 
 TBD111 and TBD110 can tag CBOR arrays and maps. The idea is that
 the tag is factored out from each individual byte string;
@@ -348,19 +326,26 @@ the tag is placed in front of the array or map instead.
 The tags TBD111 and TBD110 are left-distributive.
 
 When the TBD111 or TBD110 tag is applied to an array, it means
-that the respective tag is imputed to all items in the array.
+that the respective tag is imputed to all items in the array that are
+byte strings.
 For example, when the array is tagged with TBD111,
 every array item that is a binary string
 is an OID.
 
 When the TBD111 or TBD110 tag is applied to a map, it means that
-the respective tag is imputed to all keys in the map.
+the respective tag is imputed to all keys in the map that are byte strings.
 The values in the map are not considered specially tagged.
 
-Array and map stacking is permitted. For example,
+Array and map nesting is permitted. For example,
 a 3-dimensional array of OIDs can be composed by using
 a single TBD111 tag, followed by an array of arrays of arrays
-of binary strings. All such binary strings are considered OIDs.
+of binary strings. All such binary strings are considered OIDs.[^1]
+
+[^1]: That was part of the original proposal.  I find it hard to
+    imagine how to stop the influence of the tag deep into a nested
+    structure.  That's why I would rather limit this to one level (no
+    nesting).  But see the Figure below, which needs a nesting of two.
+    Please discuss.
 
 Applications and Examples of OIDs
 ============
@@ -369,15 +354,15 @@ Applications and Examples of OIDs
 
 Consider the X.500 distinguished name:
 
-| Attribute Types                                                               | Attribute Values                     |
-| c (2.5.4.6)                                                                   | US                                   |
-| l (2.5.4.7)<br/>s (2.5.4.8)<br/>postalCode (2.5.4.17)             | Los Angeles<br/>CA<br/>90013 |
-| street (2.5.4.9)                                                              | 532 S Olive St                       |
-| businessCategory (2.5.4.15)<br/>buildingName (0.9.2342.19200300.100.1.48) | Public Park<br/>Pershing Square  |
+| Attribute Types                                                           | Attribute Values                |
+| c (2.5.4.6)                                                               | US                              |
+| l (2.5.4.7)<br/>s (2.5.4.8)<br/>postalCode (2.5.4.17)                     | Los Angeles<br/>CA<br/>90013    |
+| street (2.5.4.9)                                                          | 532 S Olive St                  |
+| businessCategory (2.5.4.15)<br/>buildingName (0.9.2342.19200300.100.1.48) | Public Park<br/>Pershing Square |
 {: #tab-dn-data title="Example X.500 Distinguished Name"
    cols="l l" style="all"}
 
-{{tab-dn-data}} has four RDNs. The country and street RDNs are single-valued.
+{{tab-dn-data}} has four "relative distinguished names" (RDNs). The country and street RDNs are single-valued.
 The second and fourth RDNs are multi-valued.
 
 The equivalent representations in CBOR diagnostic notation and CBOR are:
@@ -427,7 +412,38 @@ d8 6f                                      # tag(111)
 (This example encoding assumes that all attribute values are UTF-8 strings,
 or can be represented as UTF-8 strings with no loss of information.)
 
+CDDL Control Operators {#control}
+===================
 
+CDDL specifications may want to specify the use of SDNVs or SDNV
+sequences (as defined for the tag content for TBD110).  This document
+introduces two new control operators that can be applied to a target
+value that is a byte string:
+
+* `.sdnv`, with a control type that contains unsigned integers.  The
+  byte string is specified to be encoded as an {{-sdnv}} SDNV (BER
+  encoding) for the matching values of the control type.
+
+* `.sdnvseq`, with a control type that contains arrays of unsigned
+  integers.  The byte string is specified to be encoded as a sequence
+  of {{-sdnv}} SDNVs (BER encoding) that decodes to an array of
+  unsigned integers matching the control type.
+
+{{fig-dn-cddl}} shows an example for the use of `.sdnvseq` for a part
+of a structure using OIDs that could be used in {{fig-dn-cbor}}.[^2]
+
+[^2]: We could define another control operator that includes the
+    X*40+Y magic, so the example can actually use "\[2, 5, 4, 6]".  We
+    could also add an operator that parses dotted decimal integer
+    sequences, so we can use "2.5.4.6".  I don't see a strong reason
+    for that.
+
+~~~ cddl
+country-rdn = {country-oid => country-value}
+country-oid = bytes .sdnvseq [85, 4, 6]
+country-value = text .size 2
+~~~
+{: #fig-dn-cddl title="Using .sdnvseq"}
 
 IANA Considerations {#iana}
 ============
@@ -441,6 +457,18 @@ present document as the specification reference.
 | TBD111 | multiple  | object identifier (BER encoding)                                        |
 | TBD110 | multiple  | relative object identifier (BER encoding); <br/>SDNV {{-sdnv}} sequence |
 {: #tab-tag-values-new title="Values for New Tags" cols="l 11eml r"}
+
+## CDDL Control Operators
+
+
+IANA is requested to assign the CDDL Control Operators in
+{{tab-operators-new}}, with the present document as the specification
+reference.
+
+| Name     | Reference                     |
+| .sdnv    | \[this document, {{control}}] |
+| .sdnvseq | \[this document, {{control}}] |
+{: #tab-operators-new title="New CDDL Operators"}
 
 
 Security Considerations
@@ -482,26 +510,30 @@ as an exercise to the reader.
 
 --- back
 
+Change Log
+==========
+{: removeInRFC="true"}
+
 Changes from -06 to -07
-=======================
+---------------------------------
 
 Reduce the draft back to its basic mandate: Describe CBOR tags for
-ASN.1 Object IDs.
+what is colloquially know as ASN.1 Object IDs.
 
 
 Changes from -05 to -06
-============
+---------------------------------
 
 Refreshed the draft to the current date ("keep-alive").
 
 Changes from -04 to -05
-============
+---------------------------------
 
 Discussed UUID usage in CBOR, and incorporated fixes
 proposed by Olivier Dubuisson, including fixes regarding OID nomenclature.
 
 Changes from -03 to -04
-============
+---------------------------------
 
 Changes occurred based on limited feedback, mainly centered around
 the abstract and introduction, rather than substantive
@@ -524,7 +556,7 @@ technical changes. These changes include:
 
 
 Changes from -02 to -03
-============
+---------------------------------
 
 Many significant changes occurred in this version. These changes include:
 
@@ -547,5 +579,5 @@ Many significant changes occurred in this version. These changes include:
  -->
 <!--  LocalWords:  signedness endianness ASN BER encodings OIDs OID
  -->
-<!--  LocalWords:  Implementers
+<!--  LocalWords:  Implementers SDNV SDNVs repurpose SDNV's UTF
  -->

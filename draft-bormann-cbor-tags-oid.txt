@@ -5,8 +5,8 @@
 Network Working Group                                         C. Bormann
 Internet-Draft                                    Universität Bremen TZI
 Intended status: Standards Track                              S. Leonard
-Expires: 1 January 2021                                    Penango, Inc.
-                                                            30 June 2020
+Expires: 4 January 2021                                    Penango, Inc.
+                                                             3 July 2020
 
 
 Concise Binary Object Representation (CBOR) Tags for Object Identifiers
@@ -38,7 +38,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 1 January 2021.
+   This Internet-Draft will expire on 4 January 2021.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Bormann & Leonard        Expires 1 January 2021                 [Page 1]
+Bormann & Leonard        Expires 4 January 2021                 [Page 1]
 
-Internet-Draft             CBOR Tags for OIDs                  June 2020
+Internet-Draft             CBOR Tags for OIDs                  July 2020
 
 
    extracted from this document must include Simplified BSD License text
@@ -68,19 +68,16 @@ Table of Contents
    2.  Object Identifiers  . . . . . . . . . . . . . . . . . . . . .   3
    3.  Examples  . . . . . . . . . . . . . . . . . . . . . . . . . .   5
    4.  Discussion  . . . . . . . . . . . . . . . . . . . . . . . . .   6
-   5.  Tag Factoring and Tag Stacking with OID Arrays and Maps . . .   6
-   6.  Applications and Examples of OIDs . . . . . . . . . . . . . .   7
-   7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   8
-   8.  Security Considerations . . . . . . . . . . . . . . . . . . .   9
-   9.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   9
-     9.1.  Normative References  . . . . . . . . . . . . . . . . . .  10
-     9.2.  Informative References  . . . . . . . . . . . . . . . . .  10
-   Appendix A.  Changes from -06 to -07  . . . . . . . . . . . . . .  11
-   Appendix B.  Changes from -05 to -06  . . . . . . . . . . . . . .  11
-   Appendix C.  Changes from -04 to -05  . . . . . . . . . . . . . .  11
-   Appendix D.  Changes from -03 to -04  . . . . . . . . . . . . . .  11
-   Appendix E.  Changes from -02 to -03  . . . . . . . . . . . . . .  12
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  12
+   5.  Tag Factoring with OID Arrays and Maps  . . . . . . . . . . .   6
+   6.  Applications and Examples of OIDs . . . . . . . . . . . . . .   6
+   7.  CDDL Control Operators  . . . . . . . . . . . . . . . . . . .   8
+   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   9
+   9.  Security Considerations . . . . . . . . . . . . . . . . . . .  10
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  10
+     10.1.  Normative References . . . . . . . . . . . . . . . . . .  11
+     10.2.  Informative References . . . . . . . . . . . . . . . . .  11
+   Appendix A.  Change Log . . . . . . . . . . . . . . . . . . . . .  12
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  13
 
 1.  Introduction
 
@@ -101,19 +98,6 @@ Table of Contents
    intended as the reference document for the IANA registration of the
    tags so defined.
 
-
-
-
-
-
-
-
-
-Bormann & Leonard        Expires 1 January 2021                 [Page 2]
-
-Internet-Draft             CBOR Tags for OIDs                  June 2020
-
-
 1.1.  Terminology
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
@@ -121,6 +105,14 @@ Internet-Draft             CBOR Tags for OIDs                  June 2020
    "OPTIONAL" in this document are to be interpreted as described in
    BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
    capitals, as shown here.
+
+
+
+
+Bormann & Leonard        Expires 4 January 2021                 [Page 2]
+
+Internet-Draft             CBOR Tags for OIDs                  July 2020
+
 
    The terminology of RFC 7049 applies; in particular the term "byte" is
    used in its now customary sense as a synonym for "octet".
@@ -161,31 +153,32 @@ Internet-Draft             CBOR Tags for OIDs                  June 2020
    Since the semantics of absolute and relative object identifiers
    differ, this specification defines two tags:
 
-
-
-
-
-Bormann & Leonard        Expires 1 January 2021                 [Page 3]
-
-Internet-Draft             CBOR Tags for OIDs                  June 2020
-
-
    Tag TBD111: tags a byte string as the [X.690] encoding of an absolute
    object identifier (simply "object identifier" or "OID").
 
    Tag TBD110: tags a byte string as the [X.690] encoding of a relative
-   object identifier (also "relative OID").  Since the encoding is the
-   same, this tag can also be used for tagging a byte string that
-   contains a sequence of zero or more [RFC6256] Self-Delimiting Numeric
-   Values (SDNVs).
+   object identifier (also "relative OID").  Since the encoding of each
+   number is the same as for [RFC6256] Self-Delimiting Numeric Values
+   (SDNVs), this tag can also be used for tagging a byte string that
+   contains a sequence of zero or more SDNVs.
+
+
+
+
+Bormann & Leonard        Expires 4 January 2021                 [Page 3]
+
+Internet-Draft             CBOR Tags for OIDs                  July 2020
+
 
 2.1.  Requirements on the byte string being tagged
 
    A byte string tagged by TBD111 or TBD110 MUST be a syntactically
    valid BER representation of an object identifier: A concatenation of
-   zero or more SDNV values, where each SDNV value is a sequence of
-   bytes that all have their most significant bit set, except for the
-   last byte, and where the first byte cannot be 0x80.
+   zero or more SDNV values, where each SDNV value is a sequence of one
+   or more bytes that all have their most significant bit set, except
+   for the last byte, where it must be unset; the first byte of each
+   SDNV cannot be 0x80 (which would be a leading zero in SDNV's base-128
+   arithmetic).
 
    In other words:
 
@@ -205,7 +198,7 @@ Internet-Draft             CBOR Tags for OIDs                  June 2020
    permits empty relative object identifiers; they may still be excluded
    by application semantics.
 
-   Do enable the search for specific object ID values, it is RECOMMENDED
+   To enable the search for specific object ID values, it is RECOMMENDED
    that definite length encoding (see Section 2.2.2 of [RFC7049]) is
    used for the byte strings used as tag content for these tags.
 
@@ -219,13 +212,6 @@ Internet-Draft             CBOR Tags for OIDs                  June 2020
 
       "/^(([\x81-\xFF][\x80-\xFF]*)?[\x00-\x7F])+$/"
 
-
-
-Bormann & Leonard        Expires 1 January 2021                 [Page 4]
-
-Internet-Draft             CBOR Tags for OIDs                  June 2020
-
-
    For byte strings with tag TBD110:
 
       "/^(([\x81-\xFF][\x80-\xFF]*)?[\x00-\x7F])*$/"
@@ -233,14 +219,20 @@ Internet-Draft             CBOR Tags for OIDs                  June 2020
    A tag with tagged content that does not conform to the applicable
    regexp is invalid.
 
+
+
+Bormann & Leonard        Expires 4 January 2021                 [Page 4]
+
+Internet-Draft             CBOR Tags for OIDs                  July 2020
+
+
 3.  Examples
 
 3.1.  Encoding of the SHA-256 OID
 
    ASN.1 Value Notation:  { joint-iso-itu-t(2) country(16) us(840)
-      organization(1) gov(101)
-
-      csor(3) nistalgorithm(4) hashalgs(2) sha256(1) }
+      organization(1) gov(101) csor(3) nistalgorithm(4) hashalgs(2)
+      sha256(1) }
 
    Dotted Decimal Notation:  2.16.840.1.101.3.4.2.1
 
@@ -275,18 +267,20 @@ Internet-Draft             CBOR Tags for OIDs                  June 2020
 
               Figure 3: MIB relative object identifier, in BER
 
-
-
-Bormann & Leonard        Expires 1 January 2021                 [Page 5]
-
-Internet-Draft             CBOR Tags for OIDs                  June 2020
-
-
    D8 6E                             # tag(110)
       43                             # 0b010_01001: mt 2 (bstr), 3 bytes
          01 01 1D                    # X.690 Clause 8.20
 
              Figure 4: MIB relative object identifier, in CBOR
+
+
+
+
+
+Bormann & Leonard        Expires 4 January 2021                 [Page 5]
+
+Internet-Draft             CBOR Tags for OIDs                  July 2020
+
 
    This relative OID saves seven bytes compared to the full OID
    encoding.
@@ -304,18 +298,7 @@ Internet-Draft             CBOR Tags for OIDs                  June 2020
    as the OID Resolution Service (ORS) [X.672] and the OID Repository
    [OID-INFO] are available.
 
-5.  Tag Factoring and Tag Stacking with OID Arrays and Maps
-
-   A common use of object identifiers in ASN.1 is to identify the kind
-   of data in an open type (Clause 3.8.57 of [X.680]), using information
-   object classes [X.681].  CBOR is schema-neutral, and (although not
-   fully discussed in [RFC7049]) semantic tagging was originally
-   intended to identify items in a global, context-free way (i.e., where
-   a specification would not repurpose a tag with different semantics
-   than its IANA registration).  Therefore, using OIDs to identify
-   contextual data in a similar fashion to [X.681] is RECOMMENDED.
-
-5.1.  Tag Factoring
+5.  Tag Factoring with OID Arrays and Maps
 
    TBD111 and TBD110 can tag CBOR arrays and maps.  The idea is that the
    tag is factored out from each individual byte string; the tag is
@@ -323,31 +306,37 @@ Internet-Draft             CBOR Tags for OIDs                  June 2020
    TBD110 are left-distributive.
 
    When the TBD111 or TBD110 tag is applied to an array, it means that
-   the respective tag is imputed to all items in the array.  For
-   example, when the array is tagged with TBD111, every array item that
-   is a binary string is an OID.
+   the respective tag is imputed to all items in the array that are byte
+   strings.  For example, when the array is tagged with TBD111, every
+   array item that is a binary string is an OID.
 
    When the TBD111 or TBD110 tag is applied to a map, it means that the
-   respective tag is imputed to all keys in the map.  The values in the
-   map are not considered specially tagged.
+   respective tag is imputed to all keys in the map that are byte
+   strings.  The values in the map are not considered specially tagged.
 
-
-
-Bormann & Leonard        Expires 1 January 2021                 [Page 6]
-
-Internet-Draft             CBOR Tags for OIDs                  June 2020
-
-
-   Array and map stacking is permitted.  For example, a 3-dimensional
+   Array and map nesting is permitted.  For example, a 3-dimensional
    array of OIDs can be composed by using a single TBD111 tag, followed
    by an array of arrays of arrays of binary strings.  All such binary
    strings are considered OIDs.
+   // That was part of the original proposal.  I find it hard to imagine
+   // how to stop the influence of the tag deep into a nested structure.
+   // That's why I would rather limit this to one level (no nesting).
+   // But see the Figure below, which needs a nesting of two.  Please
+   // discuss.
 
 6.  Applications and Examples of OIDs
 
 6.1.  X.500 Distinguished Name
 
    Consider the X.500 distinguished name:
+
+
+
+
+Bormann & Leonard        Expires 4 January 2021                 [Page 6]
+
+Internet-Draft             CBOR Tags for OIDs                  July 2020
+
 
               +------------------------------+-------------+
               | Attribute Types              | Attribute   |
@@ -369,8 +358,9 @@ Internet-Draft             CBOR Tags for OIDs                  June 2020
 
                 Table 1: Example X.500 Distinguished Name
 
-   Table 1 has four RDNs.  The country and street RDNs are single-
-   valued.  The second and fourth RDNs are multi-valued.
+   Table 1 has four "relative distinguished names" (RDNs).  The country
+   and street RDNs are single-valued.  The second and fourth RDNs are
+   multi-valued.
 
    The equivalent representations in CBOR diagnostic notation and CBOR
    are:
@@ -389,9 +379,19 @@ Internet-Draft             CBOR Tags for OIDs                  June 2020
 
 
 
-Bormann & Leonard        Expires 1 January 2021                 [Page 7]
+
+
+
+
+
+
+
+
+
+
+Bormann & Leonard        Expires 4 January 2021                 [Page 7]
 
-Internet-Draft             CBOR Tags for OIDs                  June 2020
+Internet-Draft             CBOR Tags for OIDs                  July 2020
 
 
    d8 6f                                      # tag(111)
@@ -428,27 +428,52 @@ Internet-Draft             CBOR Tags for OIDs                  June 2020
    strings, or can be represented as UTF-8 strings with no loss of
    information.)
 
-7.  IANA Considerations
+7.  CDDL Control Operators
 
-7.1.  CBOR Tags
+   CDDL specifications may want to specify the use of SDNVs or SDNV
+   sequences (as defined for the tag content for TBD110).  This document
+   introduces two new control operators that can be applied to a target
+   value that is a byte string:
+
+   *  ".sdnv", with a control type that contains unsigned integers.  The
+      byte string is specified to be encoded as an [RFC6256] SDNV (BER
+      encoding) for the matching values of the control type.
+
+
+
+
+
+
+
+Bormann & Leonard        Expires 4 January 2021                 [Page 8]
+
+Internet-Draft             CBOR Tags for OIDs                  July 2020
+
+
+   *  ".sdnvseq", with a control type that contains arrays of unsigned
+      integers.  The byte string is specified to be encoded as a
+      sequence of [RFC6256] SDNVs (BER encoding) that decodes to an
+      array of unsigned integers matching the control type.
+
+   Figure 7 shows an example for the use of ".sdnvseq" for a part of a
+   structure using OIDs that could be used in Figure 6.
+   // We could define another control operator that includes the X*40+Y
+   // magic, so the example can actually use "[2, 5, 4, 6]".  We could
+   // also add an operator that parses dotted decimal integer sequences,
+   // so we can use "2.5.4.6".  I don't see a strong reason for that.
+
+   country-rdn = {country-oid => country-value}
+   country-oid = bytes .sdnvseq [85, 4, 6]
+   country-value = text .size 2
+
+                          Figure 7: Using .sdnvseq
+
+8.  IANA Considerations
+
+8.1.  CBOR Tags
 
    IANA is requested to assign the CBOR tags in Table 2, with the
    present document as the specification reference.
-
-
-
-
-
-
-
-
-
-
-
-Bormann & Leonard        Expires 1 January 2021                 [Page 8]
-
-Internet-Draft             CBOR Tags for OIDs                  June 2020
-
 
     +--------+-----------+--------------------------------------------+
     | Tag    | Data Item |                                  Semantics |
@@ -461,7 +486,37 @@ Internet-Draft             CBOR Tags for OIDs                  June 2020
 
                         Table 2: Values for New Tags
 
-8.  Security Considerations
+8.2.  CDDL Control Operators
+
+   IANA is requested to assign the CDDL Control Operators in Table 3,
+   with the present document as the specification reference.
+
+
+
+
+
+
+
+
+
+
+
+Bormann & Leonard        Expires 4 January 2021                 [Page 9]
+
+Internet-Draft             CBOR Tags for OIDs                  July 2020
+
+
+                 +----------+----------------------------+
+                 | Name     | Reference                  |
+                 +==========+============================+
+                 | .sdnv    | [this document, Section 7] |
+                 +----------+----------------------------+
+                 | .sdnvseq | [this document, Section 7] |
+                 +----------+----------------------------+
+
+                        Table 3: New CDDL Operators
+
+9.  Security Considerations
 
    The security considerations of RFC 7049 apply.
 
@@ -484,7 +539,7 @@ Internet-Draft             CBOR Tags for OIDs                  June 2020
    trivial representation conversions apply; the primary integer values
    are unlimited in range.
 
-8.1.  Conversions Between BER and Dotted Decimal Notation
+9.1.  Conversions Between BER and Dotted Decimal Notation
 
    [PKILCAKE] uncovers exploit vectors for the illegal values above, as
    well as for cases in which conversion to or from the dotted decimal
@@ -497,16 +552,17 @@ Internet-Draft             CBOR Tags for OIDs                  June 2020
    algorithm [DOUBLEDABBLE] are well-known in the art; their application
    to this field is left as an exercise to the reader.
 
-9.  References
+10.  References
 
 
 
-Bormann & Leonard        Expires 1 January 2021                 [Page 9]
+
+Bormann & Leonard        Expires 4 January 2021                [Page 10]
 
-Internet-Draft             CBOR Tags for OIDs                  June 2020
+Internet-Draft             CBOR Tags for OIDs                  July 2020
 
 
-9.1.  Normative References
+10.1.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -542,14 +598,13 @@ Internet-Draft             CBOR Tags for OIDs                  June 2020
               Distinguished Encoding Rules (DER)", ITU-T Recommendation
               X.690, August 2015.
 
-9.2.  Informative References
+10.2.  Informative References
 
    [DOUBLEDABBLE]
               Gao, S., Al-Khalili, D., and N. Chabini, "An improved BCD
-              adder using 6-LUT FPGAs",
-              DOI: 10.1109/NEWCAS.2012.6328944, IEEE 10th International
-              New Circuits and Systems Conference (NEWCAS 2012), pp.
-              13-16, June 2012.
+              adder using 6-LUT FPGAs", DOI 10.1109/newcas.2012.6328944,
+              10th IEEE International NEWCAS Conference, June 2012,
+              <https://doi.org/10.1109/newcas.2012.6328944>.
 
    [OID-INFO] Orange SA, "OID Repository", 2016,
               <http://www.oid-info.com/>.
@@ -557,19 +612,20 @@ Internet-Draft             CBOR Tags for OIDs                  June 2020
 
 
 
-Bormann & Leonard        Expires 1 January 2021                [Page 10]
+
+Bormann & Leonard        Expires 4 January 2021                [Page 11]
 
-Internet-Draft             CBOR Tags for OIDs                  June 2020
+Internet-Draft             CBOR Tags for OIDs                  July 2020
 
 
    [PCRE]     Ho, A., "PCRE - Perl Compatible Regular Expressions",
               2018, <http://www.pcre.org/>.
 
-   [PKILCAKE] Kaminsky, D., Patterson, M.L., and L. Sassaman, "PKI Layer
-              Cake: New Collision Attacks Against the Global X.509
-              Infrastructure", DOI: 10.1007/978-3-642-14577-3_22,
-              Lecture Notes in Computer Science 6052 289-303, FC 2010,
-              January 2010, <http://dl.acm.org/citation.cfm?id=2163593>.
+   [PKILCAKE] Kaminsky, D., Patterson, M., and L. Sassaman, "PKI Layer
+              Cake: New Collision Attacks against the Global X.509
+              Infrastructure", DOI 10.1007/978-3-642-14577-3_22,
+              Financial Cryptography and Data Security pp. 289-303,
+              2010, <https://doi.org/10.1007/978-3-642-14577-3_22>.
 
    [RFC7388]  Schoenwaelder, J., Sehgal, A., Tsou, T., and C. Zhou,
               "Definition of Managed Objects for IPv6 over Low-Power
@@ -582,26 +638,25 @@ Internet-Draft             CBOR Tags for OIDs                  June 2020
               identifier resolution system", ITU-T Recommendation X.672,
               August 2010.
 
-   [X.681]    International Telecommunications Union, "Information
-              technology -- Abstract Syntax Notation One (ASN.1):
-              Information object specification", ITU-T Recommendation
-              X.681, August 2015.
+Appendix A.  Change Log
 
-Appendix A.  Changes from -06 to -07
+   This section is to be removed before publishing as an RFC.
+
+A.1.  Changes from -06 to -07
 
    Reduce the draft back to its basic mandate: Describe CBOR tags for
-   ASN.1 Object IDs.
+   what is colloquially know as ASN.1 Object IDs.
 
-Appendix B.  Changes from -05 to -06
+A.2.  Changes from -05 to -06
 
    Refreshed the draft to the current date ("keep-alive").
 
-Appendix C.  Changes from -04 to -05
+A.3.  Changes from -04 to -05
 
    Discussed UUID usage in CBOR, and incorporated fixes proposed by
    Olivier Dubuisson, including fixes regarding OID nomenclature.
 
-Appendix D.  Changes from -03 to -04
+A.4.  Changes from -03 to -04
 
    Changes occurred based on limited feedback, mainly centered around
    the abstract and introduction, rather than substantive technical
@@ -613,9 +668,10 @@ Appendix D.  Changes from -03 to -04
 
 
 
-Bormann & Leonard        Expires 1 January 2021                [Page 11]
+
+Bormann & Leonard        Expires 4 January 2021                [Page 12]
 
-Internet-Draft             CBOR Tags for OIDs                  June 2020
+Internet-Draft             CBOR Tags for OIDs                  July 2020
 
 
    *  Rewrote the abstract to describe the content more accurately, and
@@ -633,7 +689,7 @@ Internet-Draft             CBOR Tags for OIDs                  June 2020
 
    *  Updated IANA registration tables.
 
-Appendix E.  Changes from -02 to -03
+A.5.  Changes from -02 to -03
 
    Many significant changes occurred in this version.  These changes
    include:
@@ -669,9 +725,9 @@ Authors' Addresses
 
 
 
-Bormann & Leonard        Expires 1 January 2021                [Page 12]
+Bormann & Leonard        Expires 4 January 2021                [Page 13]
 
-Internet-Draft             CBOR Tags for OIDs                  June 2020
+Internet-Draft             CBOR Tags for OIDs                  July 2020
 
 
    Sean Leonard
@@ -725,4 +781,4 @@ Internet-Draft             CBOR Tags for OIDs                  June 2020
 
 
 
-Bormann & Leonard        Expires 1 January 2021                [Page 13]
+Bormann & Leonard        Expires 4 January 2021                [Page 14]
