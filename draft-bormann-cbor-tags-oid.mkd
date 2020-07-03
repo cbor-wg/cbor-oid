@@ -3,7 +3,7 @@ title: >
   Concise Binary Object Representation (CBOR) Tags for Object Identifiers
 abbrev: CBOR Tags for OIDs
 docname: draft-bormann-cbor-tags-oid-07
-date: 2020-06-30
+date: 2020-07-03
 
 stand_alone: true
 
@@ -106,36 +106,8 @@ informative:
     author:
       org: Orange SA
     date: 2016
-  PKILCAKE:
-    target: http://dl.acm.org/citation.cfm?id=2163593
-    title: >
-      PKI Layer Cake:
-      New Collision Attacks Against the Global X.509 Infrastructure
-    author:
-      -
-        name: Dan Kaminsky
-        ins: D. Kaminsky
-      -
-        name: Meredith L. Patterson
-        ins: M. L. Patterson
-      -
-        name: Len Sassaman
-        ins: L. Sassaman
-    date: 2010-01
-    seriesinfo:
-      FC: 2010
-      Lecture Notes in Computer Science 6052: 289-303
-      DOI:: 10.1007/978-3-642-14577-3_22
-  DOUBLEDABBLE:
-    author:
-      - ins: S. Gao
-      - ins: D. Al-Khalili
-      - ins: N. Chabini
-    date: 2012-06
-    title: An improved BCD adder using 6-LUT FPGAs
-    seriesinfo:
-      IEEE: 10th International New Circuits and Systems Conference (NEWCAS 2012), pp. 13–16
-      DOI:: 10.1109/NEWCAS.2012.6328944
+  PKILCAKE: DOI.10.1007/978-3-642-14577-3_22
+  DOUBLEDABBLE: DOI.10.1109/NEWCAS.2012.6328944
 
 --- abstract
 
