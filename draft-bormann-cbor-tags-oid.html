@@ -8,7 +8,7 @@
 <meta content="Carsten Bormann" name="author">
 <meta content="Sean Leonard" name="author">
 <meta content="
-       The Concise Binary Object Representation (CBOR, RFC 7049) is a data
+       The Concise Binary Object Representation (CBOR, draft-ietf-cbor-7049bis) is a data
 format whose design goals include the possibility of extremely small
 code size, fairly small message size, and extensibility without the
 need for version negotiation. 
@@ -1148,7 +1148,7 @@ dd.break {
 <h1 id="title">Concise Binary Object Representation (CBOR) Tags for Object Identifiers</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
-<p id="section-abstract-1">The Concise Binary Object Representation (CBOR, RFC 7049) is a data
+<p id="section-abstract-1">The Concise Binary Object Representation (CBOR, draft-ietf-cbor-7049bis) is a data
 format whose design goals include the possibility of extremely small
 code size, fairly small message size, and extensibility without the
 need for version negotiation.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
@@ -1247,7 +1247,10 @@ so defined.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
             <p id="section-toc.1-1.11.1"><a href="#section-appendix.a" class="xref">Appendix A</a>.  <a href="#name-change-log" class="xref">Change Log</a><a href="#section-toc.1-1.11.1" class="pilcrow">¶</a></p>
 </li>
 <li class="toc ulEmpty" id="section-toc.1-1.12">
-            <p id="section-toc.1-1.12.1"><a href="#section-appendix.b" class="xref"></a><a href="#name-authors-addresses" class="xref">Authors' Addresses</a><a href="#section-toc.1-1.12.1" class="pilcrow">¶</a></p>
+            <p id="section-toc.1-1.12.1"><a href="#section-appendix.b" class="xref"></a><a href="#name-acknowledgments" class="xref">Acknowledgments</a><a href="#section-toc.1-1.12.1" class="pilcrow">¶</a></p>
+</li>
+<li class="toc ulEmpty" id="section-toc.1-1.13">
+            <p id="section-toc.1-1.13.1"><a href="#section-appendix.c" class="xref"></a><a href="#name-authors-addresses" class="xref">Authors' Addresses</a><a href="#section-toc.1-1.13.1" class="pilcrow">¶</a></p>
 </li>
 </ul>
 </nav>
@@ -1258,10 +1261,10 @@ so defined.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">The Concise Binary Object Representation (CBOR, <span>[<a href="#RFC7049" class="xref">RFC7049</a>]</span>) provides
+<p id="section-1-1">The Concise Binary Object Representation (CBOR, <span>[<a href="#I-D.ietf-cbor-7049bis" class="xref">I-D.ietf-cbor-7049bis</a>]</span>) provides
 for the interchange of structured data without a requirement for a
 pre-agreed schema.
-RFC 7049 defines a basic set of data types, as well as a tagging
+<span>[<a href="#I-D.ietf-cbor-7049bis" class="xref">I-D.ietf-cbor-7049bis</a>]</span> defines a basic set of data types, as well as a tagging
 mechanism that enables extending the set of data types supported via
 an IANA registry.<a href="#section-1-1" class="pilcrow">¶</a></p>
 <p id="section-1-2">The present document defines CBOR tags for object identifiers
@@ -1269,11 +1272,12 @@ an IANA registry.<a href="#section-1-1" class="pilcrow">¶</a></p>
 The ASN.1 Basic Encoding Rules
 (BER, <span>[<a href="#X.690" class="xref">X.690</a>]</span>) specify binary encodings of both (absolute) object identifiers
 and relative object identifiers.
-The contents of these encodings can be carried in a CBOR byte string.
+The contents of these encodings (the "value" part of BER's
+type-length-value structure) can be carried in a CBOR byte string.
 This document defines two CBOR tags that cover the two kinds of
-ASN.1 object identifiers encoded in this way. The tags
-can also be applied to arrays and maps for more articulated
-identification purposes.
+ASN.1 object identifiers encoded in this way.
+The tags can also be applied to arrays and maps to efficiently tag all
+elements of an array or all keys of a map.
 It is intended as the reference document for the IANA registration of
 the tags so defined.<a href="#section-1-2" class="pilcrow">¶</a></p>
 <div id="terms">
@@ -1286,7 +1290,7 @@ NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED",
 "MAY", and "OPTIONAL" in this document are to be interpreted as
 described in BCP 14 <span>[<a href="#RFC2119" class="xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="xref">RFC8174</a>]</span> when, and only when, they
 appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
-<p id="section-1.1-2">The terminology of RFC 7049 applies; in particular
+<p id="section-1.1-2">The terminology of draft-ietf-cbor-7049bis applies; in particular
 the term "byte" is used in its now customary sense as a synonym for
 "octet".<a href="#section-1.1-2" class="pilcrow">¶</a></p>
 </section>
@@ -1301,17 +1305,20 @@ the term "byte" is used in its now customary sense as a synonym for
 <p id="section-2-1">The International Object Identifier tree <span>[<a href="#X.660" class="xref">X.660</a>]</span> is
 a hierarchically managed space of
 identifiers, each of which is uniquely represented as a sequence of
-primary integer values
+unsigned integer values
 <span>[<a href="#X.680" class="xref">X.680</a>]</span>.
-While these sequences can easily be represented in CBOR arrays of
+(These integer values are called "primary integer values" in X.660
+because they can be accompanied by (not necessarily unambiguous)
+secondary identifiers.  We ignore the latter and simply use the term
+"integer values" here, possibly calling out their unsignedness.)<a href="#section-2-1" class="pilcrow">¶</a></p>
+<p id="section-2-2">While these sequences can easily be represented in CBOR arrays of
 unsigned integers, a more compact representation can often be achieved
 by adopting the widely used representation of object identifiers
 defined in BER; this representation may also be more amenable to
-processing by other software making use of object identifiers.<a href="#section-2-1" class="pilcrow">¶</a></p>
-<p id="section-2-2">BER represents the sequence of unsigned integers by concatenating
-self-delimiting <span>[<a href="#RFC6256" class="xref">RFC6256</a>]</span> representations of each of the
-primary integer values in sequence.<a href="#section-2-2" class="pilcrow">¶</a></p>
-<p id="section-2-3">ASN.1 distinguishes absolute object identifiers (ASN.1 Type <code>OBJECT IDENTIFIER</code>),
+processing by other software making use of object identifiers.<a href="#section-2-2" class="pilcrow">¶</a></p>
+<p id="section-2-3">BER represents the sequence of unsigned integers by concatenating
+self-delimiting <span>[<a href="#RFC6256" class="xref">RFC6256</a>]</span> representations of each of the integer values in sequence.<a href="#section-2-3" class="pilcrow">¶</a></p>
+<p id="section-2-4">ASN.1 distinguishes absolute object identifiers (ASN.1 Type <code>OBJECT IDENTIFIER</code>),
 which begin at a root arc (<span>[<a href="#X.660" class="xref">X.660</a>]</span> Clause 3.5.21), from relative object
 identifiers (ASN.1 Type <code>RELATIVE-OID</code>), which begin
 relative to some object identifier known from context (<span>[<a href="#X.680" class="xref">X.680</a>]</span>
@@ -1324,28 +1331,28 @@ and the second arcs under 0 and 1 are limited to the integer values between
 0 and 39.  (The root arc <code>joint-iso-itu-t(2)</code> has
 no such limitations on its second arc.)
 If X and Y are the first two integers,
-the single integer actually encoded is computed as:<a href="#section-2-3" class="pilcrow">¶</a></p>
+the single integer actually encoded is computed as:<a href="#section-2-4" class="pilcrow">¶</a></p>
 <ul class="ulEmpty">
-<li class="ulEmpty" id="section-2-4.1">X * 40 + Y<a href="#section-2-4.1" class="pilcrow">¶</a>
+<li class="ulEmpty" id="section-2-5.1">X * 40 + Y<a href="#section-2-5.1" class="pilcrow">¶</a>
 </li>
 </ul>
-<p id="section-2-5">The inverse transformation (again making use of the known ranges of X
-and Y) is applied when decoding the object identifier.<a href="#section-2-5" class="pilcrow">¶</a></p>
-<p id="section-2-6">Since the semantics of absolute and relative object identifiers
-differ, this specification defines two tags:<a href="#section-2-6" class="pilcrow">¶</a></p>
-<p id="section-2-7">Tag TBD111: tags a byte string as the <span>[<a href="#X.690" class="xref">X.690</a>]</span> encoding of an
-absolute object identifier (simply "object identifier" or "OID").<a href="#section-2-7" class="pilcrow">¶</a></p>
-<p id="section-2-8">Tag TBD110: tags a byte string as the <span>[<a href="#X.690" class="xref">X.690</a>]</span> encoding of a relative
+<p id="section-2-6">The inverse transformation (again making use of the known ranges of X
+and Y) is applied when decoding the object identifier.<a href="#section-2-6" class="pilcrow">¶</a></p>
+<p id="section-2-7">Since the semantics of absolute and relative object identifiers
+differ, this specification defines two tags:<a href="#section-2-7" class="pilcrow">¶</a></p>
+<p id="section-2-8">Tag TBD111: tags a byte string as the <span>[<a href="#X.690" class="xref">X.690</a>]</span> encoding of an
+absolute object identifier (simply "object identifier" or "OID").<a href="#section-2-8" class="pilcrow">¶</a></p>
+<p id="section-2-9">Tag TBD110: tags a byte string as the <span>[<a href="#X.690" class="xref">X.690</a>]</span> encoding of a relative
 object identifier (also "relative OID").  Since the encoding of each
 number is the same as for <span>[<a href="#RFC6256" class="xref">RFC6256</a>]</span> Self-Delimiting Numeric Values
 (SDNVs), this tag can also be used for tagging a byte string that
-contains a sequence of zero or more SDNVs.<a href="#section-2-8" class="pilcrow">¶</a></p>
+contains a sequence of zero or more SDNVs.<a href="#section-2-9" class="pilcrow">¶</a></p>
 <div id="reqts">
 <section id="section-2.1">
         <h3 id="name-requirements-on-the-byte-st">
 <a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-requirements-on-the-byte-st" class="section-name selfRef">Requirements on the byte string being tagged</a>
         </h3>
-<p id="section-2.1-1">A byte string tagged by TBD111 or TBD110 MUST be a syntactically valid BER
+<p id="section-2.1-1">To form a valid tag, a byte string tagged by TBD111 or TBD110 MUST be a syntactically valid BER
 representation of an object identifier: A concatenation of zero or
 more SDNV values, where each SDNV value is a sequence of one or more bytes that
 all have their most significant bit set, except for the last byte,
@@ -1354,11 +1361,11 @@ where it must be unset; the first byte of each SDNV cannot be 0x80
 <p id="section-2.1-2">In other words:<a href="#section-2.1-2" class="pilcrow">¶</a></p>
 <ul>
 <li id="section-2.1-3.1">its first byte, and any byte that follows a byte that has the most significant
-bit unset, MUST NOT be 0x80 (this requirement excludes expressing the
-primary integer values with anything but the shortest form)<a href="#section-2.1-3.1" class="pilcrow">¶</a>
+bit unset, MUST NOT be 0x80 (this requirement requires expressing the
+integer values in their shortest form, with no leading zeroes)<a href="#section-2.1-3.1" class="pilcrow">¶</a>
 </li>
 <li id="section-2.1-3.2">its last byte MUST NOT have the most significant bit set (this
-requirement excludes an incomplete final primary integer value)<a href="#section-2.1-3.2" class="pilcrow">¶</a>
+requirement excludes an incomplete final integer value)<a href="#section-2.1-3.2" class="pilcrow">¶</a>
 </li>
 </ul>
 <p id="section-2.1-4">If either of these invalid conditions are encountered, the tag is
@@ -1369,7 +1376,7 @@ This specification permits
 empty relative object identifiers; they may
 still be excluded by application semantics.<a href="#section-2.1-5" class="pilcrow">¶</a></p>
 <p id="section-2.1-6">To enable the search for specific object ID values, it is RECOMMENDED
-that definite length encoding (see Section 2.2.2 of <span>[<a href="#RFC7049" class="xref">RFC7049</a>]</span>) is used
+that definite length encoding (see Section 2.2.2 of <span>[<a href="#I-D.ietf-cbor-7049bis" class="xref">I-D.ietf-cbor-7049bis</a>]</span>) is used
 for the byte strings used as tag content for these tags.<a href="#section-2.1-6" class="pilcrow">¶</a></p>
 <p id="section-2.1-7">The valid set of byte strings can also be expressed using regular
 expressions on bytes, using no specific notation but resembling
@@ -1672,14 +1679,14 @@ integers.  The byte string is specified to be encoded as a sequence
 of <span>[<a href="#RFC6256" class="xref">RFC6256</a>]</span> SDNVs (BER encoding) that decodes to an array of
 unsigned integers matching the control type.<a href="#section-7-2.2" class="pilcrow">¶</a>
 </li>
+<li id="section-7-2.3">
+          <code>.oid</code>, like <code>.sdnvseq</code>, except that the X*40+Y translation for
+absolute OIDs is included (see <a href="#fig-dn-cddl-oid" class="xref">Figure 8</a>).<a href="#section-7-2.3" class="pilcrow">¶</a>
+</li>
 </ul>
 <p id="section-7-3"><a href="#fig-dn-cddl" class="xref">Figure 7</a> shows an example for the use of <code>.sdnvseq</code> for a part
-of a structure using OIDs that could be used in <a href="#fig-dn-cbor" class="xref">Figure 6</a>.
-  <span class="cref" id="_2">We could define another control operator that includes the
-X*40+Y magic, so the example can actually use "[2, 5, 4, 6]".  We
-could also add an operator that parses dotted decimal integer
-sequences, so we can use "2.5.4.6".  I don't see a strong reason
-for that.</span><a href="#section-7-3" class="pilcrow">¶</a></p>
+of a structure using OIDs that could be used in <a href="#fig-dn-cbor" class="xref">Figure 6</a>;
+<a href="#fig-dn-cddl-oid" class="xref">Figure 8</a> shows the same with the <code>.oid</code> operator.<a href="#section-7-3" class="pilcrow">¶</a></p>
 <span id="name-using-sdnvseq"></span><div id="fig-dn-cddl">
 <figure id="figure-7">
         <div class="artwork art-text alignLeft art-cddl" id="section-7-4.1">
@@ -1693,6 +1700,22 @@ country-value = text .size 2
 <a href="#name-using-sdnvseq" class="selfRef">Using .sdnvseq</a>
         </figcaption></figure>
 </div>
+<span id="name-using-oid"></span><div id="fig-dn-cddl-oid">
+<figure id="figure-8">
+        <div class="artwork art-text alignLeft art-cddl" id="section-7-5.1">
+<pre>
+country-rdn = {country-oid =&gt; country-value}
+country-oid = bytes .oid [2, 5, 4, 6]
+country-value = text .size 2
+</pre>
+</div>
+<figcaption><a href="#figure-8" class="selfRef">Figure 8</a>:
+<a href="#name-using-oid" class="selfRef">Using .oid</a>
+        </figcaption></figure>
+</div>
+<p id="section-7-6">(Note that the control type need not be a literal; e.g., <code>bytes .oid
+[2, 5, 4, *uint]</code> matches all OIDs inside OID arc 2.5.4,
+<code>attributeType</code>.)<a href="#section-7-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana">
@@ -1777,7 +1800,7 @@ reference.<a href="#section-8.2-1" class="pilcrow">¶</a></p>
       <h2 id="name-security-considerations">
 <a href="#section-9" class="section-number selfRef">9. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
       </h2>
-<p id="section-9-1">The security considerations of RFC 7049 apply.<a href="#section-9-1" class="pilcrow">¶</a></p>
+<p id="section-9-1">The security considerations of <span>[<a href="#I-D.ietf-cbor-7049bis" class="xref">I-D.ietf-cbor-7049bis</a>]</span> apply.<a href="#section-9-1" class="pilcrow">¶</a></p>
 <p id="section-9-2">The encodings in Clauses 8.19 and 8.20 of <span>[<a href="#X.690" class="xref">X.690</a>]</span> are quite compact and unambiguous,
 but MUST be followed precisely to avoid security pitfalls.
 In particular, the requirements set out in <a href="#reqts" class="xref">Section 2.1</a> of this document need to be
@@ -1793,7 +1816,7 @@ processing of this kind (e.g., converting into dotted notation and
 back) unless absolutely necessary.
 If the OIDs are translated into other representations, the usual
 security considerations for non-trivial representation conversions
-apply; the primary integer values are unlimited in range.<a href="#section-9-3" class="pilcrow">¶</a></p>
+apply; the integer values are unlimited in range.<a href="#section-9-3" class="pilcrow">¶</a></p>
 <div id="bdconv">
 <section id="section-9.1">
         <h3 id="name-conversions-between-ber-and">
@@ -1822,6 +1845,10 @@ as an exercise to the reader.<a href="#section-9.1-1" class="pilcrow">¶</a></p>
 <a href="#section-10.1" class="section-number selfRef">10.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
         </h3>
 <dl class="references">
+<dt id="I-D.ietf-cbor-7049bis">[I-D.ietf-cbor-7049bis]</dt>
+<dd>
+<span class="refAuthor">Bormann, C.</span><span class="refAuthor"> and P. Hoffman</span>, <span class="refTitle">"Concise Binary Object Representation (CBOR)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-cbor-7049bis-14</span>, <time datetime="2020-06-16">16 June 2020</time>, <span>&lt;<a href="http://www.ietf.org/internet-drafts/draft-ietf-cbor-7049bis-14.txt">http://www.ietf.org/internet-drafts/draft-ietf-cbor-7049bis-14.txt</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC2119">[RFC2119]</dt>
 <dd>
 <span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc2119">https://www.rfc-editor.org/info/rfc2119</a>&gt;</span>. </dd>
@@ -1829,10 +1856,6 @@ as an exercise to the reader.<a href="#section-9.1-1" class="pilcrow">¶</a></p>
 <dt id="RFC6256">[RFC6256]</dt>
 <dd>
 <span class="refAuthor">Eddy, W.</span><span class="refAuthor"> and E. Davies</span>, <span class="refTitle">"Using Self-Delimiting Numeric Values in Protocols"</span>, <span class="seriesInfo">RFC 6256</span>, <span class="seriesInfo">DOI 10.17487/RFC6256</span>, <time datetime="2011-05">May 2011</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc6256">https://www.rfc-editor.org/info/rfc6256</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="RFC7049">[RFC7049]</dt>
-<dd>
-<span class="refAuthor">Bormann, C.</span><span class="refAuthor"> and P. Hoffman</span>, <span class="refTitle">"Concise Binary Object Representation (CBOR)"</span>, <span class="seriesInfo">RFC 7049</span>, <span class="seriesInfo">DOI 10.17487/RFC7049</span>, <time datetime="2013-10">October 2013</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc7049">https://www.rfc-editor.org/info/rfc7049</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8174">[RFC8174]</dt>
 <dd>
@@ -1970,8 +1993,16 @@ and Regular Expressions (tag 35).<a href="#section-a.5-2.4" class="pilcrow">¶</
 </div>
 </section>
 </div>
-<div id="authors-addresses">
+<div id="acknowledgments">
 <section id="section-appendix.b">
+      <h2 id="name-acknowledgments">
+<a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
+      </h2>
+<p id="section-appendix.b-1">Jim Schaad provided a review of this document.<a href="#section-appendix.b-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="section-appendix.c">
       <h2 id="name-authors-addresses">
 <a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
       </h2>

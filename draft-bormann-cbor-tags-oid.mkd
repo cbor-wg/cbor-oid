@@ -41,7 +41,7 @@ author:
 
 normative:
   RFC6256: sdnv
-  RFC7049: cbor
+  I-D.ietf-cbor-7049bis: cbor
   X.660:
     title: >
       Information technology —
@@ -103,7 +103,7 @@ informative:
 --- abstract
 
 
-The Concise Binary Object Representation (CBOR, RFC 7049) is a data
+The Concise Binary Object Representation (CBOR, draft-ietf-cbor-7049bis) is a data
 format whose design goals include the possibility of extremely small
 code size, fairly small message size, and extensibility without the
 need for version negotiation.
@@ -118,10 +118,10 @@ so defined.
 Introduction        {#intro}
 ============
 
-The Concise Binary Object Representation (CBOR, {{RFC7049}}) provides
+The Concise Binary Object Representation (CBOR, {{-cbor}}) provides
 for the interchange of structured data without a requirement for a
 pre-agreed schema.
-RFC 7049 defines a basic set of data types, as well as a tagging
+{{-cbor}} defines a basic set of data types, as well as a tagging
 mechanism that enables extending the set of data types supported via
 an IANA registry.
 
@@ -130,11 +130,12 @@ The present document defines CBOR tags for object identifiers
 The ASN.1 Basic Encoding Rules
 (BER, {{X.690}}) specify binary encodings of both (absolute) object identifiers
 and relative object identifiers.
-The contents of these encodings can be carried in a CBOR byte string.
+The contents of these encodings (the "value" part of BER's
+type-length-value structure) can be carried in a CBOR byte string.
 This document defines two CBOR tags that cover the two kinds of
-ASN.1 object identifiers encoded in this way. The tags
-can also be applied to arrays and maps for more articulated
-identification purposes.
+ASN.1 object identifiers encoded in this way.
+The tags can also be applied to arrays and maps to efficiently tag all
+elements of an array or all keys of a map.
 It is intended as the reference document for the IANA registration of
 the tags so defined.
 
@@ -143,7 +144,7 @@ Terminology         {#terms}
 
 {::boilerplate bcp14}
 
-The terminology of RFC 7049 applies; in particular
+The terminology of draft-ietf-cbor-7049bis applies; in particular
 the term "byte" is used in its now customary sense as a synonym for
 "octet".
 
@@ -153,8 +154,13 @@ Object Identifiers {#oids}
 The International Object Identifier tree {{X.660}} is
 a hierarchically managed space of
 identifiers, each of which is uniquely represented as a sequence of
-primary integer values
+unsigned integer values
 {{X.680}}.
+(These integer values are called "primary integer values" in X.660
+because they can be accompanied by (not necessarily unambiguous)
+secondary identifiers.  We ignore the latter and simply use the term
+"integer values" here, possibly calling out their unsignedness.)
+
 While these sequences can easily be represented in CBOR arrays of
 unsigned integers, a more compact representation can often be achieved
 by adopting the widely used representation of object identifiers
@@ -162,8 +168,7 @@ defined in BER; this representation may also be more amenable to
 processing by other software making use of object identifiers.
 
 BER represents the sequence of unsigned integers by concatenating
-self-delimiting {{-sdnv}} representations of each of the
-primary integer values in sequence.
+self-delimiting {{-sdnv}} representations of each of the integer values in sequence.
 
 ASN.1 distinguishes absolute object identifiers (ASN.1 Type `OBJECT IDENTIFIER`),
 which begin at a root arc ({{X.660}} Clause 3.5.21), from relative object
@@ -199,7 +204,7 @@ contains a sequence of zero or more SDNVs.
 
 ## Requirements on the byte string being tagged {#reqts}
 
-A byte string tagged by TBD111 or TBD110 MUST be a syntactically valid BER
+To form a valid tag, a byte string tagged by TBD111 or TBD110 MUST be a syntactically valid BER
 representation of an object identifier: A concatenation of zero or
 more SDNV values, where each SDNV value is a sequence of one or more bytes that
 all have their most significant bit set, except for the last byte,
@@ -209,10 +214,10 @@ where it must be unset; the first byte of each SDNV cannot be 0x80
 In other words:
 
 * its first byte, and any byte that follows a byte that has the most significant
-  bit unset, MUST NOT be 0x80 (this requirement excludes expressing the
-  primary integer values with anything but the shortest form)
+  bit unset, MUST NOT be 0x80 (this requirement requires expressing the
+  integer values in their shortest form, with no leading zeroes)
 * its last byte MUST NOT have the most significant bit set (this
-  requirement excludes an incomplete final primary integer value)
+  requirement excludes an incomplete final integer value)
 
 If either of these invalid conditions are encountered, the tag is
 invalid.
@@ -429,14 +434,12 @@ value that is a byte string:
   of {{-sdnv}} SDNVs (BER encoding) that decodes to an array of
   unsigned integers matching the control type.
 
-{{fig-dn-cddl}} shows an example for the use of `.sdnvseq` for a part
-of a structure using OIDs that could be used in {{fig-dn-cbor}}.[^2]
+* `.oid`, like `.sdnvseq`, except that the X*40+Y translation for
+  absolute OIDs is included (see {{fig-dn-cddl-oid}}).
 
-[^2]: We could define another control operator that includes the
-    X*40+Y magic, so the example can actually use "\[2, 5, 4, 6]".  We
-    could also add an operator that parses dotted decimal integer
-    sequences, so we can use "2.5.4.6".  I don't see a strong reason
-    for that.
+{{fig-dn-cddl}} shows an example for the use of `.sdnvseq` for a part
+of a structure using OIDs that could be used in {{fig-dn-cbor}};
+{{fig-dn-cddl-oid}} shows the same with the `.oid` operator.
 
 ~~~ cddl
 country-rdn = {country-oid => country-value}
@@ -444,6 +447,17 @@ country-oid = bytes .sdnvseq [85, 4, 6]
 country-value = text .size 2
 ~~~
 {: #fig-dn-cddl title="Using .sdnvseq"}
+
+~~~ cddl
+country-rdn = {country-oid => country-value}
+country-oid = bytes .oid [2, 5, 4, 6]
+country-value = text .size 2
+~~~
+{: #fig-dn-cddl-oid title="Using .oid"}
+
+(Note that the control type need not be a literal; e.g., `bytes .oid
+[2, 5, 4, *uint]` matches all OIDs inside OID arc 2.5.4,
+`attributeType`.)
 
 IANA Considerations {#iana}
 ============
@@ -474,7 +488,7 @@ reference.
 Security Considerations
 ============
 
-The security considerations of RFC 7049 apply.
+The security considerations of {{-cbor}} apply.
 
 The encodings in Clauses 8.19 and 8.20 of {{X.690}} are quite compact and unambiguous,
 but MUST be followed precisely to avoid security pitfalls.
@@ -492,7 +506,7 @@ processing of this kind (e.g., converting into dotted notation and
 back) unless absolutely necessary.
 If the OIDs are translated into other representations, the usual
 security considerations for non-trivial representation conversions
-apply; the primary integer values are unlimited in range.
+apply; the integer values are unlimited in range.
 
 Conversions Between BER and Dotted Decimal Notation {#bdconv}
 ------------
@@ -581,3 +595,9 @@ Many significant changes occurred in this version. These changes include:
  -->
 <!--  LocalWords:  Implementers SDNV SDNVs repurpose SDNV's UTF
  -->
+
+Acknowledgments
+===============
+{: numbered="no"}
+
+Jim Schaad provided a review of this document.
