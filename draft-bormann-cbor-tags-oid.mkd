@@ -482,6 +482,7 @@ reference.
 | Name     | Reference                     |
 | .sdnv    | \[this document, {{control}}] |
 | .sdnvseq | \[this document, {{control}}] |
+| .oid     | \[this document, {{control}}] |
 {: #tab-operators-new title="New CDDL Operators"}
 
 

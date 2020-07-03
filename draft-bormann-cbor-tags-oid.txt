@@ -76,7 +76,7 @@ Table of Contents
    10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  11
      10.1.  Normative References . . . . . . . . . . . . . . . . . .  11
      10.2.  Informative References . . . . . . . . . . . . . . . . .  12
-   Appendix A.  Change Log . . . . . . . . . . . . . . . . . . . . .  12
+   Appendix A.  Change Log . . . . . . . . . . . . . . . . . . . . .  13
    Acknowledgments . . . . . . . . . . . . . . . . . . . . . . . . .  14
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  14
 
@@ -529,6 +529,8 @@ Internet-Draft             CBOR Tags for OIDs                  July 2020
                  +----------+----------------------------+
                  | .sdnvseq | [this document, Section 7] |
                  +----------+----------------------------+
+                 | .oid     | [this document, Section 7] |
+                 +----------+----------------------------+
 
                         Table 3: New CDDL Operators
 
@@ -545,6 +547,21 @@ Internet-Draft             CBOR Tags for OIDs                  July 2020
    something else entirely) by another decoder supposed to be protected
    by the checking process.
 
+
+
+
+
+
+
+
+
+
+
+Bormann & Leonard        Expires 4 January 2021                [Page 10]
+
+Internet-Draft             CBOR Tags for OIDs                  July 2020
+
+
    OIDs and relative OIDs can always be treated as opaque byte strings.
    Actually understanding the structure that was used for generating
    them is not necessary, and, except for checking the structure
@@ -554,13 +571,6 @@ Internet-Draft             CBOR Tags for OIDs                  July 2020
    other representations, the usual security considerations for non-
    trivial representation conversions apply; the integer values are
    unlimited in range.
-
-
-
-Bormann & Leonard        Expires 4 January 2021                [Page 10]
-
-Internet-Draft             CBOR Tags for OIDs                  July 2020
-
 
 9.1.  Conversions Between BER and Dotted Decimal Notation
 
@@ -599,6 +609,15 @@ Internet-Draft             CBOR Tags for OIDs                  July 2020
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/info/rfc8174>.
 
+
+
+
+
+Bormann & Leonard        Expires 4 January 2021                [Page 11]
+
+Internet-Draft             CBOR Tags for OIDs                  July 2020
+
+
    [X.660]    International Telecommunications Union, "Information
               technology -- Procedures for the operation of object
               identifier registration authorities: General procedures
@@ -609,14 +628,6 @@ Internet-Draft             CBOR Tags for OIDs                  July 2020
               technology -- Abstract Syntax Notation One (ASN.1):
               Specification of basic notation", ITU-T Recommendation
               X.680, August 2015.
-
-
-
-
-Bormann & Leonard        Expires 4 January 2021                [Page 11]
-
-Internet-Draft             CBOR Tags for OIDs                  July 2020
-
 
    [X.690]    International Telecommunications Union, "Information
               technology -- ASN.1 encoding rules: Specification of Basic
@@ -655,6 +666,14 @@ Internet-Draft             CBOR Tags for OIDs                  July 2020
               identifier resolution system", ITU-T Recommendation X.672,
               August 2010.
 
+
+
+
+Bormann & Leonard        Expires 4 January 2021                [Page 12]
+
+Internet-Draft             CBOR Tags for OIDs                  July 2020
+
+
 Appendix A.  Change Log
 
    This section is to be removed before publishing as an RFC.
@@ -663,16 +682,6 @@ A.1.  Changes from -06 to -07
 
    Reduce the draft back to its basic mandate: Describe CBOR tags for
    what is colloquially know as ASN.1 Object IDs.
-
-
-
-
-
-
-Bormann & Leonard        Expires 4 January 2021                [Page 12]
-
-Internet-Draft             CBOR Tags for OIDs                  July 2020
-
 
 A.2.  Changes from -05 to -06
 
@@ -713,6 +722,14 @@ A.5.  Changes from -02 to -03
 
    *  Expanded the draft scope to be a comprehensive CBOR update.
 
+
+
+
+Bormann & Leonard        Expires 4 January 2021                [Page 13]
+
+Internet-Draft             CBOR Tags for OIDs                  July 2020
+
+
    *  Added OID-related sections: OID Enumerations, OID Maps and Arrays,
       and Applications and Examples of OIDs.
 
@@ -722,13 +739,6 @@ A.5.  Changes from -02 to -03
       and Regular Expressions (tag 35).
 
    *  Added technique for representing sets and multisets.
-
-
-
-Bormann & Leonard        Expires 4 January 2021                [Page 13]
-
-Internet-Draft             CBOR Tags for OIDs                  July 2020
-
 
    *  Added references and fixed typos.
 
@@ -757,16 +767,6 @@ Authors' Addresses
 
    Email: dev+ietf@seantek.com
    URI:   http://www.penango.com/
-
-
-
-
-
-
-
-
-
-
 
 
 
