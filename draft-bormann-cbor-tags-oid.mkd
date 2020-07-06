@@ -228,8 +228,8 @@ This specification permits
 empty relative object identifiers; they may
 still be excluded by application semantics.
 
-To enable the search for specific object ID values, it is RECOMMENDED
-that definite length encoding (see Section 2.2.2 of {{-cbor}}) is used
+To facilitate the search for specific object ID values, it is RECOMMENDED
+that definite length encoding (see Section 3.2.3 of {{-cbor}}) is used
 for the byte strings used as tag content for these tags.
 
 The valid set of byte strings can also be expressed using regular
