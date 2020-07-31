@@ -2,8 +2,8 @@
 title: >
   Concise Binary Object Representation (CBOR) Tags for Object Identifiers
 abbrev: CBOR Tags for OIDs
-docname: draft-bormann-cbor-tags-oid-07
-date: 2020-07-03
+docname: draft-ietf-cbor-tags-oid-latest
+date: 2020-07-31
 
 stand_alone: true
 
@@ -528,6 +528,11 @@ as an exercise to the reader.
 Change Log
 ==========
 {: removeInRFC="true"}
+
+Changes from -07 (bormann) to -00 (ietf)
+---------------------------------
+
+Resubmitted as WG draft after adoption.
 
 Changes from -06 to -07
 ---------------------------------

@@ -5,12 +5,12 @@
 Network Working Group                                         C. Bormann
 Internet-Draft                                    Universität Bremen TZI
 Intended status: Standards Track                              S. Leonard
-Expires: 4 January 2021                                    Penango, Inc.
-                                                             3 July 2020
+Expires: 1 February 2021                                   Penango, Inc.
+                                                            31 July 2020
 
 
 Concise Binary Object Representation (CBOR) Tags for Object Identifiers
-                     draft-bormann-cbor-tags-oid-07
+                    draft-ietf-cbor-tags-oid-latest
 
 Abstract
 
@@ -38,7 +38,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 4 January 2021.
+   This Internet-Draft will expire on 1 February 2021.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Bormann & Leonard        Expires 4 January 2021                 [Page 1]
+Bormann & Leonard        Expires 1 February 2021                [Page 1]
 
 Internet-Draft             CBOR Tags for OIDs                  July 2020
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Bormann & Leonard        Expires 4 January 2021                 [Page 2]
+Bormann & Leonard        Expires 1 February 2021                [Page 2]
 
 Internet-Draft             CBOR Tags for OIDs                  July 2020
 
@@ -165,7 +165,7 @@ Internet-Draft             CBOR Tags for OIDs                  July 2020
 
 
 
-Bormann & Leonard        Expires 4 January 2021                 [Page 3]
+Bormann & Leonard        Expires 1 February 2021                [Page 3]
 
 Internet-Draft             CBOR Tags for OIDs                  July 2020
 
@@ -213,15 +213,15 @@ Internet-Draft             CBOR Tags for OIDs                  July 2020
    permits empty relative object identifiers; they may still be excluded
    by application semantics.
 
-   To enable the search for specific object ID values, it is RECOMMENDED
-   that definite length encoding (see Section 2.2.2 of
+   To facilitate the search for specific object ID values, it is
+   RECOMMENDED that definite length encoding (see Section 3.2.3 of
    [I-D.ietf-cbor-7049bis]) is used for the byte strings used as tag
    content for these tags.
 
 
 
 
-Bormann & Leonard        Expires 4 January 2021                 [Page 4]
+Bormann & Leonard        Expires 1 February 2021                [Page 4]
 
 Internet-Draft             CBOR Tags for OIDs                  July 2020
 
@@ -277,7 +277,7 @@ Internet-Draft             CBOR Tags for OIDs                  July 2020
 
 
 
-Bormann & Leonard        Expires 4 January 2021                 [Page 5]
+Bormann & Leonard        Expires 1 February 2021                [Page 5]
 
 Internet-Draft             CBOR Tags for OIDs                  July 2020
 
@@ -333,7 +333,7 @@ Internet-Draft             CBOR Tags for OIDs                  July 2020
 
 
 
-Bormann & Leonard        Expires 4 January 2021                 [Page 6]
+Bormann & Leonard        Expires 1 February 2021                [Page 6]
 
 Internet-Draft             CBOR Tags for OIDs                  July 2020
 
@@ -354,7 +354,7 @@ Internet-Draft             CBOR Tags for OIDs                  July 2020
 
    Consider the X.500 distinguished name:
 
-              +------------------------------+-------------+
+              +==============================+=============+
               | Attribute Types              | Attribute   |
               |                              | Values      |
               +==============================+=============+
@@ -389,7 +389,7 @@ Internet-Draft             CBOR Tags for OIDs                  July 2020
 
 
 
-Bormann & Leonard        Expires 4 January 2021                 [Page 7]
+Bormann & Leonard        Expires 1 February 2021                [Page 7]
 
 Internet-Draft             CBOR Tags for OIDs                  July 2020
 
@@ -445,7 +445,7 @@ Internet-Draft             CBOR Tags for OIDs                  July 2020
 
 
 
-Bormann & Leonard        Expires 4 January 2021                 [Page 8]
+Bormann & Leonard        Expires 1 February 2021                [Page 8]
 
 Internet-Draft             CBOR Tags for OIDs                  July 2020
 
@@ -501,12 +501,12 @@ Internet-Draft             CBOR Tags for OIDs                  July 2020
 
 
 
-Bormann & Leonard        Expires 4 January 2021                 [Page 9]
+Bormann & Leonard        Expires 1 February 2021                [Page 9]
 
 Internet-Draft             CBOR Tags for OIDs                  July 2020
 
 
-    +--------+-----------+--------------------------------------------+
+    +========+===========+============================================+
     | Tag    | Data Item |                                  Semantics |
     +========+===========+============================================+
     | TBD111 | multiple  |           object identifier (BER encoding) |
@@ -522,7 +522,7 @@ Internet-Draft             CBOR Tags for OIDs                  July 2020
    IANA is requested to assign the CDDL Control Operators in Table 3,
    with the present document as the specification reference.
 
-                 +----------+----------------------------+
+                 +==========+============================+
                  | Name     | Reference                  |
                  +==========+============================+
                  | .sdnv    | [this document, Section 7] |
@@ -557,7 +557,7 @@ Internet-Draft             CBOR Tags for OIDs                  July 2020
 
 
 
-Bormann & Leonard        Expires 4 January 2021                [Page 10]
+Bormann & Leonard        Expires 1 February 2021               [Page 10]
 
 Internet-Draft             CBOR Tags for OIDs                  July 2020
 
@@ -613,7 +613,7 @@ Internet-Draft             CBOR Tags for OIDs                  July 2020
 
 
 
-Bormann & Leonard        Expires 4 January 2021                [Page 11]
+Bormann & Leonard        Expires 1 February 2021               [Page 11]
 
 Internet-Draft             CBOR Tags for OIDs                  July 2020
 
@@ -669,7 +669,7 @@ Internet-Draft             CBOR Tags for OIDs                  July 2020
 
 
 
-Bormann & Leonard        Expires 4 January 2021                [Page 12]
+Bormann & Leonard        Expires 1 February 2021               [Page 12]
 
 Internet-Draft             CBOR Tags for OIDs                  July 2020
 
@@ -678,21 +678,25 @@ Appendix A.  Change Log
 
    This section is to be removed before publishing as an RFC.
 
-A.1.  Changes from -06 to -07
+A.1.  Changes from -07 (bormann) to -00 (ietf)
+
+   Resubmitted as WG draft after adoption.
+
+A.2.  Changes from -06 to -07
 
    Reduce the draft back to its basic mandate: Describe CBOR tags for
    what is colloquially know as ASN.1 Object IDs.
 
-A.2.  Changes from -05 to -06
+A.3.  Changes from -05 to -06
 
    Refreshed the draft to the current date ("keep-alive").
 
-A.3.  Changes from -04 to -05
+A.4.  Changes from -04 to -05
 
    Discussed UUID usage in CBOR, and incorporated fixes proposed by
    Olivier Dubuisson, including fixes regarding OID nomenclature.
 
-A.4.  Changes from -03 to -04
+A.5.  Changes from -03 to -04
 
    Changes occurred based on limited feedback, mainly centered around
    the abstract and introduction, rather than substantive technical
@@ -715,20 +719,23 @@ A.4.  Changes from -03 to -04
 
    *  Updated IANA registration tables.
 
-A.5.  Changes from -02 to -03
+
+
+
+
+
+
+Bormann & Leonard        Expires 1 February 2021               [Page 13]
+
+Internet-Draft             CBOR Tags for OIDs                  July 2020
+
+
+A.6.  Changes from -02 to -03
 
    Many significant changes occurred in this version.  These changes
    include:
 
    *  Expanded the draft scope to be a comprehensive CBOR update.
-
-
-
-
-Bormann & Leonard        Expires 4 January 2021                [Page 13]
-
-Internet-Draft             CBOR Tags for OIDs                  July 2020
-
 
    *  Added OID-related sections: OID Enumerations, OID Maps and Arrays,
       and Applications and Examples of OIDs.
@@ -774,11 +781,4 @@ Authors' Addresses
 
 
 
-
-
-
-
-
-
-
-Bormann & Leonard        Expires 4 January 2021                [Page 14]
+Bormann & Leonard        Expires 1 February 2021               [Page 14]
