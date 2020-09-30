@@ -3,7 +3,7 @@ title: >
   Concise Binary Object Representation (CBOR) Tags for Object Identifiers
 abbrev: CBOR Tags for OIDs
 docname: draft-ietf-cbor-tags-oid-latest
-date: 2020-07-31
+date: 2020-09-30
 
 stand_alone: true
 
@@ -191,7 +191,8 @@ The inverse transformation (again making use of the known ranges of X
 and Y) is applied when decoding the object identifier.
 
 Since the semantics of absolute and relative object identifiers
-differ, this specification defines two tags:
+differ, this specification defines two tags, collectively called the
+"OID tags" here:
 
 Tag TBD111: tags a byte string as the {{X.690}} encoding of an
 absolute object identifier (simply "object identifier" or "OID").
@@ -325,32 +326,37 @@ and the [OID Repository](#OID-INFO) are available.
 Tag Factoring with OID Arrays and Maps {#tfs}
 ============
 
-TBD111 and TBD110 can tag CBOR arrays and maps. The idea is that
-the tag is factored out from each individual byte string;
-the tag is placed in front of the array or map instead.
-The tags TBD111 and TBD110 are left-distributive.
+OID tags can tag byte strings (as discussed above), but also CBOR arrays and maps.
+The idea in the latter case is that
+the tag is factored out from each individual item in the container;
+the tag is placed on the array or map instead.
+<!-- I don't think this sentence really helps:
+The tags TBD111 and TBD110 are left-distributive. -->
 
-When the TBD111 or TBD110 tag is applied to an array, it means
-that the respective tag is imputed to all items in the array that are
-byte strings.
-For example, when the array is tagged with TBD111,
-every array item that is a binary string
-is an OID.
+When an OID tag is applied to an array, it means
+that the respective tag is imputed to all elements of the array that are
+byte strings, arrays, or maps.  (There is no effect on other elements,
+including text strings or tags.)
+For example, when an array is tagged with TBD111,
+every array element that is a byte string
+is an OID, and every element that is an array or map is in turn
+treated as discussed here.
 
-When the TBD111 or TBD110 tag is applied to a map, it means that
-the respective tag is imputed to all keys in the map that are byte strings.
-The values in the map are not considered specially tagged.
+When an OID tag is applied to a map, it means that
+the respective tag is imputed to all keys in the map that are byte
+strings, arrays, or maps; again, there is no effect on keys of other major types.
+Note that there is also no effect on the values in the map.
 
-Array and map nesting is permitted. For example,
+As a result of these rules, tag factoring in nested arrays and maps is supported.
+For example,
 a 3-dimensional array of OIDs can be composed by using
-a single TBD111 tag, followed by an array of arrays of arrays
-of binary strings. All such binary strings are considered OIDs.[^1]
+a single TBD111 tag containing an array of arrays of arrays
+of byte strings. All such byte strings are then considered OIDs.[^1]
 
-[^1]: That was part of the original proposal.  I find it hard to
-    imagine how to stop the influence of the tag deep into a nested
-    structure.  That's why I would rather limit this to one level (no
-    nesting).  But see the Figure below, which needs a nesting of two.
-    Please discuss.
+[^1]: Now what may be needed is a tag that can stop the recursive
+    application.  I'm not sure that level complexity is really useful,
+    instead, simply don't tag-factor arrays with elements or maps with
+    keys where you are not sure you really want recursive application.
 
 Applications and Examples of OIDs
 ============
@@ -467,9 +473,9 @@ IANA Considerations {#iana}
 IANA is requested to assign the CBOR tags in {{tab-tag-values-new}}, with the
 present document as the specification reference.
 
-| Tag    | Data Item | Semantics                                                               |
-| TBD111 | multiple  | object identifier (BER encoding)                                        |
-| TBD110 | multiple  | relative object identifier (BER encoding); <br/>SDNV {{-sdnv}} sequence |
+| Tag    | Data Item                   | Semantics                                                               |
+| TBD111 | byte string or array or map | object identifier (BER encoding)                                        |
+| TBD110 | byte string or array or map | relative object identifier (BER encoding); <br/>SDNV {{-sdnv}} sequence |
 {: #tab-tag-values-new title="Values for New Tags" cols="l 11eml r"}
 
 ## CDDL Control Operators
