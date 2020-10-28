@@ -159,13 +159,13 @@ unsigned integer values
 (These integer values are called "primary integer values" in X.660
 because they can be accompanied by (not necessarily unambiguous)
 secondary identifiers.  We ignore the latter and simply use the term
-"integer values" here, possibly calling out their unsignedness.)
+"integer values" here, occasionally calling out their unsignedness.)
 
 While these sequences can easily be represented in CBOR arrays of
 unsigned integers, a more compact representation can often be achieved
 by adopting the widely used representation of object identifiers
 defined in BER; this representation may also be more amenable to
-processing by other software making use of object identifiers.
+processing by other software that makes use of object identifiers.
 
 BER represents the sequence of unsigned integers by concatenating
 self-delimiting {{-sdnv}} representations of each of the integer values in sequence.
@@ -182,8 +182,8 @@ hierarchy that the first arc has only three integer values (0, 1, and 2),
 and the second arcs under 0 and 1 are limited to the integer values between
 0 and 39.  (The root arc `joint-iso-itu-t(2)` has
 no such limitations on its second arc.)
-If X and Y are the first two integers,
-the single integer actually encoded is computed as:
+If X and Y are the first two integer values,
+the single integer value actually encoded is computed as:
 
 > X * 40 + Y
 
@@ -461,9 +461,9 @@ country-value = text .size 2
 ~~~
 {: #fig-dn-cddl-oid title="Using .oid"}
 
-(Note that the control type need not be a literal; e.g., `bytes .oid
+Note that the control type need not be a literal; e.g., `bytes .oid
 [2, 5, 4, *uint]` matches all OIDs inside OID arc 2.5.4,
-`attributeType`.)
+`attributeType`.
 
 IANA Considerations {#iana}
 ============
