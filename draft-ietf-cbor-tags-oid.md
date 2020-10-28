@@ -3,7 +3,7 @@ title: >
   Concise Binary Object Representation (CBOR) Tags for Object Identifiers
 abbrev: CBOR Tags for OIDs
 docname: draft-ietf-cbor-tags-oid-latest
-date: 2020-09-30
+date: 2020-10-28
 
 stand_alone: true
 
@@ -97,8 +97,6 @@ informative:
     author:
       org: Orange SA
     date: 2016
-  PKILCAKE: DOI.10.1007/978-3-642-14577-3_22
-  DOUBLEDABBLE: DOI.10.1109/NEWCAS.2012.6328944
 
 --- abstract
 
@@ -351,12 +349,8 @@ As a result of these rules, tag factoring in nested arrays and maps is supported
 For example,
 a 3-dimensional array of OIDs can be composed by using
 a single TBD111 tag containing an array of arrays of arrays
-of byte strings. All such byte strings are then considered OIDs.[^1]
+of byte strings. All such byte strings are then considered OIDs.
 
-[^1]: Now what may be needed is a tag that can stop the recursive
-    application.  I'm not sure that level complexity is really useful,
-    instead, simply don't tag-factor arrays with elements or maps with
-    keys where you are not sure you really want recursive application.
 
 Applications and Examples of OIDs
 ============
@@ -515,25 +509,23 @@ If the OIDs are translated into other representations, the usual
 security considerations for non-trivial representation conversions
 apply; the integer values are unlimited in range.
 
-Conversions Between BER and Dotted Decimal Notation {#bdconv}
-------------
-
-{{PKILCAKE}} uncovers exploit vectors for the illegal values above,
-as well as for cases in which conversion to or from the dotted decimal notation
-goes awry. Neither {{X.660}} nor {{X.680}} place an upper bound on the
-range of unsigned integer values for an arc; the integers are arbitrarily valued.
-An implementation SHOULD NOT attempt to convert each component using a
-fixed-size accumulator, as an attacker will certainly be able to
-cause the accumulator to overflow. Compact and efficient techniques
-for such conversions, such as the double dabble algorithm {{DOUBLEDABBLE}}
-are well-known in the art; their application to this field is left
-as an exercise to the reader.
 
 --- back
 
 Change Log
 ==========
 {: removeInRFC="true"}
+
+
+Changes from -01 to -02
+-----------------------
+
+Minor editorial changes, remove some remnants, ready for WGLC.
+
+Changes from -00 to -01
+-----------------------
+
+Clean up OID tag factoring.
 
 Changes from -07 (bormann) to -00 (ietf)
 ---------------------------------
