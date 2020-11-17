@@ -10,6 +10,7 @@ stand_alone: true
 ipr: trust200902
 keyword: Internet-Draft
 cat: std
+consensus: true
 # updates: 7049 -- no, it doesn't
 
 pi: [toc, [tocdepth, 1], sortrefs, symrefs, compact, comments]
@@ -42,6 +43,7 @@ author:
 normative:
   RFC6256: sdnv
   I-D.ietf-cbor-7049bis: cbor
+  RFC8610: cddl
   X.660:
     title: >
       Information technology —
