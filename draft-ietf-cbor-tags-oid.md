@@ -3,7 +3,7 @@ title: >
   Concise Binary Object Representation (CBOR) Tags for Object Identifiers
 abbrev: CBOR Tags for OIDs
 docname: draft-ietf-cbor-tags-oid-latest
-date: 2020-10-28
+date: 2020-11-17
 
 stand_alone: true
 
@@ -201,9 +201,13 @@ number is the same as for {{-sdnv}} Self-Delimiting Numeric Values
 (SDNVs), this tag can also be used for tagging a byte string that
 contains a sequence of zero or more SDNVs.
 
+Tag TBD112: structurally like TBD110, but understood to be relative to
+`1.3.6.1.4.1` (IANA Private Enterprise Number OID).  Hence, the
+semantics of the result are that of an absolute object identifier.
+
 ## Requirements on the byte string being tagged {#reqts}
 
-To form a valid tag, a byte string tagged by TBD111 or TBD110 MUST be a syntactically valid BER
+To form a valid tag, a byte string tagged by TBD111, TBD110, or TBD112 MUST be a syntactically valid BER
 representation of an object identifier: A concatenation of zero or
 more SDNV values, where each SDNV value is a sequence of one or more bytes that
 all have their most significant bit set, except for the last byte,
@@ -241,7 +245,7 @@ For byte strings with tag TBD111:
 
 > `/^(([\x81-\xFF][\x80-\xFF]*)?[\x00-\x7F])+$/`
 
-For byte strings with tag TBD110:
+For byte strings with tag TBD110 or TBD112:
 
 > `/^(([\x81-\xFF][\x80-\xFF]*)?[\x00-\x7F])*$/`
 
@@ -459,6 +463,21 @@ Note that the control type need not be a literal; e.g., `bytes .oid
 [2, 5, 4, *uint]` matches all OIDs inside OID arc 2.5.4,
 `attributeType`.
 
+
+CDDL typenames
+==========
+
+For the use with CDDL {{-cddl}}, the
+typenames defined in {{tag-cddl}} are recommended:
+
+~~~ CDDL
+oid = #6.111(bstr)
+roid = #6.110(bstr)
+pen = #6.112(bstr)
+~~~
+{: #tag-cddl title="Recommended typenames for CDDL"}
+
+
 IANA Considerations {#iana}
 ============
 
@@ -470,6 +489,7 @@ present document as the specification reference.
 | Tag    | Data Item                   | Semantics                                                               |
 | TBD111 | byte string or array or map | object identifier (BER encoding)                                        |
 | TBD110 | byte string or array or map | relative object identifier (BER encoding); <br/>SDNV {{-sdnv}} sequence |
+| TBD112 | byte string or array or map | object identifier (BER encoding), relative to 1.3.6.1.4.1               |
 {: #tab-tag-values-new title="Values for New Tags" cols="l 11eml r"}
 
 ## CDDL Control Operators
