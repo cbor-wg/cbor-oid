@@ -712,15 +712,15 @@ Appendix A.  Change Log
 
    This section is to be removed before publishing as an RFC.
 
-A.1.  Changes from -02 to -03
+A.1.  Changes from -02 to -latest
 
    Process WGLC and shepherd comments:
 
-   *  Add tag TBD112 for PEN-relative OIDs
-
-   *  Add suggested CDDL typenames; reference RFC8610
-
    *  Update references (RFC 8949, URIs for ITU-T)
+
+   *  Define arc for this document, reference SDN definition
+
+   *  Restructure, small editorial clarifications
 
 
 
@@ -730,37 +730,39 @@ Bormann & Leonard         Expires 19 July 2021                 [Page 13]
 Internet-Draft             CBOR Tags for OIDs               January 2021
 
 
-   *  Define arc for this document, reference SDN definition
+A.2.  Changes from -02 to -03
 
-   *  Restructure, small editorial clarifications
+   *  Add tag TBD112 for PEN-relative OIDs
 
-A.2.  Changes from -01 to -02
+   *  Add suggested CDDL typenames; reference RFC8610
+
+A.3.  Changes from -01 to -02
 
    Minor editorial changes, remove some remnants, ready for WGLC.
 
-A.3.  Changes from -00 to -01
+A.4.  Changes from -00 to -01
 
    Clean up OID tag factoring.
 
-A.4.  Changes from -07 (bormann) to -00 (ietf)
+A.5.  Changes from -07 (bormann) to -00 (ietf)
 
    Resubmitted as WG draft after adoption.
 
-A.5.  Changes from -06 to -07
+A.6.  Changes from -06 to -07
 
    Reduce the draft back to its basic mandate: Describe CBOR tags for
    what is colloquially know as ASN.1 Object IDs.
 
-A.6.  Changes from -05 to -06
+A.7.  Changes from -05 to -06
 
    Refreshed the draft to the current date ("keep-alive").
 
-A.7.  Changes from -04 to -05
+A.8.  Changes from -04 to -05
 
    Discussed UUID usage in CBOR, and incorporated fixes proposed by
    Olivier Dubuisson, including fixes regarding OID nomenclature.
 
-A.8.  Changes from -03 to -04
+A.9.  Changes from -03 to -04
 
    Changes occurred based on limited feedback, mainly centered around
    the abstract and introduction, rather than substantive technical
@@ -777,8 +779,6 @@ A.8.  Changes from -03 to -04
 
    *  Rewrote the introduction to be more about the present text.
 
-   *  Proposed a concise OID arc.
-
 
 
 Bormann & Leonard         Expires 19 July 2021                 [Page 14]
@@ -786,11 +786,13 @@ Bormann & Leonard         Expires 19 July 2021                 [Page 14]
 Internet-Draft             CBOR Tags for OIDs               January 2021
 
 
+   *  Proposed a concise OID arc.
+
    *  Provided binary regular expression forms for OID validation.
 
    *  Updated IANA registration tables.
 
-A.9.  Changes from -02 to -03
+A.10.  Changes from -02 to -03
 
    Many significant changes occurred in this version.  These changes
    include:
@@ -832,9 +834,63 @@ Authors' Addresses
    Los Angeles, CA,  90036
    United States of America
 
+
+
+
+Bormann & Leonard         Expires 19 July 2021                 [Page 15]
+
+Internet-Draft             CBOR Tags for OIDs               January 2021
+
+
    Email: dev+ietf@seantek.com
    URI:   http://www.penango.com/
 
 
 
-Bormann & Leonard         Expires 19 July 2021                 [Page 15]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Bormann & Leonard         Expires 19 July 2021                 [Page 16]
