@@ -3,7 +3,7 @@ title: >
   Concise Binary Object Representation (CBOR) Tags for Object Identifiers
 abbrev: CBOR Tags for OIDs
 docname: draft-ietf-cbor-tags-oid-latest
-date: 2020-11-17
+date: 2021-01-15
 
 stand_alone: true
 
@@ -11,7 +11,6 @@ ipr: trust200902
 keyword: Internet-Draft
 cat: std
 consensus: true
-# updates: 7049 -- no, it doesn't
 
 pi: [toc, [tocdepth, 1], sortrefs, symrefs, compact, comments]
 
@@ -42,7 +41,7 @@ author:
 
 normative:
   RFC6256: sdnv
-  I-D.ietf-cbor-7049bis: cbor
+  RFC8949: cbor
   RFC8610: cddl
   X.660:
     title: >
@@ -54,6 +53,7 @@ normative:
     date: 2011-07
     seriesinfo:
       ITU-T: Recommendation X.660
+    target: https://www.itu.int/rec/T-REC-X.660
 
   X.680:
     title: >
@@ -64,6 +64,7 @@ normative:
     date: 2015-08
     seriesinfo:
       ITU-T: Recommendation X.680
+    target: https://www.itu.int/rec/T-REC-X.680
 
   X.690:
     title: >
@@ -75,6 +76,7 @@ normative:
     date: 2015-08
     seriesinfo:
       ITU-T: Recommendation X.690
+    target: https://www.itu.int/rec/T-REC-X.690
 
 informative:
   X.672:
@@ -86,6 +88,7 @@ informative:
     date: 2010-08
     seriesinfo:
       ITU-T: Recommendation X.672
+    target: https://www.itu.int/rec/T-REC-X.672
   PCRE:
       target: http://www.pcre.org/
       title: PCRE - Perl Compatible Regular Expressions
@@ -103,7 +106,7 @@ informative:
 --- abstract
 
 
-The Concise Binary Object Representation (CBOR, draft-ietf-cbor-7049bis) is a data
+The Concise Binary Object Representation (CBOR, RFC 8949) is a data
 format whose design goals include the possibility of extremely small
 code size, fairly small message size, and extensibility without the
 need for version negotiation.
@@ -144,9 +147,10 @@ Terminology         {#terms}
 
 {::boilerplate bcp14}
 
-The terminology of draft-ietf-cbor-7049bis applies; in particular
+The terminology of {{-cbor}} applies; in particular
 the term "byte" is used in its now customary sense as a synonym for
 "octet".
+The term "SDNV" is used as defined in {{-sdnv}}.
 
 Object Identifiers {#oids}
 ========================
@@ -159,7 +163,10 @@ unsigned integer values
 (These integer values are called "primary integer values" in X.660
 because they can be accompanied by (not necessarily unambiguous)
 secondary identifiers.  We ignore the latter and simply use the term
-"integer values" here, occasionally calling out their unsignedness.)
+"integer values" here, occasionally calling out their unsignedness.
+We also use the term "arc" when the focus is on the edge of the tree
+labeled by such an integer value, as well as in the sense of a "long
+arc", i.e. a (sub)sequence of such integer values.)
 
 While these sequences can easily be represented in CBOR arrays of
 unsigned integers, a more compact representation can often be achieved
@@ -204,7 +211,7 @@ number is the same as for {{-sdnv}} Self-Delimiting Numeric Values
 contains a sequence of zero or more SDNVs.
 
 Tag TBD112: structurally like TBD110, but understood to be relative to
-`1.3.6.1.4.1` (IANA Private Enterprise Number OID).  Hence, the
+`1.3.6.1.4.1` (IANA Private Enterprise Number OID, {{?IANA.enterprise-numbers}}).  Hence, the
 semantics of the result are that of an absolute object identifier.
 
 ## Requirements on the byte string being tagged {#reqts}
@@ -213,15 +220,17 @@ To form a valid tag, a byte string tagged by TBD111, TBD110, or TBD112 MUST be a
 representation of an object identifier: A concatenation of zero or
 more SDNV values, where each SDNV value is a sequence of one or more bytes that
 all have their most significant bit set, except for the last byte,
-where it must be unset; the first byte of each SDNV cannot be 0x80
-(which would be a leading zero in SDNV's base-128 arithmetic).
+where it is unset.
+Also, the first byte of each SDNV cannot be a
+leading zero in SDNV's base-128 arithmetic, so it cannot take the
+value 0x80 (bullet (c) in Section 8.1.2.4.2 of {{X.690}}).
 
 In other words:
 
-* its first byte, and any byte that follows a byte that has the most significant
+* the byte string's first byte, and any byte that follows a byte that has the most significant
   bit unset, MUST NOT be 0x80 (this requirement requires expressing the
   integer values in their shortest form, with no leading zeroes)
-* its last byte MUST NOT have the most significant bit set (this
+* the byte string's last byte MUST NOT have the most significant bit set (this
   requirement excludes an incomplete final integer value)
 
 If either of these invalid conditions are encountered, the tag is
@@ -254,8 +263,35 @@ For byte strings with tag TBD110 or TBD112:
 A tag with tagged content that does not conform to the applicable
 regexp is invalid.
 
-Examples {#examples}
+
+## Discussion {#discussion}
+
+Staying close to the way object identifiers are encoded in ASN.1
+BER makes back-and-forth translation easy; otherwise we would choose a
+more efficient encoding.  Object
+identifiers in IETF protocols
+are serialized in dotted decimal form or BER form, so
+there is an advantage in not inventing a third form.  Also,
+expectations of the cost of encoding object identifiers are
+based on BER; using a different encoding might not be aligned with
+these expectations. If additional information about an OID is desired,
+lookup services such as
+the [OID Resolution Service (ORS)](#X.672)
+and the [OID Repository](#OID-INFO) are available.
+
+
+Basic Examples {#examples}
 ========
+
+This section gives simple examples of an absolute and a relative
+object identifier, represented via tag number TBD111 and TBD110,
+respectively.
+
+<!-- <note removeinrfc="true" markdown="1"> -->
+RFC editor: These and other examples assume the allocation of 111 for
+TBD111 and 110 for TBD110 and need to be changed if that isn't the
+actual allocation.  Please remove this paragraph.
+<!-- </note> -->
 
 ## Encoding of the SHA-256 OID
 
@@ -311,31 +347,13 @@ D8 6E                             # tag(110)
 
 This relative OID saves seven bytes compared to the full OID encoding.
 
-Discussion {#discussion}
-==========
-
-Staying close to the way object identifiers are encoded in ASN.1
-BER makes back-and-forth translation easy; otherwise we would choose a
-more efficient encoding.  Object
-identifiers in IETF protocols
-are serialized in dotted decimal form or BER form, so
-there is an advantage in not inventing a third form.  Also,
-expectations of the cost of encoding object identifiers are
-based on BER; using a different encoding might not be aligned with
-these expectations. If additional information about an OID is desired,
-lookup services such as
-the [OID Resolution Service (ORS)](#X.672)
-and the [OID Repository](#OID-INFO) are available.
-
-Tag Factoring with OID Arrays and Maps {#tfs}
+Tag Factoring with Arrays and Maps {#tfs}
 ============
 
 OID tags can tag byte strings (as discussed above), but also CBOR arrays and maps.
 The idea in the latter case is that
 the tag is factored out from each individual item in the container;
 the tag is placed on the array or map instead.
-<!-- I don't think this sentence really helps:
-The tags TBD111 and TBD110 are left-distributive. -->
 
 When an OID tag is applied to an array, it means
 that the respective tag is imputed to all elements of the array that are
@@ -358,10 +376,7 @@ a single TBD111 tag containing an array of arrays of arrays
 of byte strings. All such byte strings are then considered OIDs.
 
 
-Applications and Examples of OIDs
-============
-
-## X.500 Distinguished Name
+## Tag Factoring Example: X.500 Distinguished Name
 
 Consider the X.500 distinguished name:
 
@@ -376,7 +391,8 @@ Consider the X.500 distinguished name:
 {{tab-dn-data}} has four "relative distinguished names" (RDNs). The country and street RDNs are single-valued.
 The second and fourth RDNs are multi-valued.
 
-The equivalent representations in CBOR diagnostic notation and CBOR are:
+The equivalent representations in CBOR diagnostic notation ({{Section 8
+of RFC8949}}) and CBOR are:
 
 
 ~~~~~~~~~~~
@@ -387,7 +403,7 @@ The equivalent representations in CBOR diagnostic notation and CBOR are:
      { h'55040f': "Public Park",
        h'0992268993f22c640130': "Pershing Square" }])
 ~~~~~~~~~~~
-{: #fig-dn-cbor-diag-7049 title="Distinguished Name, in CBOR Diagnostic Notation"}
+{: #fig-dn-cbor-diag title="Distinguished Name, in CBOR Diagnostic Notation"}
 
 ~~~~~~~~~~~
 d8 6f                                      # tag(111)
@@ -538,6 +554,16 @@ Change Log
 ==========
 {: removeInRFC="true"}
 
+Changes from -02 to -03
+-----------------------
+
+Process WGLC and shepherd comments:
+
+* Add tag TBD112 for PEN-relative OIDs
+* Add suggested CDDL typenames; reference RFC8610
+* Update references (RFC 8949, URIs for ITU-T)
+* Define arc for this document, reference SDN definition
+* Restructure, small editorial clarifications
 
 Changes from -01 to -02
 -----------------------
