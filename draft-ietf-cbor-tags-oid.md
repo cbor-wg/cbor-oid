@@ -554,16 +554,21 @@ Change Log
 ==========
 {: removeInRFC="true"}
 
-Changes from -02 to -03
+Changes from -02 to -latest
 -----------------------
 
 Process WGLC and shepherd comments:
 
-* Add tag TBD112 for PEN-relative OIDs
-* Add suggested CDDL typenames; reference RFC8610
 * Update references (RFC 8949, URIs for ITU-T)
 * Define arc for this document, reference SDN definition
 * Restructure, small editorial clarifications
+
+
+Changes from -02 to -03
+-----------------------
+
+* Add tag TBD112 for PEN-relative OIDs
+* Add suggested CDDL typenames; reference RFC8610
 
 Changes from -01 to -02
 -----------------------
