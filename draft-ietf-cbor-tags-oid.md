@@ -3,7 +3,7 @@ title: >
   Concise Binary Object Representation (CBOR) Tags for Object Identifiers
 abbrev: CBOR Tags for OIDs
 docname: draft-ietf-cbor-tags-oid-latest
-date: 2021-01-15
+date: 2021-02-19
 
 stand_alone: true
 
@@ -25,6 +25,8 @@ author:
     country: Germany
     phone: +49-421-218-63921
     email: cabo@tzi.org
+
+contributor:
   -
     ins: S. Leonard
     name: Sean Leonard
@@ -505,6 +507,7 @@ IANA is requested to assign the CBOR tags in {{tab-tag-values-new}}, with the
 present document as the specification reference.
 
 | Tag    | Data Item                   | Semantics                                                               |
+|--------|-----------------------------|-------------------------------------------------------------------------|
 | TBD111 | byte string or array or map | object identifier (BER encoding)                                        |
 | TBD110 | byte string or array or map | relative object identifier (BER encoding); <br/>SDNV {{-sdnv}} sequence |
 | TBD112 | byte string or array or map | object identifier (BER encoding), relative to 1.3.6.1.4.1               |
@@ -554,7 +557,12 @@ Change Log
 ==========
 {: removeInRFC="true"}
 
-Changes from -02 to -latest
+Changes from -04 to -05
+-----------------------
+
+* Update acknowledgements, contributor list, and author list
+
+Changes from -03 to -04
 -----------------------
 
 Process WGLC and shepherd comments:
@@ -657,4 +665,6 @@ Acknowledgments
 ===============
 {: numbered="no"}
 
-Jim Schaad provided a review of this document.
+{{{Sean Leonard}}} started the work on this document in 2014 with an
+elaborate proposal.
+{{{Jim Schaad}}} provided a significant review of this document.
