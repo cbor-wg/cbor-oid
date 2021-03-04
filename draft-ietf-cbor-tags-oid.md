@@ -218,8 +218,10 @@ semantics of the result are that of an absolute object identifier.
 
 ## Requirements on the byte string being tagged {#reqts}
 
-To form a valid tag, a byte string tagged by TBD111, TBD110, or TBD112 MUST be a syntactically valid BER
-representation of an object identifier: A concatenation of zero or
+To form a valid tag, a byte string tagged by TBD111, TBD110, or TBD112
+MUST be syntactically valid contents (the value part) for a BER
+representation of an object identifier (Sections 8.19, 8.20, and 8.20
+of {{X.690}}, respectively): A concatenation of zero or
 more SDNV values, where each SDNV value is a sequence of one or more bytes that
 all have their most significant bit set, except for the last byte,
 where it is unset.
