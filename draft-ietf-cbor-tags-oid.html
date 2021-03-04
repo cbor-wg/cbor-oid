@@ -21,7 +21,7 @@ so defined.
 <meta content="draft-ietf-cbor-tags-oid-latest" name="ietf.draft">
 <!-- Generator version information:
   xml2rfc 3.5.0
-    Python 3.9.1
+    Python 3.9.2
     appdirs 1.4.4
     ConfigArgParse 1.2.3
     google-i18n-address 2.4.0
@@ -35,7 +35,7 @@ so defined.
     pyflakes 2.2.0
     PyYAML 5.3.1
     requests 2.25.1
-    setuptools 52.0.0
+    setuptools 53.0.0
     six 1.15.0
 -->
 <link href="draft-ietf-cbor-tags-oid.xml" rel="alternate" type="application/rfc+xml">
@@ -1423,8 +1423,10 @@ semantics of the result are that of an absolute object identifier.<a href="#sect
         <h3 id="name-requirements-on-the-byte-st">
 <a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-requirements-on-the-byte-st" class="section-name selfRef">Requirements on the byte string being tagged</a>
         </h3>
-<p id="section-2.1-1">To form a valid tag, a byte string tagged by TBD111, TBD110, or TBD112 MUST be a syntactically valid BER
-representation of an object identifier: A concatenation of zero or
+<p id="section-2.1-1">To form a valid tag, a byte string tagged by TBD111, TBD110, or TBD112
+MUST be syntactically valid contents (the value part) for a BER
+representation of an object identifier (Sections 8.19, 8.20, and 8.20
+of <span>[<a href="#X.690" class="xref">X.690</a>]</span>, respectively): A concatenation of zero or
 more SDNV values, where each SDNV value is a sequence of one or more bytes that
 all have their most significant bit set, except for the last byte,
 where it is unset.
