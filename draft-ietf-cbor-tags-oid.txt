@@ -196,13 +196,14 @@ Internet-Draft             CBOR Tags for OIDs              February 2021
 2.1.  Requirements on the byte string being tagged
 
    To form a valid tag, a byte string tagged by TBD111, TBD110, or
-   TBD112 MUST be a syntactically valid BER representation of an object
-   identifier: A concatenation of zero or more SDNV values, where each
-   SDNV value is a sequence of one or more bytes that all have their
-   most significant bit set, except for the last byte, where it is
-   unset.  Also, the first byte of each SDNV cannot be a leading zero in
-   SDNV's base-128 arithmetic, so it cannot take the value 0x80 (bullet
-   (c) in Section 8.1.2.4.2 of [X.690]).
+   TBD112 MUST be syntactically valid contents (the value part) for a
+   BER representation of an object identifier (Sections 8.19, 8.20, and
+   8.20 of [X.690], respectively): A concatenation of zero or more SDNV
+   values, where each SDNV value is a sequence of one or more bytes that
+   all have their most significant bit set, except for the last byte,
+   where it is unset.  Also, the first byte of each SDNV cannot be a
+   leading zero in SDNV's base-128 arithmetic, so it cannot take the
+   value 0x80 (bullet (c) in Section 8.1.2.4.2 of [X.690]).
 
    In other words:
 
@@ -216,7 +217,6 @@ Internet-Draft             CBOR Tags for OIDs              February 2021
 
    If either of these invalid conditions are encountered, the tag is
    invalid.
-
 
 
 
