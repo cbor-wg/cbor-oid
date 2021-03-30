@@ -3,7 +3,7 @@ title: >
   Concise Binary Object Representation (CBOR) Tags for Object Identifiers
 abbrev: CBOR Tags for OIDs
 docname: draft-ietf-cbor-tags-oid-latest
-date: 2021-02-19
+date: 2021-03-30
 
 stand_alone: true
 
@@ -558,6 +558,12 @@ apply; the integer values are unlimited in range.
 Change Log
 ==========
 {: removeInRFC="true"}
+
+Changes from -05 to -06
+-----------------------
+
+Add references to specific section numbers of {{X.690}} to better
+explain validity of enclosed byte string.
 
 Changes from -04 to -05
 -----------------------
