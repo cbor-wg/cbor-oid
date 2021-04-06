@@ -168,7 +168,7 @@ secondary identifiers.  We ignore the latter and simply use the term
 "integer values" here, occasionally calling out their unsignedness.
 We also use the term "arc" when the focus is on the edge of the tree
 labeled by such an integer value, as well as in the sense of a "long
-arc", i.e. a (sub)sequence of such integer values.)
+arc", i.e., a (sub)sequence of such integer values.)
 
 While these sequences can easily be represented in CBOR arrays of
 unsigned integers, a more compact representation can often be achieved
@@ -265,7 +265,7 @@ For byte strings with tag TBD110 or TBD112:
 > `/^(([\x81-\xFF][\x80-\xFF]*)?[\x00-\x7F])*$/`
 
 A tag with tagged content that does not conform to the applicable
-regexp is invalid.
+regular expression is invalid.
 
 
 ## Discussion {#discussion}
