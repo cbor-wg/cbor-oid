@@ -31,7 +31,7 @@ contributor:
     ins: S. Leonard
     name: Sean Leonard
     email: dev+ietf@seantek.com
-    uri: http://www.penango.com/
+#    uri: http://www.penango.com/
     org: Penango, Inc.
     street:
       - 5900 Wilshire Boulevard
