@@ -3,7 +3,7 @@ title: >
   Concise Binary Object Representation (CBOR) Tags for Object Identifiers
 abbrev: CBOR Tags for OIDs
 docname: draft-ietf-cbor-tags-oid-latest
-date: 2021-03-30
+date: 2021-04-06
 
 stand_alone: true
 
@@ -152,7 +152,7 @@ Terminology         {#terms}
 The terminology of {{-cbor}} applies; in particular
 the term "byte" is used in its now customary sense as a synonym for
 "octet".
-The term "SDNV" is used as defined in {{-sdnv}}.
+The term "SDNV" (Self-Delimiting Numeric Value) is used as defined in {{-sdnv}}.
 
 Object Identifiers {#oids}
 ========================
@@ -344,7 +344,7 @@ Dotted Decimal Notation:
 
 ~~~~~~~~~~~
 D8 6E                             # tag(110)
-   43                             # 0b010_01001: mt 2 (bstr), 3 bytes
+   43                             # 0b010_00011: mt 2 (bstr), 3 bytes
       01 01 1D                    # X.690 Clause 8.20
 ~~~~~~~~~~~
 {: #fig-mib-cbor title="MIB relative object identifier, in CBOR"}
@@ -505,24 +505,27 @@ IANA Considerations {#iana}
 
 ## CBOR Tags
 
-IANA is requested to assign the CBOR tags in {{tab-tag-values-new}}, with the
+IANA is requested to assign in the CBOR tags registry
+{{!IANA.cbor-tags}} the CBOR tags in {{tab-tag-values-new}}, with the
 present document as the specification reference.
 
-| Tag    | Data Item                   | Semantics                                                               |
-|--------|-----------------------------|-------------------------------------------------------------------------|
-| TBD111 | byte string or array or map | object identifier (BER encoding)                                        |
-| TBD110 | byte string or array or map | relative object identifier (BER encoding); <br/>SDNV {{-sdnv}} sequence |
-| TBD112 | byte string or array or map | object identifier (BER encoding), relative to 1.3.6.1.4.1               |
+| Tag    | Data Item                   | Semantics                                                               | Reference                     |
+|--------|-----------------------------|-------------------------------------------------------------------------|-------------------------------|
+| TBD111 | byte string or array or map | object identifier (BER encoding)                                        | \[this document, {{oids}}] |
+| TBD110 | byte string or array or map | relative object identifier (BER encoding); <br/>SDNV {{-sdnv}} sequence | \[this document, {{oids}}] |
+| TBD112 | byte string or array or map | object identifier (BER encoding), relative to 1.3.6.1.4.1               | \[this document, {{oids}}] |
 {: #tab-tag-values-new title="Values for New Tags" cols="l 11eml r"}
 
 ## CDDL Control Operators
 
 
-IANA is requested to assign the CDDL Control Operators in
+IANA is requested to assign in the CDDL Control Operators registry
+{{!IANA.cddl}} the CDDL Control Operators in
 {{tab-operators-new}}, with the present document as the specification
 reference.
 
 | Name     | Reference                     |
+|----------|-------------------------------|
 | .sdnv    | \[this document, {{control}}] |
 | .sdnvseq | \[this document, {{control}}] |
 | .oid     | \[this document, {{control}}] |
