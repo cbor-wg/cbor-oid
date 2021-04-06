@@ -4,8 +4,8 @@
 
 Network Working Group                                         C. Bormann
 Internet-Draft                                    Universität Bremen TZI
-Intended status: Standards Track                           30 March 2021
-Expires: 1 October 2021
+Intended status: Standards Track                            6 April 2021
+Expires: 8 October 2021
 
 
 Concise Binary Object Representation (CBOR) Tags for Object Identifiers
@@ -37,7 +37,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 1 October 2021.
+   This Internet-Draft will expire on 8 October 2021.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Bormann                  Expires 1 October 2021                 [Page 1]
+Bormann                  Expires 8 October 2021                 [Page 1]
 
-Internet-Draft             CBOR Tags for OIDs                 March 2021
+Internet-Draft             CBOR Tags for OIDs                 April 2021
 
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -71,7 +71,7 @@ Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
    2.  Object Identifiers  . . . . . . . . . . . . . . . . . . . . .   3
-   3.  Basic Examples  . . . . . . . . . . . . . . . . . . . . . . .   5
+   3.  Basic Examples  . . . . . . . . . . . . . . . . . . . . . . .   6
    4.  Tag Factoring with Arrays and Maps  . . . . . . . . . . . . .   7
    5.  CDDL Control Operators  . . . . . . . . . . . . . . . . . . .   9
    6.  CDDL typenames  . . . . . . . . . . . . . . . . . . . . . . .  10
@@ -81,8 +81,8 @@ Table of Contents
      9.1.  Normative References  . . . . . . . . . . . . . . . . . .  12
      9.2.  Informative References  . . . . . . . . . . . . . . . . .  13
    Appendix A.  Change Log . . . . . . . . . . . . . . . . . . . . .  13
-   Acknowledgments . . . . . . . . . . . . . . . . . . . . . . . . .  15
-   Contributors  . . . . . . . . . . . . . . . . . . . . . . . . . .  15
+   Acknowledgments . . . . . . . . . . . . . . . . . . . . . . . . .  16
+   Contributors  . . . . . . . . . . . . . . . . . . . . . . . . . .  16
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  16
 
 1.  Introduction
@@ -109,9 +109,9 @@ Table of Contents
 
 
 
-Bormann                  Expires 1 October 2021                 [Page 2]
+Bormann                  Expires 8 October 2021                 [Page 2]
 
-Internet-Draft             CBOR Tags for OIDs                 March 2021
+Internet-Draft             CBOR Tags for OIDs                 April 2021
 
 
 1.1.  Terminology
@@ -124,7 +124,8 @@ Internet-Draft             CBOR Tags for OIDs                 March 2021
 
    The terminology of [RFC8949] applies; in particular the term "byte"
    is used in its now customary sense as a synonym for "octet".  The
-   term "SDNV" is used as defined in [RFC6256].
+   term "SDNV" (Self-Delimiting Numeric Value) is used as defined in
+   [RFC6256].
 
 2.  Object Identifiers
 
@@ -137,7 +138,7 @@ Internet-Draft             CBOR Tags for OIDs                 March 2021
    values" here, occasionally calling out their unsignedness.  We also
    use the term "arc" when the focus is on the edge of the tree labeled
    by such an integer value, as well as in the sense of a "long arc",
-   i.e. a (sub)sequence of such integer values.)
+   i.e., a (sub)sequence of such integer values.)
 
    While these sequences can easily be represented in CBOR arrays of
    unsigned integers, a more compact representation can often be
@@ -149,6 +150,25 @@ Internet-Draft             CBOR Tags for OIDs                 March 2021
    BER represents the sequence of unsigned integers by concatenating
    self-delimiting [RFC6256] representations of each of the integer
    values in sequence.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Bormann                  Expires 8 October 2021                 [Page 3]
+
+Internet-Draft             CBOR Tags for OIDs                 April 2021
+
 
    ASN.1 distinguishes absolute object identifiers (ASN.1 Type "OBJECT
    IDENTIFIER"), which begin at a root arc ([X.660] Clause 3.5.21), from
@@ -162,13 +182,6 @@ Internet-Draft             CBOR Tags for OIDs                 March 2021
    arc "joint-iso-itu-t(2)" has no such limitations on its second arc.)
    If X and Y are the first two integer values, the single integer value
    actually encoded is computed as:
-
-
-
-Bormann                  Expires 1 October 2021                 [Page 3]
-
-Internet-Draft             CBOR Tags for OIDs                 March 2021
-
 
       X * 40 + Y
 
@@ -205,6 +218,14 @@ Internet-Draft             CBOR Tags for OIDs                 March 2021
    leading zero in SDNV's base-128 arithmetic, so it cannot take the
    value 0x80 (bullet (c) in Section 8.1.2.4.2 of [X.690]).
 
+
+
+
+Bormann                  Expires 8 October 2021                 [Page 4]
+
+Internet-Draft             CBOR Tags for OIDs                 April 2021
+
+
    In other words:
 
    *  the byte string's first byte, and any byte that follows a byte
@@ -217,14 +238,6 @@ Internet-Draft             CBOR Tags for OIDs                 March 2021
 
    If either of these invalid conditions are encountered, the tag is
    invalid.
-
-
-
-
-Bormann                  Expires 1 October 2021                 [Page 4]
-
-Internet-Draft             CBOR Tags for OIDs                 March 2021
-
 
    [X.680] restricts RELATIVE-OID values to have at least one arc, i.e.,
    their encoding would have at least one SDNV.  This specification
@@ -251,7 +264,7 @@ Internet-Draft             CBOR Tags for OIDs                 March 2021
       "/^(([\x81-\xFF][\x80-\xFF]*)?[\x00-\x7F])*$/"
 
    A tag with tagged content that does not conform to the applicable
-   regexp is invalid.
+   regular expression is invalid.
 
 2.2.  Discussion
 
@@ -261,6 +274,14 @@ Internet-Draft             CBOR Tags for OIDs                 March 2021
    serialized in dotted decimal form or BER form, so there is an
    advantage in not inventing a third form.  Also, expectations of the
    cost of encoding object identifiers are based on BER; using a
+
+
+
+Bormann                  Expires 8 October 2021                 [Page 5]
+
+Internet-Draft             CBOR Tags for OIDs                 April 2021
+
+
    different encoding might not be aligned with these expectations.  If
    additional information about an OID is desired, lookup services such
    as the OID Resolution Service (ORS) [X.672] and the OID Repository
@@ -271,16 +292,6 @@ Internet-Draft             CBOR Tags for OIDs                 March 2021
    This section gives simple examples of an absolute and a relative
    object identifier, represented via tag number TBD111 and TBD110,
    respectively.
-
-
-
-
-
-
-Bormann                  Expires 1 October 2021                 [Page 5]
-
-Internet-Draft             CBOR Tags for OIDs                 March 2021
-
 
    RFC editor: These and other examples assume the allocation of 111 for
    TBD111 and 110 for TBD110 and need to be changed if that isn't the
@@ -318,6 +329,15 @@ Internet-Draft             CBOR Tags for OIDs                 March 2021
 
    Dotted Decimal Notation:  .1.1.29
 
+
+
+
+
+Bormann                  Expires 8 October 2021                 [Page 6]
+
+Internet-Draft             CBOR Tags for OIDs                 April 2021
+
+
    0D                                # UNIVERSAL TAG 13
       03                             # 3 bytes, primitive
          01 01 1D                    # X.690 Clause 8.20
@@ -326,17 +346,10 @@ Internet-Draft             CBOR Tags for OIDs                 March 2021
               Figure 3: MIB relative object identifier, in BER
 
    D8 6E                             # tag(110)
-      43                             # 0b010_01001: mt 2 (bstr), 3 bytes
+      43                             # 0b010_00011: mt 2 (bstr), 3 bytes
          01 01 1D                    # X.690 Clause 8.20
 
              Figure 4: MIB relative object identifier, in CBOR
-
-
-
-Bormann                  Expires 1 October 2021                 [Page 6]
-
-Internet-Draft             CBOR Tags for OIDs                 March 2021
-
 
    This relative OID saves seven bytes compared to the full OID
    encoding.
@@ -376,22 +389,9 @@ Internet-Draft             CBOR Tags for OIDs                 March 2021
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-Bormann                  Expires 1 October 2021                 [Page 7]
+Bormann                  Expires 8 October 2021                 [Page 7]
 
-Internet-Draft             CBOR Tags for OIDs                 March 2021
+Internet-Draft             CBOR Tags for OIDs                 April 2021
 
 
               +==============================+=============+
@@ -445,9 +445,9 @@ Internet-Draft             CBOR Tags for OIDs                 March 2021
 
 
 
-Bormann                  Expires 1 October 2021                 [Page 8]
+Bormann                  Expires 8 October 2021                 [Page 8]
 
-Internet-Draft             CBOR Tags for OIDs                 March 2021
+Internet-Draft             CBOR Tags for OIDs                 April 2021
 
 
    d8 6f                                      # tag(111)
@@ -501,9 +501,9 @@ Internet-Draft             CBOR Tags for OIDs                 March 2021
 
 
 
-Bormann                  Expires 1 October 2021                 [Page 9]
+Bormann                  Expires 8 October 2021                 [Page 9]
 
-Internet-Draft             CBOR Tags for OIDs                 March 2021
+Internet-Draft             CBOR Tags for OIDs                 April 2021
 
 
    *  ".sdnvseq", with a control type that contains arrays of unsigned
@@ -549,40 +549,42 @@ Internet-Draft             CBOR Tags for OIDs                 March 2021
 
 7.1.  CBOR Tags
 
-   IANA is requested to assign the CBOR tags in Table 2, with the
-   present document as the specification reference.
+   IANA is requested to assign in the CBOR tags registry
+   [IANA.cbor-tags] the CBOR tags in Table 2, with the present document
+   as the specification reference.
 
 
 
 
 
-
-Bormann                  Expires 1 October 2021                [Page 10]
+Bormann                  Expires 8 October 2021                [Page 10]
 
-Internet-Draft             CBOR Tags for OIDs                 March 2021
+Internet-Draft             CBOR Tags for OIDs                 April 2021
 
 
-         +========+================+============================+
-         | Tag    | Data Item      |                  Semantics |
-         +========+================+============================+
-         | TBD111 | byte string or |     object identifier (BER |
-         |        | array or map   |                  encoding) |
-         +--------+----------------+----------------------------+
-         | TBD110 | byte string or | relative object identifier |
-         |        | array or map   |            (BER encoding); |
-         |        |                |    SDNV [RFC6256] sequence |
-         +--------+----------------+----------------------------+
-         | TBD112 | byte string or |     object identifier (BER |
-         |        | array or map   |     encoding), relative to |
-         |        |                |                1.3.6.1.4.1 |
-         +--------+----------------+----------------------------+
+   +========+================+============================+============+
+   | Tag    | Data Item      |                  Semantics | Reference  |
+   +========+================+============================+============+
+   | TBD111 | byte string    |     object identifier (BER | [this      |
+   |        | or array or    |                  encoding) | document,  |
+   |        | map            |                            | Section 2] |
+   +--------+----------------+----------------------------+------------+
+   | TBD110 | byte string    | relative object identifier | [this      |
+   |        | or array or    |            (BER encoding); | document,  |
+   |        | map            |    SDNV [RFC6256] sequence | Section 2] |
+   +--------+----------------+----------------------------+------------+
+   | TBD112 | byte string    |     object identifier (BER | [this      |
+   |        | or array or    |     encoding), relative to | document,  |
+   |        | map            |                1.3.6.1.4.1 | Section 2] |
+   +--------+----------------+----------------------------+------------+
 
-                       Table 2: Values for New Tags
+                        Table 2: Values for New Tags
 
 7.2.  CDDL Control Operators
 
-   IANA is requested to assign the CDDL Control Operators in Table 3,
-   with the present document as the specification reference.
+   IANA is requested to assign in the CDDL Control Operators registry
+   [IANA.cddl] the CDDL Control Operators in Table 3, with the present
+   document as the specification reference.
 
                  +==========+============================+
                  | Name     | Reference                  |
@@ -611,11 +613,9 @@ Internet-Draft             CBOR Tags for OIDs                 March 2021
 
 
 
-
-
-Bormann                  Expires 1 October 2021                [Page 11]
+Bormann                  Expires 8 October 2021                [Page 11]
 
-Internet-Draft             CBOR Tags for OIDs                 March 2021
+Internet-Draft             CBOR Tags for OIDs                 April 2021
 
 
    OIDs and relative OIDs can always be treated as opaque byte strings.
@@ -631,6 +631,14 @@ Internet-Draft             CBOR Tags for OIDs                 March 2021
 9.  References
 
 9.1.  Normative References
+
+   [IANA.cbor-tags]
+              IANA, "Concise Binary Object Representation (CBOR) Tags",
+              <http://www.iana.org/assignments/cbor-tags>.
+
+   [IANA.cddl]
+              IANA, "Concise Data Definition Language (CDDL)",
+              <http://www.iana.org/assignments/cddl>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -656,23 +664,22 @@ Internet-Draft             CBOR Tags for OIDs                 March 2021
               DOI 10.17487/RFC8949, December 2020,
               <https://www.rfc-editor.org/info/rfc8949>.
 
+
+
+
+
+
+Bormann                  Expires 8 October 2021                [Page 12]
+
+Internet-Draft             CBOR Tags for OIDs                 April 2021
+
+
    [X.660]    International Telecommunications Union, "Information
               technology — Procedures for the operation of object
               identifier registration authorities: General procedures
               and top arcs of the international object identifier tree",
               ITU-T Recommendation X.660, July 2011,
               <https://www.itu.int/rec/T-REC-X.660>.
-
-
-
-
-
-
-
-Bormann                  Expires 1 October 2021                [Page 12]
-
-Internet-Draft             CBOR Tags for OIDs                 March 2021
-
 
    [X.680]    International Telecommunications Union, "Information
               technology — Abstract Syntax Notation One (ASN.1):
@@ -712,6 +719,17 @@ Appendix A.  Change Log
 
    This section is to be removed before publishing as an RFC.
 
+
+
+
+
+
+
+Bormann                  Expires 8 October 2021                [Page 13]
+
+Internet-Draft             CBOR Tags for OIDs                 April 2021
+
+
 A.1.  Changes from -05 to -06
 
    Add references to specific section numbers of [X.690] to better
@@ -720,15 +738,6 @@ A.1.  Changes from -05 to -06
 A.2.  Changes from -04 to -05
 
    *  Update acknowledgements, contributor list, and author list
-
-
-
-
-
-Bormann                  Expires 1 October 2021                [Page 13]
-
-Internet-Draft             CBOR Tags for OIDs                 March 2021
-
 
 A.3.  Changes from -03 to -04
 
@@ -767,6 +776,16 @@ A.9.  Changes from -05 to -06
 
    Refreshed the draft to the current date ("keep-alive").
 
+
+
+
+
+
+Bormann                  Expires 8 October 2021                [Page 14]
+
+Internet-Draft             CBOR Tags for OIDs                 April 2021
+
+
 A.10.  Changes from -04 to -05
 
    Discussed UUID usage in CBOR, and incorporated fixes proposed by
@@ -777,14 +796,6 @@ A.11.  Changes from -03 to -04
    Changes occurred based on limited feedback, mainly centered around
    the abstract and introduction, rather than substantive technical
    changes.  These changes include:
-
-
-
-
-Bormann                  Expires 1 October 2021                [Page 14]
-
-Internet-Draft             CBOR Tags for OIDs                 March 2021
-
 
    *  Changed the title so that it is about tags and techniques.
 
@@ -822,6 +833,15 @@ A.12.  Changes from -02 to -03
 
    *  Added references and fixed typos.
 
+
+
+
+
+Bormann                  Expires 8 October 2021                [Page 15]
+
+Internet-Draft             CBOR Tags for OIDs                 April 2021
+
+
 Acknowledgments
 
    Sean Leonard started the work on this document in 2014 with an
@@ -834,19 +854,10 @@ Contributors
    Penango, Inc.
    5900 Wilshire Boulevard
    21st Floor
-
-
-
-Bormann                  Expires 1 October 2021                [Page 15]
-
-Internet-Draft             CBOR Tags for OIDs                 March 2021
-
-
    Los Angeles, CA,  90036
    United States of America
 
    Email: dev+ietf@seantek.com
-   URI:   http://www.penango.com/
 
 
 Author's Address
@@ -882,15 +893,4 @@ Author's Address
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-Bormann                  Expires 1 October 2021                [Page 16]
+Bormann                  Expires 8 October 2021                [Page 16]
