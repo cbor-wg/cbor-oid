@@ -200,7 +200,10 @@ The inverse transformation (again making use of the known ranges of X
 and Y) is applied when decoding the object identifier.
 
 Since the semantics of absolute and relative object identifiers
-differ, this specification defines two tags, collectively called the
+differ, and it is very common for companies to use self-assigned numbers
+under the arc "1.3.6.1.4.1" (IANA Private Enterprise Number OID,
+{{?IANA.enterprise-numbers}}) that adds 5 fixed bytes to an encoded OID value,
+this specification defines three tags, collectively called the
 "OID tags" here:
 
 Tag TBD111: tags a byte string as the {{X.690}} encoding of an
