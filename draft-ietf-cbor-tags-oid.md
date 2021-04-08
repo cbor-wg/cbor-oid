@@ -449,7 +449,8 @@ or can be represented as UTF-8 strings with no loss of information.)
 CDDL Control Operators {#control}
 ===================
 
-CDDL specifications may want to specify the use of SDNVs or SDNV
+Concise Data Definition Language (CDDL {{-cddl}}) specifications may
+want to specify the use of SDNVs or SDNV
 sequences (as defined for the tag content for TBD110).  This document
 introduces two new control operators that can be applied to a target
 value that is a byte string:
@@ -492,7 +493,7 @@ Note that the control type need not be a literal; e.g., `bytes .oid
 CDDL typenames
 ==========
 
-For the use with CDDL {{-cddl}}, the
+For the use with CDDL, the
 typenames defined in {{tag-cddl}} are recommended:
 
 ~~~ CDDL
