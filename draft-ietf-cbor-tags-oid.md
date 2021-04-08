@@ -396,7 +396,8 @@ Consider the X.500 distinguished name:
 {: #tab-dn-data title="Example X.500 Distinguished Name"
    cols="l l" style="all"}
 
-{{tab-dn-data}} has four "relative distinguished names" (RDNs). The country and street RDNs are single-valued.
+{{tab-dn-data}} has four "relative distinguished names" (RDNs). The
+country (first) and street (third) RDNs are single-valued.
 The second and fourth RDNs are multi-valued.
 
 The equivalent representations in CBOR diagnostic notation ({{Section 8
@@ -405,7 +406,8 @@ of RFC8949}}) and CBOR are:
 
 ~~~~~~~~~~~
 111([{ h'550406': "US" },
-     { h'550407': "Los Angeles", h'550408': "CA",
+     { h'550407': "Los Angeles",
+       h'550408': "CA",
        h'550411': "90013" },
      { h'550409': "532 S Olive St" },
      { h'55040f': "Public Park",
