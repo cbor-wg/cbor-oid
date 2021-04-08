@@ -152,7 +152,8 @@ Terminology         {#terms}
 The terminology of {{-cbor}} applies; in particular
 the term "byte" is used in its now customary sense as a synonym for
 "octet".
-The term "SDNV" (Self-Delimiting Numeric Value) is used as defined in {{-sdnv}}.
+The term "SDNV" (Self-Delimiting Numeric Value) is used as defined in
+{{-sdnv}}, with the additional restriction detailed in {{reqts}}.
 
 Object Identifiers {#oids}
 ========================
