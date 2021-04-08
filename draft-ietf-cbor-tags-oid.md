@@ -559,12 +559,25 @@ If the OIDs are translated into other representations, the usual
 security considerations for non-trivial representation conversions
 apply; the integer values are unlimited in range.
 
+An attacker might trick an application into using a byte string inside
+a tag-factored data item, where the byte string is not actually
+intended to fall under one of the tags defined here.  This may cause
+the application to emit data with semantics different from what was
+intended.  Applications therefore need to be restrictive with respect
+to what data items they apply tag factoring to.
+
 
 --- back
 
 Change Log
 ==========
 {: removeInRFC="true"}
+
+Changes from -06 to -07
+-----------------------
+
+Various editorial changes prompted by IESG feedback.
+Add security consideration about tag-factoring.
 
 Changes from -05 to -06
 -----------------------
