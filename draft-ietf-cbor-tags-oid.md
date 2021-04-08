@@ -509,7 +509,7 @@ IANA Considerations {#iana}
 
 ## CBOR Tags
 
-IANA is requested to assign in the CBOR tags registry
+IANA is requested to assign in the 1+1 byte space (24..255) of the CBOR tags registry
 {{!IANA.cbor-tags}} the CBOR tags in {{tab-tag-values-new}}, with the
 present document as the specification reference.
 
