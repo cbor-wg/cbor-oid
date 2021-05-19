@@ -3,7 +3,7 @@ title: >
   Concise Binary Object Representation (CBOR) Tags for Object Identifiers
 abbrev: CBOR Tags for OIDs
 docname: draft-ietf-cbor-tags-oid-latest
-date: 2021-04-21
+date: 2021-05-19
 
 stand_alone: true
 
@@ -153,7 +153,8 @@ The terminology of {{-cbor}} applies; in particular
 the term "byte" is used in its now customary sense as a synonym for
 "octet".
 The term "SDNV" (Self-Delimiting Numeric Value) is used as defined in
-{{-sdnv}}, with the additional restriction detailed in {{reqts}}.
+{{-sdnv}}, with the additional restriction detailed in {{reqts}} (no
+leading zeros).
 
 Object Identifiers {#oids}
 ========================
@@ -522,7 +523,7 @@ CDDL typenames
 For the use with CDDL, the
 typenames defined in {{tag-cddl}} are recommended:
 
-~~~ CDDL
+~~~ cddl
 oid = #6.111(bstr)
 roid = #6.110(bstr)
 pen = #6.112(bstr)
@@ -602,8 +603,11 @@ Change Log
 Changes from -06 to -07
 -----------------------
 
-Various editorial changes prompted by IESG feedback.
-Add security consideration about tag-factoring.
+* Various editorial changes prompted by IESG feedback; clarify the
+  usage of "SDNV" in this document (no leading zeros).
+* Add security consideration about tag-factoring.
+* Make TBD112, where applicable, the preferred serialization (and thus
+  the required deterministic encoding) over TBD111.
 
 Changes from -05 to -06
 -----------------------
@@ -722,3 +726,5 @@ Acknowledgments
 {{{Sean Leonard}}} started the work on this document in 2014 with an
 elaborate proposal.
 {{{Jim Schaad}}} provided a significant review of this document.
+{{{Rob Wilton}}}'s IESG review prompted us to provide preferred
+serialization considerations.
