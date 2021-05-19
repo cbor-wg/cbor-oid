@@ -3,7 +3,7 @@ title: >
   Concise Binary Object Representation (CBOR) Tags for Object Identifiers
 abbrev: CBOR Tags for OIDs
 docname: draft-ietf-cbor-tags-oid-latest
-date: 2021-04-06
+date: 2021-04-21
 
 stand_alone: true
 
@@ -12,7 +12,7 @@ keyword: Internet-Draft
 cat: std
 consensus: true
 
-pi: [toc, [tocdepth, 1], sortrefs, symrefs, compact, comments]
+pi: [toc, [tocdepth, 2], sortrefs, symrefs, compact, comments]
 
 author:
   -
@@ -271,6 +271,18 @@ For byte strings with tag TBD110 or TBD112:
 A tag with tagged content that does not conform to the applicable
 regular expression is invalid.
 
+## Preferred Serialization Considerations {#prefser}
+
+For an absolute OID with a prefix of "1.3.6.1.4.1", representations
+with both the TBD111 and TBD112 tags are applicable, where the
+representation with TBD112 will be five bytes shorter (by leaving out
+the prefix h'2b06010401' from the enclosed byte string).
+This specification makes that shorter representation the preferred
+serialization (see {{Sections 3.4 and 4.1 of RFC8949}}).
+Note that this also implies that the Core Deterministic Encoding
+Requirements ({{Section 4.2.1 of RFC8949}}) require the use of TBD112
+tags instead of TBD111 wherever that is possible.
+
 
 ## Discussion {#discussion}
 
@@ -383,6 +395,17 @@ a 3-dimensional array of OIDs can be composed by using
 a single TBD111 tag containing an array of arrays of arrays
 of byte strings. All such byte strings are then considered OIDs.
 
+
+## Preferred Serialization Considerations
+
+Where tag factoring with tag TBD111 is used, some OIDs enclosed in the
+tag may be encoded in a shorter way by using tag TBD112 instead of
+encoding an unadorned byte string.
+This remains the preferred serialization (see also {{prefser}}).
+However, this specification does not make the presence or absence of
+tag factoring a preferred serialization; application protocols can
+define where tag factoring is to be used or not (and will need to do
+so if they have deterministic encoding requirements).
 
 ## Tag Factoring Example: X.500 Distinguished Name
 
