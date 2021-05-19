@@ -138,7 +138,8 @@ and relative object identifiers.
 The contents of these encodings (the "value" part of BER's
 type-length-value structure) can be carried in a CBOR byte string.
 This document defines two CBOR tags that cover the two kinds of
-ASN.1 object identifiers encoded in this way.
+ASN.1 object identifiers encoded in this way, and a third one to enable a
+common optimization.
 The tags can also be applied to arrays and maps to efficiently tag all
 elements of an array or all keys of a map.
 It is intended as the reference document for the IANA registration of
@@ -152,6 +153,10 @@ Terminology         {#terms}
 The terminology of {{-cbor}} applies; in particular
 the term "byte" is used in its now customary sense as a synonym for
 "octet".
+The verb "to tag (something)" is used to express the construction of a
+CBOR tag with the object (something) as the tag content and a tag
+number indicated elsewhere in the sentence (for instance in a "with"
+clause, or by the shorthand "an NNN tag" for "a tag with tag number NNN").
 The term "SDNV" (Self-Delimiting Numeric Value) is used as defined in
 {{-sdnv}}, with the additional restriction detailed in {{reqts}} (no
 leading zeros).
@@ -208,10 +213,10 @@ under the arc "1.3.6.1.4.1" (IANA Private Enterprise Number OID,
 this specification defines three tags, collectively called the
 "OID tags" here:
 
-Tag TBD111: tags a byte string as the {{X.690}} encoding of an
+Tag number TBD111: used to tag a byte string as the {{X.690}} encoding of an
 absolute object identifier (simply "object identifier" or "OID").
 
-Tag TBD110: tags a byte string as the {{X.690}} encoding of a relative
+Tag number TBD110: used to tag a byte string as the {{X.690}} encoding of a relative
 object identifier (also "relative OID").  Since the encoding of each
 number is the same as for {{-sdnv}} Self-Delimiting Numeric Values
 (SDNVs), this tag can also be used for tagging a byte string that
@@ -224,7 +229,7 @@ semantics of the result are that of an absolute object identifier.
 
 ## Requirements on the byte string being tagged {#reqts}
 
-To form a valid tag, a byte string tagged by TBD111, TBD110, or TBD112
+To form a valid tag, a byte string tagged with TBD111, TBD110, or TBD112
 MUST be syntactically valid contents (the value part) for a BER
 representation of an object identifier (Sections 8.19, 8.20, and 8.20
 of {{X.690}}, respectively): A concatenation of zero or
@@ -372,22 +377,22 @@ This relative OID saves seven bytes compared to the full OID encoding.
 Tag Factoring with Arrays and Maps {#tfs}
 ============
 
-OID tags can tag byte strings (as discussed above), but also CBOR arrays and maps.
+The tag content of OID tags can be byte strings (as discussed above), but also CBOR arrays and maps.
 The idea in the latter case is that
-the tag is factored out from each individual item in the container;
+the tag construct is factored out from each individual item in the container;
 the tag is placed on the array or map instead.
 
-When an OID tag is applied to an array, it means
+When the tag content of an OID tag is an array, this means
 that the respective tag is imputed to all elements of the array that are
 byte strings, arrays, or maps.  (There is no effect on other elements,
 including text strings or tags.)
-For example, when an array is tagged with TBD111,
+For example, when the tag content of a TBD111 tag is an array,
 every array element that is a byte string
 is an OID, and every element that is an array or map is in turn
 treated as discussed here.
 
-When an OID tag is applied to a map, it means that
-the respective tag is imputed to all keys in the map that are byte
+When the tag content of an OID tag is a map, this means that a tag
+with the same tag number is imputed to all keys in the map that are byte
 strings, arrays, or maps; again, there is no effect on keys of other major types.
 Note that there is also no effect on the values in the map.
 
@@ -400,8 +405,8 @@ of byte strings. All such byte strings are then considered OIDs.
 
 ## Preferred Serialization Considerations
 
-Where tag factoring with tag TBD111 is used, some OIDs enclosed in the
-tag may be encoded in a shorter way by using tag TBD112 instead of
+Where tag factoring with tag number TBD111 is used, some OIDs enclosed in the
+tag may be encoded in a shorter way by using tag number TBD112 instead of
 encoding an unadorned byte string.
 This remains the preferred serialization (see also {{prefser}}).
 However, this specification does not make the presence or absence of
@@ -538,7 +543,7 @@ IANA Considerations {#iana}
 ## CBOR Tags
 
 IANA is requested to assign in the 1+1 byte space (24..255) of the CBOR tags registry
-{{!IANA.cbor-tags}} the CBOR tags in {{tab-tag-values-new}}, with the
+{{!IANA.cbor-tags}} the CBOR tag numbers in {{tab-tag-values-new}}, with the
 present document as the specification reference.
 
 | Tag    | Data Item                   | Semantics                                                               | Reference                     |
@@ -546,7 +551,7 @@ present document as the specification reference.
 | TBD111 | byte string or array or map | object identifier (BER encoding)                                        | \[this document, {{oids}}] |
 | TBD110 | byte string or array or map | relative object identifier (BER encoding); <br/>SDNV {{-sdnv}} sequence | \[this document, {{oids}}] |
 | TBD112 | byte string or array or map | object identifier (BER encoding), relative to 1.3.6.1.4.1               | \[this document, {{oids}}] |
-{: #tab-tag-values-new title="Values for New Tags" cols="l 11eml r"}
+{: #tab-tag-values-new title="New Tag Numbers" cols="l 11eml r"}
 
 ## CDDL Control Operators
 
