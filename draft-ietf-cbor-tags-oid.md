@@ -215,7 +215,8 @@ Tag TBD110: tags a byte string as the {{X.690}} encoding of a relative
 object identifier (also "relative OID").  Since the encoding of each
 number is the same as for {{-sdnv}} Self-Delimiting Numeric Values
 (SDNVs), this tag can also be used for tagging a byte string that
-contains a sequence of zero or more SDNVs.
+contains a sequence of zero or more SDNVs (or a more
+application-specific tag can be created for such an application).
 
 Tag TBD112: structurally like TBD110, but understood to be relative to
 `1.3.6.1.4.1` (IANA Private Enterprise Number OID, {{?IANA.enterprise-numbers}}).  Hence, the
