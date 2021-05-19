@@ -4,8 +4,8 @@
 
 Network Working Group                                         C. Bormann
 Internet-Draft                                    Universität Bremen TZI
-Intended status: Standards Track                           21 April 2021
-Expires: 23 October 2021
+Intended status: Standards Track                             19 May 2021
+Expires: 20 November 2021
 
 
 Concise Binary Object Representation (CBOR) Tags for Object Identifiers
@@ -37,7 +37,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 23 October 2021.
+   This Internet-Draft will expire on 20 November 2021.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Bormann                  Expires 23 October 2021                [Page 1]
+Bormann                 Expires 20 November 2021                [Page 1]
 
-Internet-Draft             CBOR Tags for OIDs                 April 2021
+Internet-Draft             CBOR Tags for OIDs                   May 2021
 
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -98,7 +98,7 @@ Table of Contents
      A.5.  Changes from -02 to -03 . . . . . . . . . . . . . . . . .  15
      A.6.  Changes from -01 to -02 . . . . . . . . . . . . . . . . .  15
      A.7.  Changes from -00 to -01 . . . . . . . . . . . . . . . . .  15
-     A.8.  Changes from -07 (bormann) to -00 (ietf)  . . . . . . . .  15
+     A.8.  Changes from -07 (bormann) to -00 (ietf)  . . . . . . . .  16
      A.9.  Changes from -06 to -07 . . . . . . . . . . . . . . . . .  16
      A.10. Changes from -05 to -06 . . . . . . . . . . . . . . . . .  16
      A.11. Changes from -04 to -05 . . . . . . . . . . . . . . . . .  16
@@ -109,9 +109,9 @@ Table of Contents
 
 
 
-Bormann                  Expires 23 October 2021                [Page 2]
+Bormann                 Expires 20 November 2021                [Page 2]
 
-Internet-Draft             CBOR Tags for OIDs                 April 2021
+Internet-Draft             CBOR Tags for OIDs                   May 2021
 
 
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  17
@@ -147,7 +147,8 @@ Internet-Draft             CBOR Tags for OIDs                 April 2021
    The terminology of [RFC8949] applies; in particular the term "byte"
    is used in its now customary sense as a synonym for "octet".  The
    term "SDNV" (Self-Delimiting Numeric Value) is used as defined in
-   [RFC6256], with the additional restriction detailed in Section 2.1.
+   [RFC6256], with the additional restriction detailed in Section 2.1
+   (no leading zeros).
 
 2.  Object Identifiers
 
@@ -164,10 +165,9 @@ Internet-Draft             CBOR Tags for OIDs                 April 2021
 
 
 
-
-Bormann                  Expires 23 October 2021                [Page 3]
+Bormann                 Expires 20 November 2021                [Page 3]
 
-Internet-Draft             CBOR Tags for OIDs                 April 2021
+Internet-Draft             CBOR Tags for OIDs                   May 2021
 
 
    While these sequences can easily be represented in CBOR arrays of
@@ -221,9 +221,9 @@ Internet-Draft             CBOR Tags for OIDs                 April 2021
 
 
 
-Bormann                  Expires 23 October 2021                [Page 4]
+Bormann                 Expires 20 November 2021                [Page 4]
 
-Internet-Draft             CBOR Tags for OIDs                 April 2021
+Internet-Draft             CBOR Tags for OIDs                   May 2021
 
 
    Tag TBD112: structurally like TBD110, but understood to be relative
@@ -277,9 +277,9 @@ Internet-Draft             CBOR Tags for OIDs                 April 2021
 
 
 
-Bormann                  Expires 23 October 2021                [Page 5]
+Bormann                 Expires 20 November 2021                [Page 5]
 
-Internet-Draft             CBOR Tags for OIDs                 April 2021
+Internet-Draft             CBOR Tags for OIDs                   May 2021
 
 
       "/^(([\x81-\xFF][\x80-\xFF]*)?[\x00-\x7F])+$/"
@@ -333,9 +333,9 @@ Internet-Draft             CBOR Tags for OIDs                 April 2021
 
 
 
-Bormann                  Expires 23 October 2021                [Page 6]
+Bormann                 Expires 20 November 2021                [Page 6]
 
-Internet-Draft             CBOR Tags for OIDs                 April 2021
+Internet-Draft             CBOR Tags for OIDs                   May 2021
 
 
       organization(1) gov(101) csor(3) nistalgorithm(4) hashalgs(2)
@@ -389,9 +389,9 @@ Internet-Draft             CBOR Tags for OIDs                 April 2021
 
 
 
-Bormann                  Expires 23 October 2021                [Page 7]
+Bormann                 Expires 20 November 2021                [Page 7]
 
-Internet-Draft             CBOR Tags for OIDs                 April 2021
+Internet-Draft             CBOR Tags for OIDs                   May 2021
 
 
 4.  Tag Factoring with Arrays and Maps
@@ -445,9 +445,9 @@ Internet-Draft             CBOR Tags for OIDs                 April 2021
 
 
 
-Bormann                  Expires 23 October 2021                [Page 8]
+Bormann                 Expires 20 November 2021                [Page 8]
 
-Internet-Draft             CBOR Tags for OIDs                 April 2021
+Internet-Draft             CBOR Tags for OIDs                   May 2021
 
 
               +==============================+=============+
@@ -501,9 +501,9 @@ Internet-Draft             CBOR Tags for OIDs                 April 2021
 
 
 
-Bormann                  Expires 23 October 2021                [Page 9]
+Bormann                 Expires 20 November 2021                [Page 9]
 
-Internet-Draft             CBOR Tags for OIDs                 April 2021
+Internet-Draft             CBOR Tags for OIDs                   May 2021
 
 
    d8 6f                                      # tag(111)
@@ -557,9 +557,9 @@ Internet-Draft             CBOR Tags for OIDs                 April 2021
 
 
 
-Bormann                  Expires 23 October 2021               [Page 10]
+Bormann                 Expires 20 November 2021               [Page 10]
 
-Internet-Draft             CBOR Tags for OIDs                 April 2021
+Internet-Draft             CBOR Tags for OIDs                   May 2021
 
 
    *  ".sdnvseq", with a control type that contains arrays of unsigned
@@ -613,9 +613,9 @@ Internet-Draft             CBOR Tags for OIDs                 April 2021
 
 
 
-Bormann                  Expires 23 October 2021               [Page 11]
+Bormann                 Expires 20 November 2021               [Page 11]
 
-Internet-Draft             CBOR Tags for OIDs                 April 2021
+Internet-Draft             CBOR Tags for OIDs                   May 2021
 
 
    +========+================+============================+============+
@@ -669,9 +669,9 @@ Internet-Draft             CBOR Tags for OIDs                 April 2021
 
 
 
-Bormann                  Expires 23 October 2021               [Page 12]
+Bormann                 Expires 20 November 2021               [Page 12]
 
-Internet-Draft             CBOR Tags for OIDs                 April 2021
+Internet-Draft             CBOR Tags for OIDs                   May 2021
 
 
    OIDs and relative OIDs can always be treated as opaque byte strings.
@@ -725,9 +725,9 @@ Internet-Draft             CBOR Tags for OIDs                 April 2021
 
 
 
-Bormann                  Expires 23 October 2021               [Page 13]
+Bormann                 Expires 20 November 2021               [Page 13]
 
-Internet-Draft             CBOR Tags for OIDs                 April 2021
+Internet-Draft             CBOR Tags for OIDs                   May 2021
 
 
    [RFC8949]  Bormann, C. and P. Hoffman, "Concise Binary Object
@@ -781,9 +781,9 @@ Internet-Draft             CBOR Tags for OIDs                 April 2021
 
 
 
-Bormann                  Expires 23 October 2021               [Page 14]
+Bormann                 Expires 20 November 2021               [Page 14]
 
-Internet-Draft             CBOR Tags for OIDs                 April 2021
+Internet-Draft             CBOR Tags for OIDs                   May 2021
 
 
 Appendix A.  Change Log
@@ -792,8 +792,13 @@ Appendix A.  Change Log
 
 A.1.  Changes from -06 to -07
 
-   Various editorial changes prompted by IESG feedback.  Add security
-   consideration about tag-factoring.
+   *  Various editorial changes prompted by IESG feedback; clarify the
+      usage of "SDNV" in this document (no leading zeros).
+
+   *  Add security consideration about tag-factoring.
+
+   *  Make TBD112, where applicable, the preferred serialization (and
+      thus the required deterministic encoding) over TBD111.
 
 A.2.  Changes from -05 to -06
 
@@ -828,19 +833,18 @@ A.7.  Changes from -00 to -01
 
    Clean up OID tag factoring.
 
+
+
+
+
+Bormann                 Expires 20 November 2021               [Page 15]
+
+Internet-Draft             CBOR Tags for OIDs                   May 2021
+
+
 A.8.  Changes from -07 (bormann) to -00 (ietf)
 
    Resubmitted as WG draft after adoption.
-
-
-
-
-
-
-Bormann                  Expires 23 October 2021               [Page 15]
-
-Internet-Draft             CBOR Tags for OIDs                 April 2021
-
 
 A.9.  Changes from -06 to -07
 
@@ -886,17 +890,18 @@ A.13.  Changes from -02 to -03
 
    *  Expanded the draft scope to be a comprehensive CBOR update.
 
+
+
+
+Bormann                 Expires 20 November 2021               [Page 16]
+
+Internet-Draft             CBOR Tags for OIDs                   May 2021
+
+
    *  Added OID-related sections: OID Enumerations, OID Maps and Arrays,
       and Applications and Examples of OIDs.
 
    *  Added Tag 36 update (binary MIME, better definitions).
-
-
-
-Bormann                  Expires 23 October 2021               [Page 16]
-
-Internet-Draft             CBOR Tags for OIDs                 April 2021
-
 
    *  Added stub/experimental sections for X.690 Series Tags (tag <<X>>)
       and Regular Expressions (tag 35).
@@ -909,7 +914,8 @@ Acknowledgments
 
    Sean Leonard started the work on this document in 2014 with an
    elaborate proposal.  Jim Schaad provided a significant review of this
-   document.
+   document.  Rob Wilton's IESG review prompted us to provide preferred
+   serialization considerations.
 
 Contributors
 
@@ -943,10 +949,4 @@ Author's Address
 
 
 
-
-
-
-
-
-
-Bormann                  Expires 23 October 2021               [Page 17]
+Bormann                 Expires 20 November 2021               [Page 17]
