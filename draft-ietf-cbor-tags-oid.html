@@ -16,12 +16,12 @@ object identifiers (OIDs).  It is intended
 as the reference document for the IANA registration of the CBOR tags
 so defined. 
     " name="description">
-<meta content="xml2rfc 3.5.0" name="generator">
+<meta content="xml2rfc 3.7.0" name="generator">
 <meta content="Internet-Draft" name="keyword">
 <meta content="draft-ietf-cbor-tags-oid-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.5.0
-    Python 3.9.2
+  xml2rfc 3.7.0
+    Python 3.9.5
     appdirs 1.4.4
     ConfigArgParse 1.2.3
     google-i18n-address 2.4.0
@@ -35,7 +35,7 @@ so defined.
     pyflakes 2.2.0
     PyYAML 5.3.1
     requests 2.25.1
-    setuptools 54.1.2
+    setuptools 56.0.0
     six 1.15.0
     WeasyPrint 0.42.3
 -->
@@ -1167,6 +1167,14 @@ dd > ul:first-child {
 dt+dd:empty::before{
   content: "\00a0";
 }
+/* Make paragraph spacing inside <li> smaller than in body text, to fit better within the list */
+li > p {
+  margin-bottom: 0.5em
+}
+/* Don't let p margin spill out from inside list items */
+li > p:last-of-type {
+  margin-bottom: 0;
+}
 </style>
 <link href="rfc-local.css" rel="stylesheet" type="text/css">
 <script type="application/javascript">async function addMetadata(){try{const e=document.styleSheets[0].cssRules;for(let t=0;t<e.length;t++)if(/#identifiers/.exec(e[t].selectorText)){const a=e[t].cssText.replace("#identifiers","#external-updates");document.styleSheets[0].insertRule(a,document.styleSheets[0].cssRules.length)}}catch(e){console.log(e)}const e=document.getElementById("external-metadata");if(e)try{var t,a="",o=function(e){const t=document.getElementsByTagName("meta");for(let a=0;a<t.length;a++)if(t[a].getAttribute("name")===e)return t[a].getAttribute("content");return""}("rfc.number");if(o){t="https://www.rfc-editor.org/rfc/rfc"+o+".json";try{const e=await fetch(t);a=await e.json()}catch(e){t=document.URL.indexOf("html")>=0?document.URL.replace(/html$/,"json"):document.URL+".json";const o=await fetch(t);a=await o.json()}}if(!a)return;e.style.display="block";const s="",d="https://datatracker.ietf.org/doc",n="https://datatracker.ietf.org/ipr/search",c="https://www.rfc-editor.org/info",l=a.doc_id.toLowerCase(),i=a.doc_id.slice(0,3).toLowerCase(),f=a.doc_id.slice(3).replace(/^0+/,""),u={status:"Status",obsoletes:"Obsoletes",obsoleted_by:"Obsoleted By",updates:"Updates",updated_by:"Updated By",see_also:"See Also",errata_url:"Errata"};let h="<dl style='overflow:hidden' id='external-updates'>";["status","obsoletes","obsoleted_by","updates","updated_by","see_also","errata_url"].forEach(e=>{if("status"==e){a[e]=a[e].toLowerCase();var t=a[e].split(" "),o=t.length,w="",p=1;for(let e=0;e<o;e++)p<o?w=w+r(t[e])+" ":w+=r(t[e]),p++;a[e]=w}else if("obsoletes"==e||"obsoleted_by"==e||"updates"==e||"updated_by"==e){var g,m="",b=1;g=a[e].length;for(let t=0;t<g;t++)a[e][t]&&(a[e][t]=String(a[e][t]).toLowerCase(),m=b<g?m+"<a href='"+s+"/rfc/".concat(a[e][t])+"'>"+a[e][t].slice(3)+"</a>, ":m+"<a href='"+s+"/rfc/".concat(a[e][t])+"'>"+a[e][t].slice(3)+"</a>",b++);a[e]=m}else if("see_also"==e){var y,L="",C=1;y=a[e].length;for(let t=0;t<y;t++)if(a[e][t]){a[e][t]=String(a[e][t]);var _=a[e][t].slice(0,3),v=a[e][t].slice(3).replace(/^0+/,"");L=C<y?"RFC"!=_?L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+_+" "+v+"</a>, ":L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+v+"</a>, ":"RFC"!=_?L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+_+" "+v+"</a>":L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+v+"</a>",C++}a[e]=L}else if("errata_url"==e){var R="";R=a[e]?R+"<a href='"+a[e]+"'>Errata exist</a> | <a href='"+d+"/"+l+"'>Datatracker</a>| <a href='"+n+"/?"+i+"="+f+"&submit="+i+"'>IPR</a> | <a href='"+c+"/"+l+"'>Info page</a>":"<a href='"+d+"/"+l+"'>Datatracker</a> | <a href='"+n+"/?"+i+"="+f+"&submit="+i+"'>IPR</a> | <a href='"+c+"/"+l+"'>Info page</a>",a[e]=R}""!=a[e]?"Errata"==u[e]?h+=`<dt>More info:</dt><dd>${a[e]}</dd>`:h+=`<dt>${u[e]}:</dt><dd>${a[e]}</dd>`:"Errata"==u[e]&&(h+=`<dt>More info:</dt><dd>${a[e]}</dd>`)}),h+="</dl>",e.innerHTML=h}catch(e){console.log(e)}else console.log("Could not locate metadata <div> element");function r(e){return e.charAt(0).toUpperCase()+e.slice(1)}}window.removeEventListener("load",addMetadata),window.addEventListener("load",addMetadata);</script>
@@ -1181,7 +1189,7 @@ dt+dd:empty::before{
 </tr></thead>
 <tfoot><tr>
 <td class="left">Bormann</td>
-<td class="center">Expires 8 October 2021</td>
+<td class="center">Expires 23 October 2021</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1194,12 +1202,12 @@ dt+dd:empty::before{
 <dd class="internet-draft">draft-ietf-cbor-tags-oid-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2021-04-06" class="published">6 April 2021</time>
+<time datetime="2021-04-21" class="published">21 April 2021</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2021-10-08">8 October 2021</time></dd>
+<dd class="expires"><time datetime="2021-10-23">23 October 2021</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1240,7 +1248,7 @@ so defined.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 8 October 2021.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 23 October 2021.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1268,53 +1276,134 @@ so defined.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
         <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
 <a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
         </h2>
-<nav class="toc"><ul class="compact ulEmpty toc">
-<li class="compact ulEmpty toc" id="section-toc.1-1.1">
-            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="xref">1</a>.  <a href="#name-introduction" class="xref">Introduction</a><a href="#section-toc.1-1.1.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="compact ulEmpty toc" id="section-toc.1-1.2">
-            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="xref">2</a>.  <a href="#name-object-identifiers" class="xref">Object Identifiers</a><a href="#section-toc.1-1.2.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="compact ulEmpty toc" id="section-toc.1-1.3">
-            <p id="section-toc.1-1.3.1" class="keepWithNext"><a href="#section-3" class="xref">3</a>.  <a href="#name-basic-examples" class="xref">Basic Examples</a><a href="#section-toc.1-1.3.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="compact ulEmpty toc" id="section-toc.1-1.4">
-            <p id="section-toc.1-1.4.1"><a href="#section-4" class="xref">4</a>.  <a href="#name-tag-factoring-with-arrays-a" class="xref">Tag Factoring with Arrays and Maps</a><a href="#section-toc.1-1.4.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="compact ulEmpty toc" id="section-toc.1-1.5">
-            <p id="section-toc.1-1.5.1"><a href="#section-5" class="xref">5</a>.  <a href="#name-cddl-control-operators" class="xref">CDDL Control Operators</a><a href="#section-toc.1-1.5.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="compact ulEmpty toc" id="section-toc.1-1.6">
-            <p id="section-toc.1-1.6.1"><a href="#section-6" class="xref">6</a>.  <a href="#name-cddl-typenames" class="xref">CDDL typenames</a><a href="#section-toc.1-1.6.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="compact ulEmpty toc" id="section-toc.1-1.7">
-            <p id="section-toc.1-1.7.1"><a href="#section-7" class="xref">7</a>.  <a href="#name-iana-considerations" class="xref">IANA Considerations</a><a href="#section-toc.1-1.7.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="compact ulEmpty toc" id="section-toc.1-1.8">
-            <p id="section-toc.1-1.8.1"><a href="#section-8" class="xref">8</a>.  <a href="#name-security-considerations" class="xref">Security Considerations</a><a href="#section-toc.1-1.8.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="compact ulEmpty toc" id="section-toc.1-1.9">
-            <p id="section-toc.1-1.9.1"><a href="#section-9" class="xref">9</a>.  <a href="#name-references" class="xref">References</a><a href="#section-toc.1-1.9.1" class="pilcrow">¶</a></p>
-<ul class="compact ulEmpty toc">
-<li class="compact ulEmpty toc" id="section-toc.1-1.9.2.1">
-                <p id="section-toc.1-1.9.2.1.1"><a href="#section-9.1" class="xref">9.1</a>.  <a href="#name-normative-references" class="xref">Normative References</a><a href="#section-toc.1-1.9.2.1.1" class="pilcrow">¶</a></p>
-</li>
-              <li class="compact ulEmpty toc" id="section-toc.1-1.9.2.2">
-                <p id="section-toc.1-1.9.2.2.1"><a href="#section-9.2" class="xref">9.2</a>.  <a href="#name-informative-references" class="xref">Informative References</a><a href="#section-toc.1-1.9.2.2.1" class="pilcrow">¶</a></p>
+<nav class="toc"><ul class="toc ulEmpty compact">
+<li class="toc ulEmpty compact" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="xref">1</a>.  <a href="#name-introduction" class="xref">Introduction</a></p>
+<ul class="toc ulEmpty compact">
+<li class="toc ulEmpty compact" id="section-toc.1-1.1.2.1">
+                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="xref">1.1</a>.  <a href="#name-terminology" class="xref">Terminology</a></p>
 </li>
             </ul>
 </li>
-          <li class="compact ulEmpty toc" id="section-toc.1-1.10">
-            <p id="section-toc.1-1.10.1"><a href="#section-appendix.a" class="xref">Appendix A</a>.  <a href="#name-change-log" class="xref">Change Log</a><a href="#section-toc.1-1.10.1" class="pilcrow">¶</a></p>
+          <li class="toc ulEmpty compact" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1"><a href="#section-2" class="xref">2</a>.  <a href="#name-object-identifiers" class="xref">Object Identifiers</a></p>
+<ul class="toc ulEmpty compact">
+<li class="toc ulEmpty compact" id="section-toc.1-1.2.2.1">
+                <p id="section-toc.1-1.2.2.1.1" class="keepWithNext"><a href="#section-2.1" class="xref">2.1</a>.  <a href="#name-requirements-on-the-byte-st" class="xref">Requirements on the byte string being tagged</a></p>
 </li>
-          <li class="compact ulEmpty toc" id="section-toc.1-1.11">
-            <p id="section-toc.1-1.11.1"><a href="#section-appendix.b" class="xref"></a><a href="#name-acknowledgments" class="xref">Acknowledgments</a><a href="#section-toc.1-1.11.1" class="pilcrow">¶</a></p>
+              <li class="toc ulEmpty compact" id="section-toc.1-1.2.2.2">
+                <p id="section-toc.1-1.2.2.2.1"><a href="#section-2.2" class="xref">2.2</a>.  <a href="#name-preferred-serialization-con" class="xref">Preferred Serialization Considerations</a></p>
 </li>
-          <li class="compact ulEmpty toc" id="section-toc.1-1.12">
-            <p id="section-toc.1-1.12.1"><a href="#section-appendix.c" class="xref"></a><a href="#name-contributors" class="xref">Contributors</a><a href="#section-toc.1-1.12.1" class="pilcrow">¶</a></p>
+              <li class="toc ulEmpty compact" id="section-toc.1-1.2.2.3">
+                <p id="section-toc.1-1.2.2.3.1"><a href="#section-2.3" class="xref">2.3</a>.  <a href="#name-discussion" class="xref">Discussion</a></p>
 </li>
-          <li class="compact ulEmpty toc" id="section-toc.1-1.13">
-            <p id="section-toc.1-1.13.1"><a href="#section-appendix.d" class="xref"></a><a href="#name-authors-address" class="xref">Author's Address</a><a href="#section-toc.1-1.13.1" class="pilcrow">¶</a></p>
+            </ul>
+</li>
+          <li class="toc ulEmpty compact" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="xref">3</a>.  <a href="#name-basic-examples" class="xref">Basic Examples</a></p>
+<ul class="toc ulEmpty compact">
+<li class="toc ulEmpty compact" id="section-toc.1-1.3.2.1">
+                <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="xref">3.1</a>.  <a href="#name-encoding-of-the-sha-256-oid" class="xref">Encoding of the SHA-256 OID</a></p>
+</li>
+              <li class="toc ulEmpty compact" id="section-toc.1-1.3.2.2">
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="xref">3.2</a>.  <a href="#name-encoding-of-a-mib-relative-" class="xref">Encoding of a MIB Relative OID</a></p>
+</li>
+            </ul>
+</li>
+          <li class="toc ulEmpty compact" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="xref">4</a>.  <a href="#name-tag-factoring-with-arrays-a" class="xref">Tag Factoring with Arrays and Maps</a></p>
+<ul class="toc ulEmpty compact">
+<li class="toc ulEmpty compact" id="section-toc.1-1.4.2.1">
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="xref">4.1</a>.  <a href="#name-preferred-serialization-cons" class="xref">Preferred Serialization Considerations</a></p>
+</li>
+              <li class="toc ulEmpty compact" id="section-toc.1-1.4.2.2">
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="xref">4.2</a>.  <a href="#name-tag-factoring-example-x500-" class="xref">Tag Factoring Example: X.500 Distinguished Name</a></p>
+</li>
+            </ul>
+</li>
+          <li class="toc ulEmpty compact" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="xref">5</a>.  <a href="#name-cddl-control-operators" class="xref">CDDL Control Operators</a></p>
+</li>
+          <li class="toc ulEmpty compact" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="xref">6</a>.  <a href="#name-cddl-typenames" class="xref">CDDL typenames</a></p>
+</li>
+          <li class="toc ulEmpty compact" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="xref">7</a>.  <a href="#name-iana-considerations" class="xref">IANA Considerations</a></p>
+<ul class="toc ulEmpty compact">
+<li class="toc ulEmpty compact" id="section-toc.1-1.7.2.1">
+                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="xref">7.1</a>.  <a href="#name-cbor-tags" class="xref">CBOR Tags</a></p>
+</li>
+              <li class="toc ulEmpty compact" id="section-toc.1-1.7.2.2">
+                <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="xref">7.2</a>.  <a href="#name-cddl-control-operators-2" class="xref">CDDL Control Operators</a></p>
+</li>
+            </ul>
+</li>
+          <li class="toc ulEmpty compact" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="xref">8</a>.  <a href="#name-security-considerations" class="xref">Security Considerations</a></p>
+</li>
+          <li class="toc ulEmpty compact" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="xref">9</a>.  <a href="#name-references" class="xref">References</a></p>
+<ul class="toc ulEmpty compact">
+<li class="toc ulEmpty compact" id="section-toc.1-1.9.2.1">
+                <p id="section-toc.1-1.9.2.1.1"><a href="#section-9.1" class="xref">9.1</a>.  <a href="#name-normative-references" class="xref">Normative References</a></p>
+</li>
+              <li class="toc ulEmpty compact" id="section-toc.1-1.9.2.2">
+                <p id="section-toc.1-1.9.2.2.1"><a href="#section-9.2" class="xref">9.2</a>.  <a href="#name-informative-references" class="xref">Informative References</a></p>
+</li>
+            </ul>
+</li>
+          <li class="toc ulEmpty compact" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#section-appendix.a" class="xref">Appendix A</a>.  <a href="#name-change-log" class="xref">Change Log</a></p>
+<ul class="toc ulEmpty compact">
+<li class="toc ulEmpty compact" id="section-toc.1-1.10.2.1">
+                <p id="section-toc.1-1.10.2.1.1"><a href="#section-a.1" class="xref">A.1</a>.  <a href="#name-changes-from-06-to-07" class="xref">Changes from -06 to -07</a></p>
+</li>
+              <li class="toc ulEmpty compact" id="section-toc.1-1.10.2.2">
+                <p id="section-toc.1-1.10.2.2.1"><a href="#section-a.2" class="xref">A.2</a>.  <a href="#name-changes-from-05-to-06" class="xref">Changes from -05 to -06</a></p>
+</li>
+              <li class="toc ulEmpty compact" id="section-toc.1-1.10.2.3">
+                <p id="section-toc.1-1.10.2.3.1"><a href="#section-a.3" class="xref">A.3</a>.  <a href="#name-changes-from-04-to-05" class="xref">Changes from -04 to -05</a></p>
+</li>
+              <li class="toc ulEmpty compact" id="section-toc.1-1.10.2.4">
+                <p id="section-toc.1-1.10.2.4.1"><a href="#section-a.4" class="xref">A.4</a>.  <a href="#name-changes-from-03-to-04" class="xref">Changes from -03 to -04</a></p>
+</li>
+              <li class="toc ulEmpty compact" id="section-toc.1-1.10.2.5">
+                <p id="section-toc.1-1.10.2.5.1"><a href="#section-a.5" class="xref">A.5</a>.  <a href="#name-changes-from-02-to-03" class="xref">Changes from -02 to -03</a></p>
+</li>
+              <li class="toc ulEmpty compact" id="section-toc.1-1.10.2.6">
+                <p id="section-toc.1-1.10.2.6.1"><a href="#section-a.6" class="xref">A.6</a>.  <a href="#name-changes-from-01-to-02" class="xref">Changes from -01 to -02</a></p>
+</li>
+              <li class="toc ulEmpty compact" id="section-toc.1-1.10.2.7">
+                <p id="section-toc.1-1.10.2.7.1"><a href="#section-a.7" class="xref">A.7</a>.  <a href="#name-changes-from-00-to-01" class="xref">Changes from -00 to -01</a></p>
+</li>
+              <li class="toc ulEmpty compact" id="section-toc.1-1.10.2.8">
+                <p id="section-toc.1-1.10.2.8.1"><a href="#section-a.8" class="xref">A.8</a>.  <a href="#name-changes-from-07-bormann-to-" class="xref">Changes from -07 (bormann) to -00 (ietf)</a></p>
+</li>
+              <li class="toc ulEmpty compact" id="section-toc.1-1.10.2.9">
+                <p id="section-toc.1-1.10.2.9.1"><a href="#section-a.9" class="xref">A.9</a>.  <a href="#name-changes-from-06-to-07-2" class="xref">Changes from -06 to -07</a></p>
+</li>
+              <li class="toc ulEmpty compact" id="section-toc.1-1.10.2.10">
+                <p id="section-toc.1-1.10.2.10.1"><a href="#section-a.10" class="xref">A.10</a>. <a href="#name-changes-from-05-to-06-2" class="xref">Changes from -05 to -06</a></p>
+</li>
+              <li class="toc ulEmpty compact" id="section-toc.1-1.10.2.11">
+                <p id="section-toc.1-1.10.2.11.1"><a href="#section-a.11" class="xref">A.11</a>. <a href="#name-changes-from-04-to-05-2" class="xref">Changes from -04 to -05</a></p>
+</li>
+              <li class="toc ulEmpty compact" id="section-toc.1-1.10.2.12">
+                <p id="section-toc.1-1.10.2.12.1"><a href="#section-a.12" class="xref">A.12</a>. <a href="#name-changes-from-03-to-04-2" class="xref">Changes from -03 to -04</a></p>
+</li>
+              <li class="toc ulEmpty compact" id="section-toc.1-1.10.2.13">
+                <p id="section-toc.1-1.10.2.13.1"><a href="#section-a.13" class="xref">A.13</a>. <a href="#name-changes-from-02-to-03-2" class="xref">Changes from -02 to -03</a></p>
+</li>
+            </ul>
+</li>
+          <li class="toc ulEmpty compact" id="section-toc.1-1.11">
+            <p id="section-toc.1-1.11.1"><a href="#section-appendix.b" class="xref"></a><a href="#name-acknowledgments" class="xref">Acknowledgments</a></p>
+</li>
+          <li class="toc ulEmpty compact" id="section-toc.1-1.12">
+            <p id="section-toc.1-1.12.1"><a href="#section-appendix.c" class="xref"></a><a href="#name-contributors" class="xref">Contributors</a></p>
+</li>
+          <li class="toc ulEmpty compact" id="section-toc.1-1.13">
+            <p id="section-toc.1-1.13.1"><a href="#section-appendix.d" class="xref"></a><a href="#name-authors-address" class="xref">Author's Address</a></p>
 </li>
         </ul>
 </nav>
@@ -1479,12 +1568,28 @@ their domain, so they can be applied directly to CBOR byte strings.<a href="#sec
 regular expression is invalid.<a href="#section-2.1-12" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="discussion">
+<div id="prefser">
 <section id="section-2.2">
-        <h3 id="name-discussion">
-<a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-discussion" class="section-name selfRef">Discussion</a>
+        <h3 id="name-preferred-serialization-con">
+<a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-preferred-serialization-con" class="section-name selfRef">Preferred Serialization Considerations</a>
         </h3>
-<p id="section-2.2-1">Staying close to the way object identifiers are encoded in ASN.1
+<p id="section-2.2-1">For an absolute OID with a prefix of "1.3.6.1.4.1", representations
+with both the TBD111 and TBD112 tags are applicable, where the
+representation with TBD112 will be five bytes shorter (by leaving out
+the prefix h'2b06010401' from the enclosed byte string).
+This specification makes that shorter representation the preferred
+serialization (see Sections <a href="https://rfc-editor.org/rfc/rfc8949#section-3.4" class="relref">3.4</a> and <a href="https://rfc-editor.org/rfc/rfc8949#section-4.1" class="relref">4.1</a> of <span>[<a href="#RFC8949" class="xref">RFC8949</a>]</span>).
+Note that this also implies that the Core Deterministic Encoding
+Requirements (<span><a href="https://rfc-editor.org/rfc/rfc8949#section-4.2.1" class="relref">Section 4.2.1</a> of [<a href="#RFC8949" class="xref">RFC8949</a>]</span>) require the use of TBD112
+tags instead of TBD111 wherever that is possible.<a href="#section-2.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="discussion">
+<section id="section-2.3">
+        <h3 id="name-discussion">
+<a href="#section-2.3" class="section-number selfRef">2.3. </a><a href="#name-discussion" class="section-name selfRef">Discussion</a>
+        </h3>
+<p id="section-2.3-1">Staying close to the way object identifiers are encoded in ASN.1
 BER makes back-and-forth translation easy; otherwise we would choose a
 more efficient encoding.  Object
 identifiers in IETF protocols
@@ -1495,7 +1600,7 @@ based on BER; using a different encoding might not be aligned with
 these expectations. If additional information about an OID is desired,
 lookup services such as
 the <span><a href="#X.672" class="xref">OID Resolution Service (ORS)</a> [<a href="#X.672" class="xref">X.672</a>]</span>
-and the <span><a href="#OID-INFO" class="xref">OID Repository</a> [<a href="#OID-INFO" class="xref">OID-INFO</a>]</span> are available.<a href="#section-2.2-1" class="pilcrow">¶</a></p>
+and the <span><a href="#OID-INFO" class="xref">OID Repository</a> [<a href="#OID-INFO" class="xref">OID-INFO</a>]</span> are available.<a href="#section-2.3-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1640,12 +1745,27 @@ For example,
 a 3-dimensional array of OIDs can be composed by using
 a single TBD111 tag containing an array of arrays of arrays
 of byte strings. All such byte strings are then considered OIDs.<a href="#section-4-4" class="pilcrow">¶</a></p>
-<div id="tag-factoring-example-x500-distinguished-name">
+<div id="preferred-serialization-considerations">
 <section id="section-4.1">
-        <h3 id="name-tag-factoring-example-x500-">
-<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-tag-factoring-example-x500-" class="section-name selfRef">Tag Factoring Example: X.500 Distinguished Name</a>
+        <h3 id="name-preferred-serialization-cons">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-preferred-serialization-cons" class="section-name selfRef">Preferred Serialization Considerations</a>
         </h3>
-<p id="section-4.1-1">Consider the X.500 distinguished name:<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.1-1">Where tag factoring with tag TBD111 is used, some OIDs enclosed in the
+tag may be encoded in a shorter way by using tag TBD112 instead of
+encoding an unadorned byte string.
+This remains the preferred serialization (see also <a href="#prefser" class="xref">Section 2.2</a>).
+However, this specification does not make the presence or absence of
+tag factoring a preferred serialization; application protocols can
+define where tag factoring is to be used or not (and will need to do
+so if they have deterministic encoding requirements).<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="tag-factoring-example-x500-distinguished-name">
+<section id="section-4.2">
+        <h3 id="name-tag-factoring-example-x500-">
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-tag-factoring-example-x500-" class="section-name selfRef">Tag Factoring Example: X.500 Distinguished Name</a>
+        </h3>
+<p id="section-4.2-1">Consider the X.500 distinguished name:<a href="#section-4.2-1" class="pilcrow">¶</a></p>
 <span id="name-example-x500-distinguished-"></span><div id="tab-dn-data">
 <table class="center" id="table-1">
           <caption>
@@ -1678,15 +1798,17 @@ of byte strings. All such byte strings are then considered OIDs.<a href="#sectio
           </tbody>
         </table>
 </div>
-<p id="section-4.1-3"><a href="#tab-dn-data" class="xref">Table 1</a> has four "relative distinguished names" (RDNs). The country and street RDNs are single-valued.
-The second and fourth RDNs are multi-valued.<a href="#section-4.1-3" class="pilcrow">¶</a></p>
-<p id="section-4.1-4">The equivalent representations in CBOR diagnostic notation (<span><a href="https://rfc-editor.org/rfc/rfc8949#section-8" class="relref">Section 8</a> of [<a href="#RFC8949" class="xref">RFC8949</a>]</span>) and CBOR are:<a href="#section-4.1-4" class="pilcrow">¶</a></p>
+<p id="section-4.2-3"><a href="#tab-dn-data" class="xref">Table 1</a> has four "relative distinguished names" (RDNs). The
+country (first) and street (third) RDNs are single-valued.
+The second and fourth RDNs are multi-valued.<a href="#section-4.2-3" class="pilcrow">¶</a></p>
+<p id="section-4.2-4">The equivalent representations in CBOR diagnostic notation (<span><a href="https://rfc-editor.org/rfc/rfc8949#section-8" class="relref">Section 8</a> of [<a href="#RFC8949" class="xref">RFC8949</a>]</span>) and CBOR are:<a href="#section-4.2-4" class="pilcrow">¶</a></p>
 <span id="name-distinguished-name-in-cbor-"></span><div id="fig-dn-cbor-diag">
 <figure id="figure-5">
-          <div class="artwork art-text alignLeft" id="section-4.1-5.1">
+          <div class="artwork art-text alignLeft" id="section-4.2-5.1">
 <pre>
 111([{ h'550406': "US" },
-     { h'550407': "Los Angeles", h'550408': "CA",
+     { h'550407': "Los Angeles",
+       h'550408': "CA",
        h'550411': "90013" },
      { h'550409': "532 S Olive St" },
      { h'55040f': "Public Park",
@@ -1699,7 +1821,7 @@ The second and fourth RDNs are multi-valued.<a href="#section-4.1-3" class="pilc
 </div>
 <span id="name-distinguished-name-in-cbor-1"></span><div id="fig-dn-cbor">
 <figure id="figure-6">
-          <div class="artwork art-text alignLeft" id="section-4.1-6.1">
+          <div class="artwork art-text alignLeft" id="section-4.2-6.1">
 <pre>
 d8 6f                                      # tag(111)
    84                                      # array(4)
@@ -1734,8 +1856,8 @@ d8 6f                                      # tag(111)
 <a href="#name-distinguished-name-in-cbor-1" class="selfRef">Distinguished Name, in CBOR (109 bytes)</a>
           </figcaption></figure>
 </div>
-<p id="section-4.1-7">(This example encoding assumes that all attribute values are UTF-8 strings,
-or can be represented as UTF-8 strings with no loss of information.)<a href="#section-4.1-7" class="pilcrow">¶</a></p>
+<p id="section-4.2-7">(This example encoding assumes that all attribute values are UTF-8 strings,
+or can be represented as UTF-8 strings with no loss of information.)<a href="#section-4.2-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1968,7 +2090,7 @@ to what data items they apply tag factoring to.<a href="#section-8-4" class="pil
 <dd class="break"></dd>
 <dt id="RFC6256">[RFC6256]</dt>
         <dd>
-<span class="refAuthor">Eddy, W.</span><span class="refAuthor"> and E. Davies</span>, <span class="refTitle">"Using Self-Delimiting Numeric Values in Protocols"</span>, <span class="seriesInfo">RFC 6256</span>, <span class="seriesInfo">DOI 10.17487/RFC6256</span>, <time datetime="2011-05" class="refDate">May 2011</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc6256">https://www.rfc-editor.org/info/rfc6256</a>&gt;</span>. </dd>
+<span class="refAuthor">Eddy, W.</span> and <span class="refAuthor">E. Davies</span>, <span class="refTitle">"Using Self-Delimiting Numeric Values in Protocols"</span>, <span class="seriesInfo">RFC 6256</span>, <span class="seriesInfo">DOI 10.17487/RFC6256</span>, <time datetime="2011-05" class="refDate">May 2011</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc6256">https://www.rfc-editor.org/info/rfc6256</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8174">[RFC8174]</dt>
         <dd>
@@ -1976,11 +2098,11 @@ to what data items they apply tag factoring to.<a href="#section-8-4" class="pil
 <dd class="break"></dd>
 <dt id="RFC8610">[RFC8610]</dt>
         <dd>
-<span class="refAuthor">Birkholz, H.</span><span class="refAuthor">, Vigano, C.</span><span class="refAuthor">, and C. Bormann</span>, <span class="refTitle">"Concise Data Definition Language (CDDL): A Notational Convention to Express Concise Binary Object Representation (CBOR) and JSON Data Structures"</span>, <span class="seriesInfo">RFC 8610</span>, <span class="seriesInfo">DOI 10.17487/RFC8610</span>, <time datetime="2019-06" class="refDate">June 2019</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8610">https://www.rfc-editor.org/info/rfc8610</a>&gt;</span>. </dd>
+<span class="refAuthor">Birkholz, H.</span>, <span class="refAuthor">Vigano, C.</span>, and <span class="refAuthor">C. Bormann</span>, <span class="refTitle">"Concise Data Definition Language (CDDL): A Notational Convention to Express Concise Binary Object Representation (CBOR) and JSON Data Structures"</span>, <span class="seriesInfo">RFC 8610</span>, <span class="seriesInfo">DOI 10.17487/RFC8610</span>, <time datetime="2019-06" class="refDate">June 2019</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8610">https://www.rfc-editor.org/info/rfc8610</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8949">[RFC8949]</dt>
         <dd>
-<span class="refAuthor">Bormann, C.</span><span class="refAuthor"> and P. Hoffman</span>, <span class="refTitle">"Concise Binary Object Representation (CBOR)"</span>, <span class="seriesInfo">STD 94</span>, <span class="seriesInfo">RFC 8949</span>, <span class="seriesInfo">DOI 10.17487/RFC8949</span>, <time datetime="2020-12" class="refDate">December 2020</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8949">https://www.rfc-editor.org/info/rfc8949</a>&gt;</span>. </dd>
+<span class="refAuthor">Bormann, C.</span> and <span class="refAuthor">P. Hoffman</span>, <span class="refTitle">"Concise Binary Object Representation (CBOR)"</span>, <span class="seriesInfo">STD 94</span>, <span class="seriesInfo">RFC 8949</span>, <span class="seriesInfo">DOI 10.17487/RFC8949</span>, <time datetime="2020-12" class="refDate">December 2020</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8949">https://www.rfc-editor.org/info/rfc8949</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="X.660">[X.660]</dt>
         <dd>
@@ -2003,7 +2125,7 @@ to what data items they apply tag factoring to.<a href="#section-8-4" class="pil
 <dl class="references">
 <dt id="IANA.enterprise-numbers">[IANA.enterprise-numbers]</dt>
         <dd>
-<span class="refAuthor">IANA</span>, <span class="refTitle">"enterprise-numbers"</span>, <span>&lt;<a href="http://www.iana.org/assignments/enterprise-numbers">http://www.iana.org/assignments/enterprise-numbers</a>&gt;</span>. </dd>
+<span class="refAuthor">IANA</span>, <span class="refTitle">"Enterprise Numbers"</span>, <span>&lt;<a href="http://www.iana.org/assignments/enterprise-numbers">http://www.iana.org/assignments/enterprise-numbers</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="OID-INFO">[OID-INFO]</dt>
         <dd>
@@ -2015,7 +2137,7 @@ to what data items they apply tag factoring to.<a href="#section-8-4" class="pil
 <dd class="break"></dd>
 <dt id="RFC7388">[RFC7388]</dt>
         <dd>
-<span class="refAuthor">Schoenwaelder, J.</span><span class="refAuthor">, Sehgal, A.</span><span class="refAuthor">, Tsou, T.</span><span class="refAuthor">, and C. Zhou</span>, <span class="refTitle">"Definition of Managed Objects for IPv6 over Low-Power Wireless Personal Area Networks (6LoWPANs)"</span>, <span class="seriesInfo">RFC 7388</span>, <span class="seriesInfo">DOI 10.17487/RFC7388</span>, <time datetime="2014-10" class="refDate">October 2014</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc7388">https://www.rfc-editor.org/info/rfc7388</a>&gt;</span>. </dd>
+<span class="refAuthor">Schoenwaelder, J.</span>, <span class="refAuthor">Sehgal, A.</span>, <span class="refAuthor">Tsou, T.</span>, and <span class="refAuthor">C. Zhou</span>, <span class="refTitle">"Definition of Managed Objects for IPv6 over Low-Power Wireless Personal Area Networks (6LoWPANs)"</span>, <span class="seriesInfo">RFC 7388</span>, <span class="seriesInfo">DOI 10.17487/RFC7388</span>, <time datetime="2014-10" class="refDate">October 2014</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc7388">https://www.rfc-editor.org/info/rfc7388</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="X.672">[X.672]</dt>
       <dd>
