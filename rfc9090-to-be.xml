@@ -23,11 +23,7 @@
       </address>
     </author>
     <date year="2021" month="July"/>
-<!-- [rfced] Please insert any keywords (beyond those that appear in 
-the title) for use on https://www.rfc-editor.org/search.
--->
 
-<keyword>example</keyword>
 <!-- [rfced] Please review the "Inclusive Language" portion of the online 
 Style Guide <https://www.rfc-editor.org/styleguide/part2/#inclusive_language>
 and let us know if any changes are needed. -->
@@ -126,82 +122,17 @@ the single integer value actually encoded is computed as:</t>
       <t>The inverse transformation (again making use of the known ranges of X
 and Y) is applied when decoding the object identifier.</t>
 
-<!-- [rfced] We made a few updates to the xml tagging and have listed those
-updates below. Please review and let us know any concerns.
-
-a) In Figures 1-6, we updated <artwork> to <sourcecode>. For Figures 2, 4, 5,
-and 6, we used type="cbor". We left the type empty for Figures 1 and 3; it is
-acceptable to do this, but please review the current list of preferred values
-for "type" (https://www.rfc-editor.org/materials/sourcecode-types.txt) and let
-us know if one is appropriate. If the list does not contain an applicable
-type, then feel free to let us know.
-
-
-b) The following text in Section 3.1 (and similar text in Section 3.2) was
-tagged as <dl>. We added <sourcecode type="asn.1"> in the <dd> of the first
-list item. There is minimal change in the appearance in the txt output, but in
-the html/pdf output, the <sourcecode> appears in a gray box. Please review in
-both the txt and html output formats. Note that we can also use <dl
-newline="true"> in order for the <dd> to appear on the line after the <dt>, if
-that if preferable.
-
-Original:
-   ASN.1 Value Notation:  { joint-iso-itu-t(2) country(16) us(840)
-      organization(1) gov(101) csor(3) nistalgorithm(4) hashalgs(2)
-      sha256(1) }
-
-   Dotted Decimal Notation:  2.16.840.1.101.3.4.2.1
--->
-
-<!-- [rfced] Please review the use of <tt> for consistency and let us know if
-any updates are needed. For example, we see <tt> used for the arc in the
-first sentence below but not in the second. We also see <tt> used for
-RELATIVE-OID in one instance but not the other.
-
-Note: In the html and pdf outputs, the text enclosed in <tt> is output in
-fixed-width font. In the txt output, the text enclosed in <tt> appears in
-quotation marks.
-
-Original:
-   Since the semantics of absolute and relative object identifiers
-   differ, and it is very common for companies to use self-assigned
-   numbers under the arc "1.3.6.1.4.1"
-.....
-   Note that the control type need not be a literal; e.g., "bytes .oid
-   [2, 5, 4, *uint]" matches all OIDs inside OID arc 2.5.4,
-   "attributeType".
--->
-
       <t>Since the semantics of absolute and relative object identifiers
 differ and since it is very common for companies to use self-assigned numbers
-under the arc "1.3.6.1.4.1" (IANA Private Enterprise Number OID
+under the arc <tt>1.3.6.1.4.1</tt> (IANA Private Enterprise Number OID
 <xref target="IANA.enterprise-numbers" format="default"/>) that adds 5 fixed bytes to an encoded OID value,
 this specification defines three tags, collectively called the
 "OID tags" here:</t>
-<!-- [rfced] Please review "[X.690] encoding" here. Should this read "BER
-encoding [X.690]" or something else?
-
-Original
-   Tag number TBD111: used to tag a byte string as the [X.690] encoding
-   of an absolute object identifier (simply "object identifier" or
-   "OID").
-
-   Tag number TBD110: used to tag a byte string as the [X.690] encoding
-   of a relative object identifier (also "relative OID"). 
-
-Perhaps:
-   Tag number 111: used to tag a byte string as the BER  encoding [X.690]
-   of an absolute object identifier (simply "object identifier" or
-   "OID").
-
-   Tag number 110: used to tag a byte string as the BER encoding [X.690] 
-   of a relative object identifier (also called "relative OID"). 
--->
 
 <dl>
-      <dt>Tag number 111:</dt><dd>Used to tag a byte string as the <xref target="X.690" format="default"/> encoding of an
+      <dt>Tag number 111:</dt><dd>Used to tag a byte string as the BER encoding <xref target="X.690" format="default"/> of an
 absolute object identifier (simply "object identifier" or "OID").</dd>
-      <dt>Tag number 110:</dt><dd>Used to tag a byte string as the <xref target="X.690" format="default"/> encoding of a relative
+      <dt>Tag number 110:</dt><dd>Used to tag a byte string as the BER encoding <xref target="X.690" format="default"/> of a relative
 object identifier (also called "relative OID").  Since the encoding of each
 number is the same as for Self-Delimiting Numeric Values
 (SDNVs) <xref target="RFC6256" format="default"/>, this tag can also be used for tagging a byte string that
@@ -212,23 +143,38 @@ application-specific tag can be created for such an application).</dd>
 semantics of the result are that of an absolute object identifier.</dd>
 </dl>
       <section anchor="reqts" toc="default">
-<!-- [rfced] "8.20" is repeated twice in this sentence (see list of sections
-in the parenthetical at the end of the sentence). Please let us know how to
-update.
-
-Original:
-   To form a valid tag, a byte string tagged with TBD111, TBD110, or
-   TBD112 MUST be syntactically valid contents (the value part) for a
-   BER representation of an object identifier (Sections 8.19, 8.20, and
-   8.20 of [X.690], respectively):
--->
-
 
         <name>Requirements on the Byte String Being Tagged</name>
         <t>To form a valid tag, a byte string tagged with 111, 110, or 112
 <bcp14>MUST</bcp14> be syntactically valid contents (the value part) for a BER
-representation of an object identifier (Sections 8.19, 8.20, and 8.20
-of <xref target="X.690" format="default"/>, respectively): A concatenation of zero or
+representation of an object identifier (see <xref target="oid-x.690" format="default"/>): </t>
+
+<table anchor="oid-x.690"> 
+  <name></name>    
+  <thead>
+    <tr>
+      <th>Tag number</th> 
+      <th>Section of <xref target="X.690" format="default"/></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>111</td>
+      <td>8.19</td>
+    </tr>
+    <tr>
+      <td>110</td>
+      <td>8.20</td>
+    </tr>
+    <tr>
+      <td>112</td>
+      <td>8.20</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<t>A concatenation of zero or
 more SDNV values, where each SDNV value is a sequence of one or more bytes that
 all have their most significant bit set, except for the last byte,
 where it is unset.
@@ -285,7 +231,7 @@ regular expression is invalid.</t>
       </section>
       <section anchor="prefser" toc="default">
         <name>Preferred Serialization Considerations</name>
-        <t>For an absolute OID with a prefix of "1.3.6.1.4.1", representations
+        <t>For an absolute OID with a prefix of <tt>1.3.6.1.4.1</tt>, representations
 with both the 111 and 112 tags are applicable, where the
 representation with 112 will be five bytes shorter (by leaving out
 the prefix h'2b06010401' from the enclosed byte string).
@@ -336,7 +282,7 @@ Dotted Decimal Notation:  </dt>
 
         <figure anchor="fig-sha-ber">
           <name>SHA-256 OID in BER</name>
-          <sourcecode name="" type=""><![CDATA[
+          <sourcecode type=""><![CDATA[
 06                                # UNIVERSAL TAG 6
    09                             # 9 bytes, primitive
       60 86 48 01 65 03 04 02 01  # X.690 Clause 8.19
@@ -346,7 +292,7 @@ Dotted Decimal Notation:  </dt>
         </figure>
         <figure anchor="fig-sha-cbor">
           <name>SHA-256 OID in CBOR</name>
-          <sourcecode name="" type="cbor"><![CDATA[
+          <sourcecode type="cbor"><![CDATA[
 D8 6F                             # tag(111)
    49                             # 0b010_01001: mt 2, 9 bytes
       60 86 48 01 65 03 04 02 01  # X.690 Clause 8.19
@@ -372,7 +318,7 @@ Dotted Decimal Notation:  </dt>
         </dl>
         <figure anchor="fig-mib-ber">
           <name>MIB Relative Object Identifier in BER</name>
-          <sourcecode name="" type=""><![CDATA[
+          <sourcecode type=""><![CDATA[
 0D                                # UNIVERSAL TAG 13
    03                             # 3 bytes, primitive
       01 01 1D                    # X.690 Clause 8.20
@@ -381,7 +327,7 @@ Dotted Decimal Notation:  </dt>
         </figure>
         <figure anchor="fig-mib-cbor">
           <name>MIB Relative Object Identifier in CBOR</name>
-          <sourcecode name="" type="cbor"><![CDATA[
+          <sourcecode type="cbor"><![CDATA[
 D8 6E                             # tag(110)
    43                             # 0b010_00011: mt 2 (bstr), 3 bytes
       01 01 1D                    # X.690 Clause 8.20
@@ -468,7 +414,7 @@ The second and fourth RDNs are multivalued.</t>
         <t>The equivalent representations in CBOR diagnostic notation (<xref section="8" sectionFormat="of" target="RFC8949" format="default"/>) and CBOR are:</t>
         <figure anchor="fig-dn-cbor-diag">
           <name>Distinguished Name in CBOR Diagnostic Notation</name>
-          <sourcecode name="" type="cbor"><![CDATA[
+          <sourcecode type="cbor"><![CDATA[
 111([{ h'550406': "US" },
      { h'550407': "Los Angeles",
        h'550408': "CA",
@@ -480,7 +426,7 @@ The second and fourth RDNs are multivalued.</t>
         </figure>
         <figure anchor="fig-dn-cbor">
           <name>Distinguished Name in CBOR (109 Bytes)</name>
-          <sourcecode name="" type="cbor"><![CDATA[
+          <sourcecode type="cbor"><![CDATA[
 d8 6f                                      # tag(111)
    84                                      # array(4)
       a1                                   # map(1)
@@ -547,7 +493,7 @@ country-value = text .size 2
       </figure>
       <figure anchor="fig-dn-cddl-oid">
         <name>Using .oid</name>
-        <sourcecode type="cddl">
+        <sourcecode name="rfc9090.cddl" type="cddl">
 country-rdn = {country-oid =&gt; country-value}
 country-oid = bytes .oid [2, 5, 4, 6]
 country-value = text .size 2
@@ -555,35 +501,16 @@ country-value = text .size 2
       </figure>
 
       <t>Note that the control type need not be a literal; for example, <tt>bytes .oid
-[2, 5, 4, *uint]</tt> matches all OIDs inside OID arc 2.5.4,
+[2, 5, 4, *uint]</tt> matches all OIDs inside OID arc <tt>2.5.4</tt>,
 <tt>attributeType</tt>.</t>
     </section>
-<!-- [rfced] May we update "typename" to "type name" (or "Type Name" in
-titles)? We see that RFC 8610 uses "typename" in code but has one
-instance of "type name" in general text.
-
-Original:
-   Section 6: CDDL Typenames 
-   ...
-   the typenames defined in Figure 9 are recommended:
-   ...
-   Figure 9: Recommended Typenames for CDDL 
-
-Perhaps:
-   Section 6: CDDL Type Names
-   ...
-   the type names defined in Figure 9 are recommended:
-   ...
-   Figure 9: Recommended Type Names for CDDL 
--->
-
 
     <section anchor="cddl-typenames" toc="default">
-      <name>CDDL typenames</name>
+      <name>CDDL Type Names</name>
       <t>For the use with CDDL, the
-typenames defined in <xref target="tag-cddl" format="default"/> are recommended:</t>
+type names defined in <xref target="tag-cddl" format="default"/> are recommended:</t>
       <figure anchor="tag-cddl">
-        <name>Recommended typenames for CDDL</name>
+        <name>Recommended Type Names for CDDL</name>
         <sourcecode type="cddl">
 oid = #6.111(bstr)
 roid = #6.110(bstr)
@@ -594,40 +521,6 @@ pen = #6.112(bstr)
     <section anchor="iana" toc="default">
       <name>IANA Considerations</name>
 
-<!-- [rfced] Questions about IANA Considerations
-
-a) Sections 7.1 and 7.2: We note that the "CBOR Tags" and "CDDL Control
-Operators" registries do not include section numbers in the Reference
-column. Would you like to remove the section numbers from Tables 2 and 3 to
-exactly match the IANA registry? Or do you prefer to leave this as is?
-
-
-b) Section 7.1: May we upate the following text as shown below? If any changes
-are made here, we will request that IANA update the "CBOR Tags" registry at
-https://www.iana.org/assignments/cbor-tags/ accordingly prior to publication.
-
-Original:
-byte string or array or map
-
-Perhaps:
-byte string, array, or map
-
-
-c) Section 7.1: Would you prefer that the text in the Semantics column of
-Table 2 be aligned at the left rather than the right?
-
-
-d) Section 7.1: Would it be helpful to rearrange the rows in Table 2 so that
-the tag numbers are in order? Or do you prefer the current order?
-
-Also, we see that the tag numbers defined in this document also appear in the
-order 111, 110, and 112 elsewhere in the document (see example below). Would
-it be helpful to also reorder these as 110, 111, 112?
-
-Current:
-   To form a valid tag, a byte string tagged with 111, 110, or 112 MUST
-f   be syntactically valid contents (the value part) ...
--->
 
       <section anchor="cbor-tags" toc="default">
         <name>CBOR Tags</name>
@@ -640,28 +533,28 @@ in the 1+1 byte space (24..255) of the "CBOR Tags" registry
             <tr>
               <th align="left">Tag</th>
               <th align="left">Data Item</th>
-              <th align="right">Semantics</th>
+              <th align="left">Semantics</th>
               <th align="left">Reference</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td align="left">111</td>
-              <td align="left">byte string or array or map</td>
-              <td align="right">object identifier (BER encoding)</td>
-              <td align="left">RFC 9090, <xref target="oids" format="default"/></td>
+              <td align="left">byte string, array, or map</td>
+              <td align="left">object identifier (BER encoding)</td>
+              <td align="left">RFC 9090</td>
             </tr>
             <tr>
               <td align="left">110</td>
-              <td align="left">byte string or array or map</td>
-              <td align="right">relative object identifier (BER encoding); SDNV <xref target="RFC6256" format="default"/> sequence</td>
-              <td align="left">RFC 9090, <xref target="oids" format="default"/></td>
+              <td align="left">byte string, array, or map</td>
+              <td align="left">relative object identifier (BER encoding); SDNV <xref target="RFC6256" format="default"/> sequence</td>
+              <td align="left">RFC 9090</td>
             </tr>
             <tr>
               <td align="left">112</td>
-              <td align="left">byte string or array or map</td>
-              <td align="right">object identifier (BER encoding), relative to 1.3.6.1.4.1</td>
-              <td align="left">RFC 9090, <xref target="oids" format="default"/></td>
+              <td align="left">byte string, array, or map</td>
+              <td align="left">object identifier (BER encoding), relative to 1.3.6.1.4.1</td>
+              <td align="left">RFC 9090</td>
             </tr>
           </tbody>
         </table>
@@ -683,15 +576,15 @@ reference.</t>
           <tbody>
             <tr>
               <td align="left">.sdnv</td>
-              <td align="left">RFC 9090, <xref target="control" format="default"/></td>
+              <td align="left">RFC 9090</td>
             </tr>
             <tr>
               <td align="left">.sdnvseq</td>
-              <td align="left">RFC 9090, <xref target="control" format="default"/></td>
+              <td align="left">RFC 9090</td>
             </tr>
             <tr>
               <td align="left">.oid</td>
-              <td align="left">RFC 9090, <xref target="control" format="default"/></td>
+              <td align="left">RFC 9090</td>
             </tr>
           </tbody>
         </table>
@@ -700,22 +593,6 @@ reference.</t>
     <section anchor="security-considerations" toc="default">
       <name>Security Considerations</name>
       <t>The security considerations of <xref target="RFC8949" format="default"/> apply.</t>
-<!-- [rfced] Will "supposed to be protected" be clear to readers here? 
-
-Original:
-   an attacker may be able to subvert a checking process by submitting  
-   alternative representations that are later taken as the original (or even  
-   something else entirely) by another decoder supposed to be protected by the 
-   checking process.
-
-Perhaps:
-   an attacker may be able to subvert a checking process by submitting  
-   alternative representations that are later taken as the original (or even  
-   something else entirely) by another decoder that should be protected by the 
-   checking process.
--->
-
-
 
       <t>The encodings in Clauses 8.19 and 8.20 of <xref target="X.690" format="default"/> are quite compact and unambiguous
 but <bcp14>MUST</bcp14> be followed precisely to avoid security pitfalls.
@@ -723,7 +600,7 @@ In particular, the requirements set out in <xref target="reqts" format="default"
 followed; otherwise, an attacker may be able to subvert a checking
 process by submitting alternative representations that are later taken
 as the original (or even something else entirely) by another decoder
-supposed to be protected by the checking process.</t>
+that is intended to be protected by the checking process.</t>
       <t>OIDs and relative OIDs can always be treated as opaque byte strings.
 Actually understanding the structure that was used for generating them
 is not necessary, and, except for checking the structure requirements,
